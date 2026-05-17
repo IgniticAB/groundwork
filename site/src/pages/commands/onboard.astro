@@ -14,7 +14,7 @@ const description =
     The surge-staffing command. Every other command in this skill
     <em>produces</em> context; this one <em>consumes</em> it and produces a
     task-specific subset. A fresh agent or a teammate gets exactly the slice
-    that applies to the task in front of them — and nothing more.
+    that applies to the task in front of them, and nothing more.
   </p>
 
   <h2>Why this command exists</h2>
@@ -33,7 +33,7 @@ const description =
   <p>
     The premise mirrors a finding in the 2026 Anthropic Agentic Coding Trends
     Report: with context formalised in <code>CLAUDE.md</code> /
-    <code>AGENTS.md</code>, onboarding times collapse — but only if someone
+    <code>AGENTS.md</code>, onboarding times collapse, but only if someone
     curates the slice. That curation is this command.
   </p>
 
@@ -52,7 +52,7 @@ const description =
     <li>Handing a task to a teammate.</li>
     <li>Opening Claude Code on a project after weeks away.</li>
     <li>
-      Compacting a long, noisy session — pause, brief a fresh session, carry
+      Compacting a long, noisy session. Pause, brief a fresh session, carry
       on with a clean slate.
     </li>
     <li>The repo's context is good but voluminous and the agent does not need all of it.</li>
@@ -64,22 +64,22 @@ const description =
   <p>Optionally, the briefing is also pasted inline in chat for immediate use.</p>
   <p>The sections:</p>
   <ul>
-    <li><strong>What you are working on</strong> — the task, the why, the user-facing outcome.</li>
-    <li><strong>What you need to know about this repo</strong> — three to five sentences. Not the tour.</li>
-    <li><strong>Conventions that apply to this area</strong> — only the rules that touch the files you will edit.</li>
-    <li><strong>Decisions worth knowing</strong> — 3 to 5 ADRs with one-line summaries. Plus any negative-space callouts likely to be re-suggested.</li>
-    <li><strong>Recent activity in this area</strong> — the last 5–10 commits, with dates and one-line subjects.</li>
-    <li><strong>How to verify</strong> — fast and full commands, scoped to the area where possible.</li>
-    <li><strong>What's out of scope</strong> — explicitly. The leash on scope creep.</li>
-    <li><strong>Tools available</strong> — relevant MCP servers, HITL requirements named.</li>
-    <li><strong>Where to look for more</strong> — pointers, not bodies of text.</li>
+    <li><strong>What you are working on.</strong> The task, the why, the user-facing outcome.</li>
+    <li><strong>What you need to know about this repo.</strong> Three to five sentences. Not the tour.</li>
+    <li><strong>Conventions that apply to this area.</strong> Only the rules that touch the files you will edit.</li>
+    <li><strong>Decisions worth knowing.</strong> 3 to 5 ADRs with one-line summaries. Plus any negative-space callouts likely to be re-suggested.</li>
+    <li><strong>Recent activity in this area.</strong> The last 5 to 10 commits, with dates and one-line subjects.</li>
+    <li><strong>How to verify.</strong> Fast and full commands, scoped to the area where possible.</li>
+    <li><strong>What's out of scope.</strong> Explicitly. The leash on scope creep.</li>
+    <li><strong>Tools available.</strong> Relevant MCP servers, HITL requirements named.</li>
+    <li><strong>Where to look for more.</strong> Pointers, not bodies of text.</li>
   </ul>
 
   <h2>How it works</h2>
   <ol>
     <li>
       <strong>Understand the task.</strong> One sentence summary. If you
-      cannot summarize, the command pushes back — a briefing for an undefined
+      cannot summarize, the command pushes back. A briefing for an undefined
       task is a generic dump, which is what this command exists to avoid.
     </li>
     <li>
@@ -100,19 +100,19 @@ const description =
       (<code>.cursor/rules/&lt;area&gt;.mdc</code>) when they exist.
     </li>
     <li>
-      <strong>Pull recent activity</strong> — <code>git log --oneline
+      <strong>Pull recent activity.</strong> <code>git log --oneline
       --since="14 days ago"</code> against the files of interest. Last 5–10
       commits.
     </li>
     <li>
-      <strong>Identify verification</strong> — fast and full from
+      <strong>Identify verification.</strong> Fast and full from
       <code>.context/conventions.md</code>, scoped form preferred.
     </li>
     <li>
       <strong>Identify relevant MCP tools</strong> with HITL flags called out.
     </li>
     <li>
-      <strong>Define out-of-scope</strong> — two or three bullets. If you
+      <strong>Define out-of-scope.</strong> Two or three bullets. If you
       cannot name what is out of scope, the command asks. The agent's default
       is to expand.
     </li>
@@ -153,19 +153,19 @@ const description =
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a> —
-      onboarding speed is one of the success metrics.
+      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>.
+      Onboarding speed is one of the success metrics.
     </li>
     <li>
-      <a href={url('commands/plan/')}><code>plan</code></a> — recent plans
+      <a href={url('commands/plan/')}><code>plan</code></a>. Recent plans
       become part of the briefing.
     </li>
     <li>
-      <a href={url('commands/adr/')}><code>adr</code></a> — ADRs are the
+      <a href={url('commands/adr/')}><code>adr</code></a>. ADRs are the
       single most useful artifact for a fresh agent.
     </li>
     <li>
-      <a href={url('blueprint/#management')}>2026 Blueprint — surge staffing</a>
+      <a href={url('blueprint/#management')}>2026 Blueprint: surge staffing</a>
     </li>
   </ul>
 

@@ -9,7 +9,7 @@ const description =
 ---
 
 <Base title={title} description={description}>
-  <main class="container container--wide foundation-index">
+  <div class="container container--wide foundation-index">
     <span class="hero-eyebrow">Philosophy</span>
     <h1>The foundation</h1>
     <p class="lede">
@@ -34,16 +34,16 @@ const description =
       <h2>Where this comes from</h2>
       <p>
         Every page on this site distils the same source document:
-        <em>The 2026 Context Engineering Blueprint</em>. It argues that
-        context — not model capability — is the bottleneck on AI-assisted
-        engineering, and that the discipline of <em>engineering</em> it is the
-        defining R&D skill of the year.
+        <em>The 2026 Context Engineering Blueprint</em>. Its argument: context,
+        not model capability, is the bottleneck on AI-assisted engineering,
+        and the discipline of <em>engineering</em> it is the defining R&D
+        skill of the year.
       </p>
       <p>
         <a class="src-link" href={url('blueprint/')}>Read the full Blueprint →</a>
       </p>
     </section>
-  </main>
+  </div>
 
   <style>
     .found-list {
@@ -114,7 +114,12 @@ const description =
       font-weight: 600;
       text-decoration: none;
     }
-    .src-link:hover { color: var(--ember); }
+    .src-link:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--ember);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 4px;
+    }
 
     @media (max-width: 560px) {
       .found-row { grid-template-columns: 1fr; gap: 0.4rem; }

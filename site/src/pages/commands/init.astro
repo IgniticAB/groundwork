@@ -25,19 +25,18 @@ const description =
     team's narrative.
   </p>
   <p>
-    <code>init</code> replaces guessing with detection. It reads your repo —
-    package manifests, scripts, recent commits — and emits a complete starter
+    <code>init</code> replaces guessing with detection. It reads your repo
+    (package manifests, scripts, recent commits) and emits a complete starter
     set of context files. One file per harness, all pointing at a single
     canonical <code>.context/conventions.md</code>. No duplication. No
     placeholders. No "TODO: implement this".
   </p>
   <p>
     The point is not the files. The point is that every other command in this
-    skill —
-    <a href={url('commands/plan/')}><code>plan</code></a>,
+    skill (<a href={url('commands/plan/')}><code>plan</code></a>,
     <a href={url('commands/adr/')}><code>adr</code></a>,
     <a href={url('commands/verify/')}><code>verify</code></a>,
-    <a href={url('commands/onboard/')}><code>onboard</code></a> — assumes
+    <a href={url('commands/onboard/')}><code>onboard</code></a>) assumes
     these files exist. <code>init</code> is the foundation under the
     foundation.
   </p>
@@ -59,8 +58,8 @@ const description =
     <li>
       A small or medium repo where nobody has written a <code>CLAUDE.md</code>
       yet. If one already exists and is just stale, use
-      <a href={url('commands/document/')}><code>document</code></a> instead —
-      it preserves history.
+      <a href={url('commands/document/')}><code>document</code></a> instead.
+      It preserves history.
     </li>
     <li>
       Standardising an org's context engineering across multiple repos.
@@ -71,13 +70,13 @@ const description =
   <h2>What it produces</h2>
   <p>Depending on which harnesses you target, some subset of:</p>
   <ul>
-    <li><code>CLAUDE.md</code> — Claude Code</li>
-    <li><code>AGENTS.md</code> — Codex and generic</li>
-    <li><code>.cursor/rules/main.mdc</code> — Cursor, with file-scoping frontmatter</li>
-    <li><code>.github/copilot-instructions.md</code> — GitHub Copilot</li>
-    <li><code>.context/conventions.md</code> — the single canonical source of truth</li>
-    <li><code>docs/decisions/</code> — README, a starter ADR, and a negative-space stub</li>
-    <li><code>.context/hooks/check-context.sh</code> — pre-commit drift hook</li>
+    <li><code>CLAUDE.md</code> for Claude Code</li>
+    <li><code>AGENTS.md</code> for Codex and generic agents</li>
+    <li><code>.cursor/rules/main.mdc</code> for Cursor, with file-scoping frontmatter</li>
+    <li><code>.github/copilot-instructions.md</code> for GitHub Copilot</li>
+    <li><code>.context/conventions.md</code>, the single canonical source of truth</li>
+    <li><code>docs/decisions/</code>: README, a starter ADR, and a negative-space stub</li>
+    <li><code>.context/hooks/check-context.sh</code>, the pre-commit drift hook</li>
   </ul>
   <p>
     Every per-harness file is short and points at <code>.context/conventions.md</code>.
@@ -100,7 +99,7 @@ const description =
     </li>
     <li>
       <strong>Write the canonical conventions</strong> at
-      <code>.context/conventions.md</code> — under 200 lines, with a fixed
+      <code>.context/conventions.md</code>: under 200 lines, with a fixed
       structure.
     </li>
     <li>
@@ -109,8 +108,8 @@ const description =
     </li>
     <li>
       <strong>Set up ADRs and the pre-commit hook.</strong> Suggests the
-      install command for husky / pre-commit / lefthook if none is present —
-      does not silently install.
+      install command for husky / pre-commit / lefthook if none is present.
+      Does not silently install.
     </li>
     <li>
       <strong>Run verification.</strong> The commands you picked actually
@@ -122,7 +121,7 @@ const description =
     <p>
       No placeholder text. Every file under 200 lines. Per-harness files point
       at the canonical source rather than duplicating it. If the repo already
-      had partial context files, they are not overwritten — you get a diff and
+      had partial context files, they are not overwritten; you get a diff and
       decide.
     </p>
   </Callout>
@@ -131,33 +130,33 @@ const description =
   <p>
     <code>init</code> deliberately stops at scaffolding. It does not author
     skills, set up MCP servers, scope rules per directory, or onboard a
-    specific task. Those have their own commands —
-    <a href={url('commands/mcp/')}><code>mcp</code></a>,
+    specific task. Those have their own commands
+    (<a href={url('commands/mcp/')}><code>mcp</code></a>,
     <a href={url('commands/scope/')}><code>scope</code></a>,
-    <a href={url('commands/onboard/')}><code>onboard</code></a> —
+    <a href={url('commands/onboard/')}><code>onboard</code></a>)
     so that <code>init</code> stays predictable.
   </p>
 
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a> —
-      where Build sits in the larger story.
+      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
+      Where Build sits in the larger story.
     </li>
     <li>
-      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a> —
-      why per-harness files belong in the Project layer and nothing else.
+      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a>.
+      Why per-harness files belong in the Project layer and nothing else.
     </li>
     <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a> —
-      standardised initialisation, scoped rules, defensive commits.
+      <a href={url('foundation/good-practices/')}>Good practices</a>.
+      Standardised initialisation, scoped rules, defensive commits.
     </li>
     <li>
-      <a href={url('foundation/harness-reference/')}>Harness reference</a> —
-      where each harness expects files.
+      <a href={url('foundation/harness-reference/')}>Harness reference</a>.
+      Where each harness expects files.
     </li>
     <li>
-      <a href={url('blueprint/#contextops')}>2026 Blueprint — ContextOps</a>
+      <a href={url('blueprint/#contextops')}>2026 Blueprint: ContextOps</a>
     </li>
   </ul>
 

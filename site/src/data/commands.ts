@@ -25,7 +25,7 @@ export const commands: CommandMeta[] = [
     slug: 'document',
     name: 'document',
     oneLiner: 'Delta-refresh stale context files without nuking history.',
-    reachFor: 'The repo already has CLAUDE.md / AGENTS.md / rules — but they no longer match the code.',
+    reachFor: 'The repo already has CLAUDE.md / AGENTS.md / rules, but they no longer match the code.',
     blurb: 'Keeps the why. Marks the old rule deprecated with a date and reason, layers the new rule on top, never silently rewrites.',
   },
   {
@@ -38,7 +38,7 @@ export const commands: CommandMeta[] = [
   {
     slug: 'adr',
     name: 'adr',
-    oneLiner: 'Capture an Architecture Decision Record — including the alternatives you rejected.',
+    oneLiner: 'Capture an Architecture Decision Record, including the alternatives you rejected.',
     reachFor: 'A choice was made and the why needs to outlive the conversation.',
     blurb: 'MADR-lite with a non-negotiable negative-space section and a "Reconsider if" trigger. Ingests live decisions, merged PRs, or commit ranges.',
   },
@@ -54,7 +54,7 @@ export const commands: CommandMeta[] = [
     name: 'mcp',
     oneLiner: 'Design an MCP setup with least-privilege, human-in-the-loop, and real auditing.',
     reachFor: 'Before connecting an agent to anything that can touch production.',
-    blurb: 'Four tiers, named credentials, HITL flags enforced in config — not in the prompt. The policy file an auditor would actually accept.',
+    blurb: 'Four tiers, named credentials, HITL flags enforced in config, not in the prompt. The policy file an auditor would actually accept.',
   },
   {
     slug: 'verify',

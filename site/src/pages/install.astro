@@ -5,11 +5,11 @@ import { url } from '../lib/url';
 
 const title = 'Install';
 const description =
-  'Install the Groundwork skill in any AI coding harness. Claude Code, Cursor, Codex, Copilot, Gemini, OpenCode — 50+ supported. Plus the optional detector CLI for CI.';
+  'Install the Groundwork skill in any AI coding harness. Claude Code, Cursor, Codex, Copilot, Gemini, OpenCode, 50+ supported. Plus the optional detector CLI for CI.';
 ---
 
 <Base title={title} description={description}>
-  <main class="container install">
+  <div class="container install">
     <span class="hero-eyebrow">Get started</span>
     <h1>Install Groundwork</h1>
     <p class="lede">
@@ -21,8 +21,7 @@ const description =
     <p>
       The Groundwork skill is one umbrella entry with nine commands. It works
       anywhere the open <a href="https://github.com/vercel-labs/skills">skills</a>
-      installer runs — that means Claude Code, Cursor, Codex, Gemini CLI,
-      OpenCode, and
+      installer runs: Claude Code, Cursor, Codex, Gemini CLI, OpenCode, and
       <a href="https://github.com/vercel-labs/skills#supported-agents">50+ more</a>.
     </p>
 
@@ -44,7 +43,7 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
 
     <Callout label="Where files land" tone="mute">
       <p>
-        Files are placed in the location each harness expects —
+        Files land in the location each harness expects:
         <code>.claude/skills/groundwork/</code>, <code>.cursor/skills/groundwork/</code>,
         <code>.agents/skills/groundwork/</code>, and so on. No magic, no editing
         your dotfiles. See
@@ -71,8 +70,8 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
       <li>
         <strong>By slash shortcut</strong> (Claude Code only, optional).
         <code>/gw init</code>, <code>/gw audit</code>. Requires
-        <code>slash-commands/gw.md</code> in <code>.claude/commands/</code> —
-        ships with the skill.
+        <code>slash-commands/gw.md</code> in <code>.claude/commands/</code>.
+        Ships with the skill.
       </li>
     </ul>
 
@@ -102,7 +101,7 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
     <Callout label="Skill vs. CLI" tone="ember">
       <p>
         The skill <strong>authors</strong> context. The CLI <strong>guards</strong>
-        it. They complement each other. Most teams run both — the skill for
+        it. They complement each other. Most teams run both: the skill for
         humans iterating with the agent, the CLI in CI as a hard gate.
       </p>
     </Callout>
@@ -137,14 +136,14 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
 
     <Callout label="A note on memory" tone="mute">
       <p>
-        Groundwork governs <strong>context</strong> — the files your repo
-        commits. It does not govern <strong>memory</strong> — your agent's
+        Groundwork governs <strong>context</strong>: the files your repo
+        commits. It does not govern <strong>memory</strong>: your agent's
         long-term notes about you. If you ask the skill to write your personal
         preferences into <code>CLAUDE.md</code>, it will push back. Those go in
         memory, not in the repo.
       </p>
     </Callout>
-  </main>
+  </div>
 
   <style>
     .install pre { max-width: 100%; }

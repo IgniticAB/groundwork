@@ -23,7 +23,7 @@ const description =
     The single biggest difference between teams who feel productive with AI
     and teams who feel like AI is wasting their time is whether the agent has
     rock-solid verification. With it, the agent can iterate locally until
-    tests pass — you only review the design. Without it, you are correcting
+    tests pass; you only review the design. Without it, you are correcting
     typos and missing imports for an hour.
   </p>
   <p>
@@ -42,7 +42,7 @@ const description =
       <a href={url('foundation/cognitive-debt/')}>cognitive debt repayment
       practice</a> and the
       <a href={url('foundation/anti-patterns/')}>last anti-pattern</a>
-      Groundwork rejects (#10 — verification as an afterthought). The
+      Groundwork rejects (#10, verification as an afterthought). The
       <a href={url('blueprint/#good-practices')}>2026 Blueprint</a> lists it
       among the practices teams must embrace.
     </p>
@@ -74,13 +74,13 @@ const description =
       section near the top.
     </li>
     <li>
-      <code>.context/hooks/check-context.sh</code> — pre-commit hook script
+      <code>.context/hooks/check-context.sh</code>, a pre-commit hook script
       tailored to your stack.
     </li>
     <li>
       Registration with your existing hook runner (husky / pre-commit /
       lefthook) if one is detected. Otherwise, the one-line install
-      instruction — suggest, do not install silently.
+      instruction. Suggest, do not install silently.
     </li>
     <li>
       The Groundwork detector wired in as a pre-commit step and as a CI job
@@ -164,19 +164,19 @@ const description =
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a> —
-      verification-first is the fourth repayment practice.
+      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>.
+      Verification-first is the fourth repayment practice.
     </li>
     <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #10 —
+      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #10:
       verification as an afterthought.
     </li>
     <li>
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a> —
+      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
       Maintain stage. Hooks and CI checks live here.
     </li>
     <li>
-      <a href={url('blueprint/#good-practices')}>2026 Blueprint —
+      <a href={url('blueprint/#good-practices')}>2026 Blueprint:
       verification-driven logic</a>
     </li>
   </ul>

@@ -7,347 +7,798 @@ import { foundation } from '../data/foundation';
 const title = 'Groundwork';
 const description =
   'Context engineering for any LLM. One skill, nine commands, for setting up and maintaining the boring layer that makes the rest actually useful.';
+
+// Featured 3 + tight 6 ordering. The featured commands are the lifecycle anchors.
+const featuredSlugs = ['init', 'verify', 'audit'];
+const featured = featuredSlugs
+  .map((s) => commands.find((c) => c.slug === s))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+const rest = commands.filter((c) => !featuredSlugs.includes(c.slug));
+
+const heroFeature = foundation[0];
+const heroFoundationRest = foundation.slice(1);
+
+// Tree specimen rows. First entry is the root.
+const tree = [
+  { line: 'your-repo/', note: '' },
+  { line: '├── CLAUDE.md', note: 'Claude Code, 47 lines, points at conventions' },
+  { line: '├── AGENTS.md', note: 'Codex-compatible duplicate' },
+  { line: '├── .cursor/rules/main.mdc', note: 'YAML frontmatter, scoped' },
+  { line: '├── .github/copilot-instructions.md', note: 'Copilot' },
+  { line: '├── .context/', note: '' },
+  { line: '│   ├── conventions.md', note: 'the canonical source of truth' },
+  { line: '│   └── hooks/check-context.sh', note: 'pre-commit drift hook' },
+  { line: '└── docs/decisions/', note: '' },
+  { line: '    ├── README.md', note: '' },
+  { line: '    ├── 0001-record-architecture-decisions.md', note: 'the meta-ADR' },
+  { line: '    └── negative-space.md', note: 'rejected paths, kept visible' },
+];
 ---
 
 <Base title={title} description={description}>
-  <main class="container container--wide home">
-    <section class="hero">
-      <span class="hero-eyebrow">v1.1 · Skill + 9 commands</span>
-      <h1>Lay the groundwork.<br />The agent does the rest.</h1>
-      <p class="lede">
-        Context engineering for any LLM. One skill, nine commands. The boring
-        part nobody automates is the only part that compounds.
+  <section class="hero-band hero-band--home">
+    <div class="hero-stage">
+      <div class="hero-meta">
+        <span class="hero-chip">v1.1 · Skill plus nine commands</span>
+        <span class="hero-divider" aria-hidden="true"></span>
+        <span class="hero-status">MIT · works in 50+ harnesses</span>
+      </div>
+
+      <h1 class="hero-display display">
+        Groundwork<span class="hero-display-stop" aria-hidden="true"></span>
+      </h1>
+
+      <p class="hero-tag">
+        Context is the new code. Most teams write it once and never touch it.
+        Groundwork makes it an engineered artifact: versioned, reviewed,
+        wired to the verification commands that prove it works.
       </p>
 
       <div class="hero-cta">
         <code class="cmd-block">npx skills add IgniticAB/groundwork</code>
-        <a class="hero-link" href={url('install/')}>or read the install guide →</a>
+        <div class="hero-cta-links">
+          <a class="hero-arrow" href={url('install/')}>Install guide<span aria-hidden="true">→</span></a>
+          <a class="hero-arrow" href={url('commands/')}>The nine commands<span aria-hidden="true">→</span></a>
+        </div>
       </div>
+    </div>
 
-      <p class="hero-support">
-        Works with Claude Code, Cursor, Codex, Gemini CLI, OpenCode, and
-        <a href="https://github.com/vercel-labs/skills#supported-agents">50+ more</a>.
-        MIT-licensed. No smoke, no mirrors.
-      </p>
-    </section>
+    <div class="hero-ledge" aria-hidden="true">
+      <span>Ignite minds.</span>
+      <span class="hero-ledge-dot"></span>
+      <span>Spark change.</span>
+    </div>
+  </section>
 
-    <section class="why">
-      <div class="why-stack">
+  <section class="band band--paper">
+    <div class="stage">
+      <div class="proof-grid">
+        <div class="proof-copy">
+          <span class="kicker">What it produces</span>
+          <h2>One command. Real files. No placeholders.</h2>
+          <p class="lede">
+            <code>groundwork init</code> reads your repo, asks four questions,
+            and emits the scaffolding every other command assumes. Per-harness
+            files point at one canonical source. ADRs ready to be authored.
+            A pre-commit hook that fails when context drifts from the code.
+          </p>
+          <p>
+            No <em>TODO: implement</em>. No 800-line CLAUDE.md. No assumptions
+            about your timezone or your package manager. Run it once. Every
+            other command in this skill picks up from there.
+          </p>
+          <a class="link-arrow" href={url('commands/init/')}>
+            How <code>init</code> works<span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <figure class="tree" aria-label="Tree of files Groundwork init produces">
+          <figcaption class="tree-caption">
+            <span class="tree-prompt">$</span>
+            <span>groundwork init</span>
+          </figcaption>
+          <ol class="tree-lines">
+            {tree.map((row) => (
+              <li class:list={[
+                'tree-line',
+                row.line.trim().endsWith('/') ? 'tree-line--dir' : '',
+                row.line.startsWith('your-repo/') ? 'tree-line--root' : '',
+              ]}>
+                <code>{row.line}</code>
+                {row.note && <span class="tree-note">{row.note}</span>}
+              </li>
+            ))}
+          </ol>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="stage">
+      <header class="band-head">
         <div>
-          <h2>Context is the new code</h2>
-          <p>
-            In 2026, the bottleneck on AI-assisted engineering is not model
-            capability. It is the quality of the context the model sees. Code
-            that ships fast but nobody understands accumulates
-            <em>cognitive debt</em> — the gap between a system's structure and
-            the team's shared theory of how it works.
-          </p>
-          <p>
-            <strong>Groundwork</strong> turns that context into an engineered
-            artifact. Versioned. Reviewed. Wired to the verification commands
-            that prove it works. No vibes, no monolithic prompt bloat, no
-            assumptions about what your agent already knows.
-          </p>
-          <p>
-            <a href={url('blueprint/')}>The 2026 Context Engineering Blueprint →</a>
-          </p>
+          <span class="kicker">The skill</span>
+          <h2>Nine commands. Three you reach for first.</h2>
         </div>
-        <div class="why-aside">
-          <div class="chip chip--ember">Why it exists</div>
-          <ul class="why-list">
-            <li>
-              <strong>Your CLAUDE.md is one source of truth, not five.</strong>
-              <span>Cursor, Codex, Copilot — same rules, emitted in each format.</span>
-            </li>
-            <li>
-              <strong>Verification is baked in.</strong>
-              <span>The agent self-corrects against your tests. You only review the design.</span>
-            </li>
-            <li>
-              <strong>Decisions outlive the conversation.</strong>
-              <span>ADRs with a "Reconsider if" trigger and a negative-space section.</span>
-            </li>
-            <li>
-              <strong>Drift is a build error.</strong>
-              <span>A pre-commit hook catches stale context before it ships.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
+        <a class="link-arrow band-head-cta" href={url('commands/')}>
+          All commands<span aria-hidden="true">→</span>
+        </a>
+      </header>
 
-    <section class="commands-preview">
-      <div class="section-head">
-        <div>
-          <h2>The nine commands</h2>
-          <p class="section-sub">
-            One file per command in the skill. One short page per command on this
-            site — the <em>why</em> first, then the <em>how</em>.
-          </p>
-        </div>
-        <a class="section-cta" href={url('commands/')}>All commands →</a>
-      </div>
-
-      <div class="cmd-grid">
-        {commands.map((c) => (
-          <a class="cmd-card" href={url(`commands/${c.slug}/`)}>
-            <div class="cmd-card-head">
-              <span class="cmd-name"><code>{c.name}</code></span>
-              <span class="cmd-arrow" aria-hidden="true">→</span>
+      <div class="featured">
+        {featured.map((c, i) => (
+          <a class="featured-card" href={url(`commands/${c.slug}/`)}>
+            <span class="featured-num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="featured-body">
+              <div class="featured-name"><code>{c.name}</code></div>
+              <p class="featured-line">{c.oneLiner}</p>
+              <p class="featured-when">{c.reachFor}</p>
             </div>
-            <p class="cmd-line">{c.oneLiner}</p>
-            <p class="cmd-when"><span>Reach for it when:</span> {c.reachFor}</p>
+            <span class="featured-arrow" aria-hidden="true">→</span>
           </a>
         ))}
       </div>
-    </section>
 
-    <section class="foundation-preview">
-      <div class="section-head">
+      <ul class="rest-list">
+        {rest.map((c) => (
+          <li>
+            <a class="rest-row" href={url(`commands/${c.slug}/`)}>
+              <code class="rest-name">{c.name}</code>
+              <span class="rest-line">{c.oneLiner}</span>
+              <span class="rest-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="band band--paper">
+    <div class="stage">
+      <header class="band-head">
         <div>
-          <h2>The foundation</h2>
-          <p class="section-sub">
-            Seven short files load on every invocation. They are the shared
-            vocabulary the commands assume you already speak.
-          </p>
+          <span class="kicker">The foundation</span>
+          <h2>The shared vocabulary every command assumes.</h2>
         </div>
-        <a class="section-cta" href={url('foundation/')}>All foundation pages →</a>
-      </div>
+        <a class="link-arrow band-head-cta" href={url('foundation/')}>
+          All seven pages<span aria-hidden="true">→</span>
+        </a>
+      </header>
 
-      <div class="found-grid">
-        {foundation.map((f) => (
-          <a class="found-card" href={url(`foundation/${f.slug}/`)}>
-            <div class="found-title">{f.title}</div>
-            <p class="found-line">{f.oneLiner}</p>
-          </a>
-        ))}
-      </div>
-    </section>
+      <div class="found-feature">
+        <a class="found-lead" href={url(`foundation/${heroFeature.slug}/`)}>
+          <span class="found-num">01</span>
+          <h3 class="found-lead-title">{heroFeature.title}</h3>
+          <p class="found-lead-line">{heroFeature.oneLiner}</p>
+          <span class="found-lead-cta" aria-hidden="true">Read it<span class="rest-arrow">→</span></span>
+        </a>
 
-    <section class="closing">
-      <div class="closing-inner">
-        <h2>Stop writing context like prose. Start engineering it.</h2>
-        <p class="lede">
-          Bootstrap a repo in one command. Audit one that already exists. Or
-          start with the philosophy and pick your battles.
-        </p>
-        <div class="closing-cta">
-          <a class="btn btn--primary" href={url('install/')}>Install Groundwork</a>
-          <a class="btn btn--ghost" href={url('commands/init/')}>See <code>init</code> in detail</a>
-          <a class="btn btn--ghost" href={url('foundation/cognitive-debt/')}>Why cognitive debt is the real risk</a>
-        </div>
+        <ul class="found-rest">
+          {heroFoundationRest.map((f, i) => (
+            <li>
+              <a class="found-rest-row" href={url(`foundation/${f.slug}/`)}>
+                <span class="found-rest-num">{String(i + 2).padStart(2, '0')}</span>
+                <span class="found-rest-title">{f.title}</span>
+                <span class="rest-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <section class="band closing">
+    <div class="stage closing-stage">
+      <p class="closing-kicker">Stop writing context like prose.</p>
+      <h2 class="closing-head">Start engineering&nbsp;it.</h2>
+      <p class="closing-lede">
+        Bootstrap a repo in one command. Audit one that already exists. Or
+        start with the philosophy and pick your battles.
+      </p>
+      <div class="closing-cta">
+        <a class="btn btn--primary" href={url('install/')}>Install Groundwork</a>
+        <a class="btn btn--ghost" href={url('commands/init/')}>
+          See <code>init</code> in detail
+        </a>
+        <a class="btn btn--ghost" href={url('foundation/cognitive-debt/')}>
+          Why cognitive debt is the real risk
+        </a>
+      </div>
+    </div>
+  </section>
 
   <style>
-    .home .hero h1 {
-      max-width: 18ch;
+    /* hero ============================================================== */
+    .hero-band--home {
+      padding-block: clamp(3.5rem, 7vw, 6.5rem);
     }
-    .hero-cta {
+    .hero-stage {
+      max-width: var(--hero-max-width);
+      margin: 0 auto;
+      padding-inline: var(--gutter);
+      position: relative;
+    }
+    .hero-meta {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 0.6rem 1.2rem;
-      margin-bottom: 1.2rem;
-      max-width: 640px;
+      gap: 0.7rem 1rem;
+      flex-wrap: wrap;
+      color: rgba(255, 249, 236, 0.82);
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
     }
-    .hero-cta .cmd-block { flex: 1 1 380px; }
-    .hero-link { font-size: 0.95rem; color: var(--muted); white-space: nowrap; }
-    .hero-link:hover { color: var(--ember-ink); }
-    .hero-support {
-      color: var(--muted);
-      font-size: 0.92rem;
-      max-width: 60ch;
+    .hero-chip {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid rgba(255, 249, 236, 0.32);
+      border-radius: 999px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+    .hero-divider {
+      flex: 1;
+      max-width: 4rem;
+      height: 1px;
+      background: rgba(255, 249, 236, 0.32);
+    }
+    .hero-status { font-variant-numeric: tabular-nums; }
+
+    .hero-display {
+      font-size: clamp(4.8rem, 18vw, 16rem);
+      line-height: 0.84;
+      margin: 0;
+      color: var(--cream);
+      letter-spacing: -0.055em;
+      font-variation-settings: "opsz" 96, "wdth" 100;
+      white-space: nowrap;
+    }
+    .hero-display-stop {
+      display: inline-block;
+      width: 0.18em;
+      height: 0.18em;
+      margin-left: 0.08em;
+      vertical-align: 0.05em;
+      background: var(--ember-glow);
+      border-radius: 999px;
     }
 
-    .section-head {
+    .hero-tag {
+      max-width: 38ch;
+      font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+      line-height: 1.45;
+      color: rgba(255, 249, 236, 0.92);
+      margin: clamp(1.4rem, 2.6vw, 2.2rem) 0 0;
+      font-weight: 400;
+    }
+    .hero-tag em {
+      color: var(--cream);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .hero-cta {
+      margin-top: clamp(2rem, 3vw, 2.6rem);
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 1.5rem;
       flex-wrap: wrap;
-      margin-top: 4rem;
-      margin-bottom: 1.4rem;
+      gap: 1rem 1.6rem;
+      align-items: center;
+      max-width: 720px;
     }
-    .section-head h2 { margin-top: 0; }
-    .section-sub {
-      color: var(--muted);
-      margin: 0.4rem 0 0;
-      max-width: 56ch;
+    .hero-cta .cmd-block {
+      flex: 1 1 360px;
+      max-width: 460px;
     }
-    .section-cta {
+    .hero-cta-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.4rem;
+    }
+    .hero-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--cream);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.97rem;
+      border-bottom: 1px solid rgba(255, 249, 236, 0.4);
+      padding-bottom: 0.1rem;
+      transition: border-color 200ms var(--ease-out-quart),
+                  transform 200ms var(--ease-out-quart);
+    }
+    .hero-arrow span {
+      transition: transform 200ms var(--ease-out-quart);
+    }
+    .hero-arrow:hover {
+      border-bottom-color: var(--cream);
+    }
+    .hero-arrow:hover span { transform: translateX(3px); }
+
+    .hero-ledge {
+      max-width: var(--hero-max-width);
+      margin: clamp(2.8rem, 4vw, 4rem) auto 0;
+      padding-inline: var(--gutter);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: rgba(255, 249, 236, 0.5);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .hero-ledge-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--ember-glow);
+    }
+
+    /* shared band layout =============================================== */
+    .band {
+      padding-block: clamp(4rem, 7vw, 6.5rem);
+    }
+    .band--paper { background: var(--bg-soft); }
+    .stage {
+      max-width: var(--hero-max-width);
+      margin: 0 auto;
+      padding-inline: var(--gutter);
+    }
+    .band-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.4rem;
+    }
+    .band-head h2 { margin-top: 0.4rem; max-width: 22ch; }
+    .band-head-cta { white-space: nowrap; }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--ember-ink);
+      letter-spacing: 0.01em;
+    }
+    .kicker::before {
+      content: '';
+      width: 1.4rem;
+      height: 1px;
+      background: var(--ember);
+    }
+
+    /* proof grid (tree specimen + copy) =============================== */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(2rem, 4vw, 4rem);
+      align-items: start;
+    }
+    .proof-copy h2 { margin-top: 0.4rem; max-width: 18ch; }
+    .proof-copy .lede {
+      font-size: 1.1rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin-top: 1rem;
+      max-width: 38ch;
+    }
+    .proof-copy p {
+      color: var(--ink-soft);
+      max-width: 38ch;
+    }
+
+    .tree {
+      margin: 0;
+      background: var(--surface-dark);
+      color: var(--cream);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem 1.6rem;
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      line-height: 1.85;
+      box-shadow:
+        0 1px 0 rgba(22, 22, 20, 0.08),
+        0 24px 40px -24px rgba(184, 67, 31, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .tree::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 36px;
+      background: linear-gradient(180deg, rgba(255, 249, 236, 0.03), transparent);
+      pointer-events: none;
+    }
+    .tree-caption {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: var(--ember-glow);
+      font-size: 0.84rem;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255, 249, 236, 0.1);
+    }
+    .tree-prompt { color: var(--ember-glow); font-weight: 700; }
+    .tree-lines {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .tree-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.6rem 1.6rem;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+    .tree-line code {
+      background: none;
+      border: none;
+      color: var(--cream);
+      padding: 0;
+      font-size: inherit;
+    }
+    .tree-line--dir code,
+    .tree-line--root code {
+      color: var(--ember-glow);
+      font-weight: 600;
+    }
+    .tree-note {
+      color: rgba(255, 249, 236, 0.5);
+      font-size: 0.78rem;
+      font-family: var(--sans);
+      font-style: italic;
+      text-align: right;
+      white-space: normal;
+      max-width: 24ch;
+      line-height: 1.4;
+    }
+
+    .link-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
       color: var(--ember-ink);
       font-weight: 600;
       text-decoration: none;
-      font-size: 0.95rem;
-      white-space: nowrap;
+      font-size: 0.97rem;
+      margin-top: 1.2rem;
     }
-    .section-cta:hover { color: var(--ember); }
+    .link-arrow code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.95em;
+      color: inherit;
+    }
+    .link-arrow span {
+      transition: transform 200ms var(--ease-out-quart);
+    }
+    .link-arrow:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--ember);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 4px;
+    }
+    .link-arrow:hover span { transform: translateX(3px); }
 
-    .why-stack {
+    /* featured 3 + tight 6 ============================================ */
+    .featured {
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 2.5rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.4rem;
     }
-    .why-aside .chip { margin-bottom: 1rem; }
-    .why-list {
+    .featured-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      gap: 0.4rem 1rem;
+      align-items: start;
+      padding: 1.6rem 1.4rem 1.4rem;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--ink);
+      transition:
+        transform 240ms var(--ease-out-quart),
+        border-color 240ms var(--ease-out-quart),
+        box-shadow 240ms var(--ease-out-quart);
+      position: relative;
+    }
+    .featured-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--ember);
+      box-shadow: 0 20px 40px -28px rgba(184, 67, 31, 0.38);
+    }
+    .featured-num {
+      grid-row: 1 / span 2;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding-top: 0.4rem;
+    }
+    .featured-body { display: contents; }
+    .featured-name {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .featured-name code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: var(--display);
+      font-size: clamp(1.45rem, 2vw, 1.7rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .featured-arrow {
+      grid-column: 3;
+      grid-row: 1;
+      color: var(--muted);
+      font-size: 1.2rem;
+      transition: transform 240ms var(--ease-out-quart),
+                  color 240ms var(--ease-out-quart);
+    }
+    .featured-card:hover .featured-arrow {
+      color: var(--ember);
+      transform: translateX(3px);
+    }
+    .featured-line {
+      grid-column: 2 / -1;
+      grid-row: 2;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+    .featured-when {
+      grid-column: 2 / -1;
+      margin: 0.5rem 0 0;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--muted);
+      border-top: 1px solid var(--rule);
+      padding-top: 0.7rem;
+    }
+
+    .rest-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .rest-list li {
+      border-bottom: 1px solid var(--rule);
+      margin: 0;
+    }
+    .rest-list li:nth-child(odd) {
+      border-right: 1px solid var(--rule);
+    }
+    .rest-row {
+      display: grid;
+      grid-template-columns: 7rem minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      text-decoration: none;
+      color: var(--ink);
+      transition: background 180ms var(--ease-out-quart);
+    }
+    .rest-row:hover { background: var(--bg-soft); }
+    .rest-name {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 650;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .rest-line {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+    .rest-arrow {
+      color: var(--muted);
+      transition: transform 200ms var(--ease-out-quart),
+                  color 200ms var(--ease-out-quart);
+    }
+    .rest-row:hover .rest-arrow {
+      color: var(--ember);
+      transform: translateX(3px);
+    }
+
+    /* foundation featured ============================================== */
+    .found-feature {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: clamp(1.5rem, 3vw, 3rem);
+      align-items: stretch;
+    }
+    .found-lead {
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.8rem;
+      background: var(--surface-feature);
+      color: var(--cream);
+      border-radius: 14px;
+      text-decoration: none;
+      box-shadow: 0 24px 40px -28px rgba(22, 22, 20, 0.35);
+      transition: transform 240ms var(--ease-out-quart);
+    }
+    .found-lead:hover {
+      transform: translateY(-3px);
+    }
+    .found-num {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ember-glow);
+      letter-spacing: 0.05em;
+      margin-bottom: 1.4rem;
+    }
+    .found-lead-title {
+      font-family: var(--display);
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--cream);
+      margin: 0 0 0.8rem;
+    }
+    .found-lead-line {
+      color: rgba(255, 249, 236, 0.78);
+      line-height: 1.5;
+      margin: 0;
+      flex: 1;
+    }
+    .found-lead-cta {
+      margin-top: 1.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--ember-glow);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .found-lead-cta .rest-arrow {
+      color: var(--ember-glow);
+    }
+    .found-lead:hover .found-lead-cta .rest-arrow {
+      transform: translateX(3px);
+    }
+
+    .found-rest {
       list-style: none;
       padding: 0;
       margin: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
     }
-    .why-list li {
-      padding: 0.9rem 1rem;
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      background: var(--bg-soft);
-      line-height: 1.5;
+    .found-rest li {
+      margin: 0;
+      border-top: 1px solid var(--rule);
     }
-    .why-list li strong { display: block; margin-bottom: 0.2rem; }
-    .why-list li span { color: var(--muted); font-size: 0.94rem; }
-
-    .cmd-grid {
+    .found-rest li:last-child { border-bottom: 1px solid var(--rule); }
+    .found-rest-row {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 3rem minmax(0, 1fr) auto;
       gap: 1rem;
-    }
-    .cmd-card {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 1.1rem 1.2rem;
-      border: 1px solid var(--rule);
-      border-radius: 10px;
-      background: var(--bg);
-      text-decoration: none;
-      color: var(--ink);
-      transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
-    }
-    .cmd-card:hover {
-      border-color: var(--ember);
-      background: var(--bg-soft);
-      transform: translateY(-1px);
-    }
-    .cmd-card-head {
-      display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-    .cmd-name code {
-      background: none;
-      border: none;
-      padding: 0;
-      font-size: 1.05rem;
-      font-weight: 650;
-      color: var(--ink);
-    }
-    .cmd-arrow {
-      color: var(--muted);
-      transition: color 120ms ease, transform 120ms ease;
-    }
-    .cmd-card:hover .cmd-arrow {
-      color: var(--ember);
-      transform: translateX(2px);
-    }
-    .cmd-line {
-      margin: 0;
-      font-size: 0.95rem;
-      color: var(--ink-soft);
-      line-height: 1.5;
-    }
-    .cmd-when {
-      margin: 0.3rem 0 0;
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-    .cmd-when span {
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.03em;
-    }
-
-    .found-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-    }
-    .found-card {
-      padding: 1rem 1.1rem;
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      background: var(--bg);
+      padding: 0.95rem 0.5rem;
       text-decoration: none;
       color: var(--ink);
-      transition: border-color 120ms ease, background 120ms ease;
+      transition: padding-inline 220ms var(--ease-out-quart),
+                  color 220ms var(--ease-out-quart);
     }
-    .found-card:hover {
-      border-color: var(--ember);
-      background: var(--bg-soft);
+    .found-rest-row:hover {
+      color: var(--ember-ink);
+      padding-inline: 1rem 0;
     }
-    .found-title {
-      font-weight: 650;
-      margin-bottom: 0.25rem;
-    }
-    .found-line {
-      margin: 0;
-      font-size: 0.92rem;
+    .found-rest-num {
+      font-family: var(--mono);
+      font-size: 0.8rem;
       color: var(--muted);
-      line-height: 1.5;
+    }
+    .found-rest-title {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .found-rest-row .rest-arrow {
+      color: var(--muted);
+    }
+    .found-rest-row:hover .rest-arrow {
+      color: var(--ember);
+      transform: translateX(3px);
     }
 
+    /* closing ========================================================== */
     .closing {
-      margin-top: 5rem;
-      padding: 3rem 2rem;
-      background: var(--ember-soft);
-      border-radius: 14px;
-      border: 1px solid color-mix(in srgb, var(--ember), transparent 70%);
+      background: var(--surface-feature);
+      color: var(--cream);
+      padding-block: clamp(4rem, 7vw, 6rem);
     }
-    .closing h2 {
-      margin-top: 0;
-      color: var(--ember-ink);
-      max-width: 22ch;
+    .closing-stage {
+      max-width: 56ch;
     }
-    .closing .lede { color: var(--ink-soft); }
+    .closing-kicker {
+      color: var(--ember-glow);
+      font-weight: 600;
+      margin: 0 0 0.4rem;
+      letter-spacing: -0.01em;
+    }
+    .closing-head {
+      font-family: var(--display);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 750;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      color: var(--cream);
+      margin: 0;
+      font-variation-settings: "opsz" 64;
+    }
+    .closing-lede {
+      color: rgba(255, 249, 236, 0.78);
+      font-size: 1.15rem;
+      line-height: 1.5;
+      margin: 1.2rem 0 1.8rem;
+      max-width: 44ch;
+    }
     .closing-cta {
       display: flex;
       flex-wrap: wrap;
       gap: 0.7rem;
-      margin-top: 1.6rem;
     }
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.7rem 1.1rem;
-      border-radius: 8px;
+      padding: 0.85rem 1.2rem;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.97rem;
       text-decoration: none;
-      transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+      transition: background 200ms var(--ease-out-quart),
+                  color 200ms var(--ease-out-quart),
+                  border-color 200ms var(--ease-out-quart),
+                  transform 200ms var(--ease-out-quart);
+      min-height: 44px;
     }
     .btn--primary {
-      background: var(--ember);
-      color: var(--bg);
-      border: 1px solid var(--ember);
+      background: var(--ember-glow);
+      color: var(--ink);
+      border: 1px solid var(--ember-glow);
+      font-weight: 700;
     }
     .btn--primary:hover {
-      background: var(--ember-ink);
-      border-color: var(--ember-ink);
-      color: var(--bg);
+      background: var(--cream);
+      border-color: var(--cream);
+      color: var(--ink);
+      transform: translateY(-1px);
     }
     .btn--ghost {
-      background: var(--bg);
-      color: var(--ink);
-      border: 1px solid var(--rule);
+      background: transparent;
+      color: var(--cream);
+      border: 1px solid rgba(255, 249, 236, 0.32);
     }
     .btn--ghost:hover {
-      border-color: var(--ember);
-      color: var(--ember-ink);
+      border-color: var(--cream);
+      color: var(--cream);
     }
     .btn code {
       background: none;
@@ -357,14 +808,24 @@ const description =
       color: inherit;
     }
 
-    @media (max-width: 900px) {
-      .why-stack { grid-template-columns: 1fr; gap: 1.5rem; }
-      .cmd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* responsive ======================================================= */
+    @media (max-width: 1000px) {
+      .proof-grid { grid-template-columns: 1fr; }
+      .tree-note { display: none; }
+      .tree-line { white-space: normal; }
     }
-    @media (max-width: 600px) {
-      .cmd-grid { grid-template-columns: 1fr; }
-      .found-grid { grid-template-columns: 1fr; }
-      .closing { padding: 2rem 1.25rem; }
+    @media (max-width: 900px) {
+      .featured { grid-template-columns: 1fr; }
+      .rest-list { grid-template-columns: 1fr; }
+      .rest-list li:nth-child(odd) { border-right: none; }
+      .found-feature { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .hero-display { font-size: clamp(3.6rem, 22vw, 7rem); }
+      .hero-ledge { font-size: 0.7rem; letter-spacing: 0.15em; }
+      .featured-card { padding: 1.3rem 1.1rem; }
+      .rest-row { grid-template-columns: 6rem minmax(0, 1fr) auto; gap: 0.7rem; }
+      .closing-head { font-size: clamp(2rem, 11vw, 3rem); }
     }
   </style>
 </Base>

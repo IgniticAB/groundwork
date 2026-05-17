@@ -18,7 +18,7 @@ export const foundation: FoundationMeta[] = [
   {
     slug: 'cognitive-debt',
     title: 'Cognitive debt',
-    oneLiner: 'Technical debt is code you wish was cleaner. Cognitive debt is code you wish you understood. AI accelerates one and reduces the other — guess which.',
+    oneLiner: 'Technical debt is code you wish was cleaner. Cognitive debt is code you wish you understood. AI accelerates one and reduces the other. Guess which.',
   },
   {
     slug: 'good-practices',
@@ -28,7 +28,7 @@ export const foundation: FoundationMeta[] = [
   {
     slug: 'anti-patterns',
     title: 'Anti-patterns',
-    oneLiner: 'Ten things that look like good context engineering and are not. Reject every one of them — including in your own output.',
+    oneLiner: 'Ten things that look like good context engineering and are not. Reject every one of them, including in your own output.',
   },
   {
     slug: 'mcp-principles',
@@ -38,7 +38,7 @@ export const foundation: FoundationMeta[] = [
   {
     slug: 'harness-reference',
     title: 'Harness reference',
-    oneLiner: 'Where each AI coding harness expects to find its context files. Claude Code, Cursor, Codex, Copilot, Cowork — locations and formats.',
+    oneLiner: 'Where each AI coding harness expects to find its context files. Claude Code, Cursor, Codex, Copilot, Cowork: locations and formats.',
   },
 ];
 

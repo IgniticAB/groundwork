@@ -13,9 +13,9 @@ const description =
   <p class="doc-lede">
     An Architecture Decision Record captures the why behind a choice so future
     agents and humans do not have to re-derive it. With Groundwork, every ADR
-    includes a real <em>considered alternatives</em> section — the
-    negative-space — and a <em>reconsider if</em> trigger that keeps it from
-    becoming a tombstone.
+    includes a real <em>considered alternatives</em> section (the negative
+    space) and a <em>reconsider if</em> trigger that keeps it from becoming a
+    tombstone.
   </p>
 
   <h2>Why this command exists</h2>
@@ -23,8 +23,8 @@ const description =
     The most subtle form of context debt is <strong>intent debt</strong>: the
     code works, the tests pass, but nobody knows why this particular shape was
     chosen. The next agent suggests GraphQL again. Or Redux. Or whatever you
-    rejected six months ago — because the rejection never made it into the
-    repo, and the agent's training data is full of the alternatives.
+    rejected six months ago, because the rejection never made it into the
+    repo and the agent's training data is full of the alternatives.
   </p>
   <p>
     An ADR is the externalized intent that prevents that. The format is
@@ -34,8 +34,8 @@ const description =
   <ul>
     <li>
       <strong>Considered alternatives.</strong> Real options the team weighed,
-      not strawmen. This is the negative space — the most valuable part of
-      the file.
+      not strawmen. This is the negative space, the most valuable part of the
+      file.
     </li>
     <li>
       <strong>Reconsider if.</strong> The future-trigger that makes the ADR a
@@ -90,20 +90,20 @@ const description =
   </p>
 
   <h2>How it works</h2>
-  <p>Three input modes — the command detects which from your first message.</p>
+  <p>Three input modes. The command detects which from your first message.</p>
   <ul>
     <li>
-      <strong>Mode A — live decision.</strong> You describe a choice you are
+      <strong>Mode A, live decision.</strong> You describe a choice you are
       making now. The command asks for the four things it needs and drafts.
     </li>
     <li>
-      <strong>Mode B — from a merged PR.</strong> Paste a PR URL or number.
+      <strong>Mode B, from a merged PR.</strong> Paste a PR URL or number.
       The command uses <code>gh pr view</code> (or WebFetch) to pull title,
       description, files, reviews, and dates. It pre-fills almost everything
       and asks only about alternatives and "Reconsider if".
     </li>
     <li>
-      <strong>Mode C — from a commit range.</strong> Name commits or an area
+      <strong>Mode C, from a commit range.</strong> Name commits or an area
       ("last week's auth refactor"). The command reads <code>git log</code>
       and <code>git diff</code>, pre-fills, and surfaces lower-confidence
       inferences for you to correct.
@@ -157,7 +157,7 @@ const description =
   <ul>
     <li>
       <strong>Status: accepted, alternatives: none considered.</strong> The
-      most common failure. There were always alternatives — even "do nothing"
+      most common failure. There were always alternatives. Even "do nothing"
       is one. Surface them.
     </li>
     <li>
@@ -179,24 +179,23 @@ const description =
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a> — intent
+      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>. Intent
       debt and how ADRs repay it.
     </li>
     <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a> — negative
+      <a href={url('foundation/good-practices/')}>Good practices</a>. Negative
       space documentation.
     </li>
     <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #9 —
-      negative-space silence.
+      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #9: negative
+      space silence.
     </li>
     <li>
-      <a href={url('commands/plan/')}><code>plan</code></a> — plans often
+      <a href={url('commands/plan/')}><code>plan</code></a>. Plans often
       surface ADR-worthy decisions; <code>plan</code> step 8 prompts for them.
     </li>
     <li>
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint —
-      externalising intent</a>
+      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint: externalising intent</a>
     </li>
   </ul>
 

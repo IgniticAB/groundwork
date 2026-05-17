@@ -14,12 +14,12 @@ const description =
     Before any agent gets write access to a real system, the access pattern
     has to be designed. <code>mcp</code> does not stand up servers for you. It
     produces the configuration and the policy that tells the team how to
-    implement them safely — and how an auditor would expect to see them.
+    implement them safely, and how an auditor would expect to see them.
   </p>
 
   <h2>Why this command exists</h2>
   <p>
-    The Model Context Protocol has become the "USB-C port for AI" — the
+    The Model Context Protocol has become the "USB-C port for AI": the
     standard way agents reach real systems. That makes it the largest attack
     surface and the largest source of operational risk in an AI-first stack.
     Get it wrong and an unscoped credential or a missing confirmation modal
@@ -29,8 +29,8 @@ const description =
     Most teams build MCP servers the way they build internal tools: one
     server, all the tools, one credential, "we will figure out auditing
     later". <code>mcp</code> exists to stop that. It walks the
-    <a href={url('foundation/mcp-principles/')}>three non-negotiables</a>:
-    least-privilege binding, human-in-the-loop, centralised auditing — and
+    <a href={url('foundation/mcp-principles/')}>three non-negotiables</a>
+    (least-privilege binding, human-in-the-loop, centralised auditing) and
     produces config files and a policy doc that operationalise them from the
     first day.
   </p>
@@ -58,13 +58,13 @@ const description =
   <h2>What it produces</h2>
   <ul>
     <li>
-      <code>.context/mcp-config.json</code> — a starter configuration in
+      <code>.context/mcp-config.json</code>: a starter configuration in
       standard MCP host format, scoped to the four tiers.
     </li>
     <li>
-      <code>docs/mcp-policy.md</code> — the human-readable policy: which
-      tiers exist, which actions require HITL, who can attach which servers,
-      where audit logs live.
+      <code>docs/mcp-policy.md</code>: the human-readable policy that names
+      which tiers exist, which actions require HITL, who can attach which
+      servers, and where audit logs live.
     </li>
     <li>
       Optionally, individual <code>mcp-server-&lt;name&gt;.config.json</code>
@@ -77,7 +77,7 @@ const description =
     <li>
       <strong>Inventory the systems.</strong> Which systems does the agent
       need to interact with? Which are read vs write? Who is the agent
-      identity — service account, user impersonation? "Just hook it up to
+      identity, service account or user impersonation? "Just hook it up to
       everything" is politely refused.
     </li>
     <li>
@@ -97,14 +97,14 @@ const description =
     </li>
     <li>
       <strong>Configure auditing.</strong> Every server has a named log
-      destination — a specific system, not "TBD". Alerting rules: tools
+      destination: a specific system, not "TBD". Alerting rules: tools
       invoked outside business hours, sensitive parameter patterns, failure
       spikes, new tool combinations.
     </li>
     <li>
       <strong>Configure credentials.</strong> One credential per tier, scoped
       to the smallest possible role, stored in a named secret manager. The
-      config references env var names — never literal secrets.
+      config references env var names, never literal secrets.
     </li>
     <li>
       <strong>Cross-link.</strong>
@@ -144,19 +144,19 @@ const description =
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/mcp-principles/')}>MCP principles</a> — the
+      <a href={url('foundation/mcp-principles/')}>MCP principles</a>. The
       three non-negotiables and the four-tier server layout.
     </li>
     <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #5 —
+      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #5:
       over-exposing tools.
     </li>
     <li>
-      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a> —
+      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a>.
       Tooling is its own layer for a reason.
     </li>
     <li>
-      <a href={url('blueprint/#mcp')}>2026 Blueprint — MCP in production</a>
+      <a href={url('blueprint/#mcp')}>2026 Blueprint: MCP in production</a>
     </li>
   </ul>
 

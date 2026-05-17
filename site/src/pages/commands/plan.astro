@@ -12,8 +12,8 @@ const description =
 <Doc title={title} description={description} section="commands" eyebrow="Command">
   <p class="doc-lede">
     A short, structured plan written <em>before</em> any code. Reviewed and
-    approved as a contract. Code that strays from the plan is rejected — and
-    if reality forces a change, the plan is updated first. Not bureaucracy.
+    approved as a contract. Code that strays from the plan is rejected. If
+    reality forces a change, the plan is updated first. Not bureaucracy.
     Cognitive debt prevention.
   </p>
 
@@ -54,12 +54,12 @@ const description =
   <p>
     Required for any change touching more than three files, or refactors, or
     migrations, or anything affecting a public API. The exact threshold lives
-    in your <code>.context/conventions.md</code> — set by
+    in your <code>.context/conventions.md</code>, set by
     <a href={url('commands/init/')}><code>init</code></a>.
   </p>
   <p>
     Optional but recommended for smaller changes. A two-file change can still
-    benefit from a five-line plan — and the discipline pays for itself.
+    benefit from a five-line plan, and the discipline pays for itself.
   </p>
 
   <h2>What it produces</h2>
@@ -92,7 +92,7 @@ const description =
     </li>
     <li>
       <strong>Draft.</strong> Fill each section. Approach is two or three
-      sentences — not a design doc.
+      sentences, not a design doc.
     </li>
     <li>
       <strong>Show the plan, wait for approval.</strong> Three options:
@@ -125,7 +125,7 @@ const description =
   <Callout label="The quality bar" tone="mute">
     <p>
       Out-of-scope has at least two bullets and they are specific. The "why"
-      is real — not "to improve the code" but the specific reason the change
+      is real: not "to improve the code" but the specific reason the change
       is happening <em>now</em>. The verification commands actually run.
     </p>
   </Callout>
@@ -152,19 +152,19 @@ const description =
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a> — Plan
+      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>. Plan
       Mode is the third repayment practice.
     </li>
     <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a> — Plan
+      <a href={url('foundation/good-practices/')}>Good practices</a>. Plan
       Mode discipline, defensive commits, interface-first development.
     </li>
     <li>
-      <a href={url('commands/adr/')}><code>adr</code></a> — the natural
+      <a href={url('commands/adr/')}><code>adr</code></a>. The natural
       follow-up when a plan made a durable decision.
     </li>
     <li>
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint — Plan Mode</a>
+      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint: Plan Mode</a>
     </li>
   </ul>
 

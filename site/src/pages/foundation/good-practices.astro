@@ -19,7 +19,7 @@ const description =
   <p>
     Document what was <em>not</em> done and why. Future agents (and humans)
     read this and stop re-suggesting rejected paths. The
-    <strong>Reconsider if</strong> line is the magic — it tells future
+    <strong>Reconsider if</strong> line is the magic: it tells future
     engineers when the rejection should be revisited and when it should stay
     closed.
   </p>
@@ -28,7 +28,7 @@ const description =
   <h2>2. Defensive commits</h2>
   <p>
     Make a git commit before any large refactor or agent-driven change. Not
-    version-control hygiene — data loss prevention. Long agent sessions touch
+    version-control hygiene. Data loss prevention. Long agent sessions touch
     dozens of files; without a checkpoint, partial rollback is painful.
   </p>
   <p>Command: <a href={url('commands/plan/')}><code>plan</code></a> includes a checkpoint step.</p>
@@ -104,7 +104,7 @@ const description =
   <Callout label="Source" tone="mute">
     <p>
       <a href={url('blueprint/#good-practices')}>2026 Context Engineering
-      Blueprint — Good Practices vs. High-Risk Anti-Patterns</a>. For the
+      Blueprint: Good Practices vs. High-Risk Anti-Patterns</a>. For the
       flipside, see <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
     </p>
   </Callout>

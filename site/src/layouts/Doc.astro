@@ -7,7 +7,7 @@ import { foundation } from '../data/foundation';
 interface Props {
   title: string;
   description: string;
-  /** "commands" | "foundation" — controls which sidebar list is active. */
+  /** "commands" | "foundation": controls which sidebar list is active. */
   section: 'commands' | 'foundation';
   /** Optional eyebrow label above the H1. */
   eyebrow?: string;
@@ -111,7 +111,9 @@ const sidebar =
       gap: 0.05rem;
     }
     .doc-sidebar-link {
-      display: block;
+      display: flex;
+      align-items: center;
+      min-height: 40px;
       padding: 0.35rem 0;
       color: var(--muted);
       text-decoration: none;

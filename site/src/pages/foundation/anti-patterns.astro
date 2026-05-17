@@ -6,13 +6,13 @@ import { url } from '../../lib/url';
 
 const title = 'Anti-patterns';
 const description =
-  'Ten things that look like good context engineering and are not. Reject every one of them — including in your own output.';
+  'Ten things that look like good context engineering and are not. Reject every one of them, including in your own output.';
 ---
 
 <Doc title={title} description={description} section="foundation" eyebrow="Foundation · 05">
   <p class="doc-lede">
     Things that look like good context engineering and are not. Reject every
-    one of them — including in your own output.
+    one of them, including in your own output.
   </p>
 
   <h2>1. Monolithic prompt bloat</h2>
@@ -70,8 +70,8 @@ const description =
   </p>
   <p>
     <strong>Why it fails.</strong> The agent does not know your timezone, OS,
-    shell, Node version, default browser, or scratch directory. It will guess
-    — and the guess is statistically wrong.
+    shell, Node version, default browser, or scratch directory. It will guess,
+    and the guess is statistically wrong.
   </p>
   <p>
     <strong>Fix.</strong> State the assumption explicitly in the Session
@@ -151,7 +151,7 @@ const description =
   </p>
   <p>
     <strong>Why it fails.</strong> The agent will eventually suggest the
-    rejected approach — every time, forever — because it does not know it was
+    rejected approach (every time, forever), because it does not know it was
     rejected.
   </p>
   <p>
@@ -177,7 +177,7 @@ const description =
   <Callout label="Source" tone="mute">
     <p>
       <a href={url('blueprint/#good-practices')}>2026 Context Engineering
-      Blueprint — Practices to Avoid</a>. The flipside is
+      Blueprint: Practices to Avoid</a>. The flipside is
       <a href={url('foundation/good-practices/')}>good practices</a>.
     </p>
   </Callout>

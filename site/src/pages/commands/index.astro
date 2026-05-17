@@ -9,12 +9,12 @@ const description =
 ---
 
 <Base title={title} description={description}>
-  <main class="container container--wide commands-index">
+  <div class="container container--wide commands-index">
     <span class="hero-eyebrow">The skill</span>
     <h1>Nine commands. One job each.</h1>
     <p class="lede">
       Each command lives in its own file in the skill. Each one is a procedure
-      the agent runs literally — not a vibe. Click through for the
+      the agent runs literally, not a vibe. Click through for the
       <em>why</em>, the <em>when</em>, and the <em>what it produces</em>.
     </p>
 
@@ -45,7 +45,7 @@ const description =
     <section class="bundle">
       <h2>How the commands fit together</h2>
       <p>
-        The commands are independent — pick the one you need. But there is a
+        The commands are independent. Pick the one you need. There is also a
         natural lifecycle:
       </p>
       <ol class="bundle-list">
@@ -83,18 +83,18 @@ const description =
     <section class="related">
       <h2>The model underneath</h2>
       <p>
-        Every command is built on a small shared vocabulary — five context
+        Every command is built on a small shared vocabulary: five context
         layers, a five-stage lifecycle, the kinds of debt AI accelerates, and
         the anti-patterns to reject. If you have not read
         <a href={url('foundation/')}>the foundation</a> yet, that is the right
         first stop. Five short pages.
       </p>
       <p>
-        The source material — <em>The 2026 Context Engineering Blueprint</em> —
+        The source material, <em>The 2026 Context Engineering Blueprint</em>,
         is reproduced in full at <a href={url('blueprint/')}>/blueprint</a>.
       </p>
     </section>
-  </main>
+  </div>
 
   <style>
     .cmd-table {
