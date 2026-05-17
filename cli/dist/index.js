@@ -50,7 +50,9 @@ function printHelp() {
 
 Usage:
   groundwork detect [path] [options]
+  groundwork watch [path]
   groundwork list-rules
+  groundwork skills update [options]
   groundwork --version
   groundwork --help
 
@@ -58,6 +60,7 @@ Commands:
   detect [path]       Scan a repo for context-engineering anti-patterns. Default: current directory.
   watch [path]        Watch the repo and re-detect on changes. Equivalent to: detect --watch.
   list-rules          List all detector rules with their IDs and descriptions.
+  skills update       Update the installed groundwork skill to the latest version. See: groundwork skills --help.
 
 Options:
   --json              Output JSON (default: human-readable).
@@ -75,9 +78,27 @@ Examples:
   groundwork detect --json > findings.json
   groundwork detect --only stale-claude-md,secrets-regex
   groundwork watch
+  groundwork skills update
 `);
 }
 async function main() {
+    // Special-case the `skills` namespace before generic flag parsing.
+    // Lets `groundwork skills update [flags]` work without colliding with detect flags.
+    if (process.argv[2] === 'skills') {
+        const sub = process.argv[3];
+        const rest = process.argv.slice(4);
+        const { runSkillsUpdate, printSkillsHelp } = await import('./skills-update.js');
+        if (!sub || sub === '--help' || sub === '-h') {
+            printSkillsHelp();
+            return;
+        }
+        if (sub === 'update') {
+            process.exit(await runSkillsUpdate(rest));
+        }
+        console.error(`Unknown skills subcommand: ${sub}`);
+        printSkillsHelp();
+        process.exit(2);
+    }
     const opts = parseArgs(process.argv);
     if (opts.help) {
         printHelp();

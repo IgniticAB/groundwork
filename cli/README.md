@@ -2,7 +2,7 @@
 
 A deterministic detector for context-engineering anti-patterns. No LLM. Runs in milliseconds. Ships JSON for CI.
 
-Companion to the [groundwork skill](../). The skill is for authoring; this CLI is for guarding.
+Companion to the [groundwork skill](../skills/groundwork/). The skill is for authoring; this CLI is for guarding.
 
 ## Install
 
@@ -21,7 +21,18 @@ groundwork detect --json > findings.json
 groundwork detect --fail-on P1     # exit 1 on P1 or worse (default: P0)
 groundwork detect --only stale-claude-md,secrets-regex
 groundwork list-rules
+groundwork skills update           # update the installed groundwork skill
 ```
+
+## Updating the skill
+
+To pull the latest skill definitions into your installed harness directories:
+
+```bash
+npx @ignitic/groundwork skills update
+```
+
+This is a thin wrapper around `npx skills update groundwork` from the [vercel-labs/skills](https://github.com/vercel-labs/skills) CLI, scoped to the groundwork skill so you don't have to remember the source path. Forward flags like `-g`, `-p`, `-y` work as expected. See `groundwork skills --help`.
 
 ## What it detects
 
