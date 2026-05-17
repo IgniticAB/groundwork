@@ -1,0 +1,39 @@
+# .github/workflows/context-check.yml
+# Runs the context-engineer detector on every PR. Fails the build on P0 findings by default.
+# Adjust --fail-on if you want to gate on P1 too.
+
+name: context-check
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need history for the ADR-coverage scan (uses recent commits).
+          fetch-depth: 50
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run context-engineer detect
+        run: npx --yes context-engineer@latest detect . --fail-on P0 --json | tee findings.json
+
+      - name: Upload findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: context-engineer-findings
+          path: findings.json
+          retention-days: 14

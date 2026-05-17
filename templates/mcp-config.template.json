@@ -1,0 +1,80 @@
+{
+  "_comment": "Starter MCP host configuration. Servers are sorted by tier (1 = read-only context, 4 = production write). All Tier 4 tools must have requiresConfirmation: true. Credentials are env-var references; literal secrets never appear in this file.",
+  "mcpServers": {
+    "repo-search": {
+      "_tier": 1,
+      "_description": "Read-only repository search and file reads",
+      "command": "<command to start server>",
+      "args": [],
+      "env": {},
+      "requiresConfirmation": false,
+      "audit": {
+        "destination": "<log destination, e.g. stdout-json or specific service>",
+        "level": "info"
+      }
+    },
+    "docs-search": {
+      "_tier": 1,
+      "_description": "Read-only internal docs",
+      "command": "<command>",
+      "args": [],
+      "env": {},
+      "requiresConfirmation": false,
+      "audit": {
+        "destination": "<log destination>",
+        "level": "info"
+      }
+    },
+    "tickets-write": {
+      "_tier": 2,
+      "_description": "Create and update tickets in <system>",
+      "command": "<command>",
+      "args": [],
+      "env": {
+        "API_TOKEN_ENV": "TICKETS_API_TOKEN"
+      },
+      "requiresConfirmation": false,
+      "audit": {
+        "destination": "<log destination>",
+        "level": "info"
+      }
+    },
+    "prod-db-read": {
+      "_tier": 3,
+      "_description": "Read-only access to production database (SELECT only, no PII columns)",
+      "command": "<command>",
+      "args": [],
+      "env": {
+        "DATABASE_URL_ENV": "PROD_DB_READONLY_URL"
+      },
+      "requiresConfirmation": false,
+      "audit": {
+        "destination": "<log destination>",
+        "level": "info",
+        "alertOn": [
+          "queries matching LIKE patterns on email/phone columns",
+          "queries outside business hours",
+          "result sets larger than 10000 rows"
+        ]
+      }
+    },
+    "prod-deploy": {
+      "_tier": 4,
+      "_description": "Deploy to production. Every invocation requires human approval.",
+      "command": "<command>",
+      "args": [],
+      "env": {
+        "DEPLOY_CREDENTIAL_ENV": "DEPLOY_ROLE_TOKEN"
+      },
+      "requiresConfirmation": true,
+      "audit": {
+        "destination": "<log destination>",
+        "level": "warn",
+        "alertOn": [
+          "every invocation",
+          "deploys outside change windows"
+        ]
+      }
+    }
+  }
+}

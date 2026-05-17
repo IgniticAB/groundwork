@@ -1,0 +1,147 @@
+// Entry point. Parses argv, dispatches to detect.
+import path from 'node:path';
+import { run } from './runner.js';
+import { reportHuman, reportJson, exitCodeFor } from './reporter.js';
+import { rules } from './rules/index.js';
+
+function parseArgs(argv: string[]): {
+  command: string;
+  repoRoot: string;
+  format: 'human' | 'json';
+  failOn: 'P0' | 'P1' | 'P2';
+  only: string[];
+  skip: string[];
+  watchMode: boolean;
+  help: boolean;
+  version: boolean;
+} {
+  let command = 'detect';
+  let repoRoot = process.cwd();
+  let format: 'human' | 'json' = 'human';
+  let failOn: 'P0' | 'P1' | 'P2' = 'P0';
+  let only: string[] = [];
+  let skip: string[] = [];
+  let watchMode = false;
+  let help = false;
+  let version = false;
+
+  const args = argv.slice(2);
+  if (args[0] && !args[0].startsWith('-')) {
+    command = args[0];
+    args.shift();
+  }
+
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === '--help' || a === '-h') help = true;
+    else if (a === '--version' || a === '-v') version = true;
+    else if (a === '--json') format = 'json';
+    else if (a === '--watch' || a === '-w') watchMode = true;
+    else if (a === '--format') format = (args[++i] as 'human' | 'json') ?? 'human';
+    else if (a === '--fail-on') failOn = (args[++i] as 'P0' | 'P1' | 'P2') ?? 'P0';
+    else if (a === '--only') only = (args[++i] ?? '').split(',').filter(Boolean);
+    else if (a === '--skip') skip = (args[++i] ?? '').split(',').filter(Boolean);
+    else if (!a.startsWith('-')) repoRoot = a;
+    else {
+      console.error(`Unknown flag: ${a}`);
+      process.exit(2);
+    }
+  }
+
+  return { command, repoRoot: path.resolve(repoRoot), format, failOn, only, skip, watchMode, help, version };
+}
+
+function printHelp(): void {
+  console.log(`context-engineer — deterministic context-engineering detector
+
+Usage:
+  context-engineer detect [path] [options]
+  context-engineer list-rules
+  context-engineer --version
+  context-engineer --help
+
+Commands:
+  detect [path]       Scan a repo for context-engineering anti-patterns. Default: current directory.
+  watch [path]        Watch the repo and re-detect on changes. Equivalent to: detect --watch.
+  list-rules          List all detector rules with their IDs and descriptions.
+
+Options:
+  --json              Output JSON (default: human-readable).
+  --format <fmt>      Output format: human | json.
+  --fail-on <sev>     Exit code 1 if any finding at or above this severity. P0 (default) | P1 | P2.
+  --only <ids>        Comma-separated list of rule IDs to run.
+  --skip <ids>        Comma-separated list of rule IDs to skip.
+  -w, --watch         Watch mode: re-run on changes.
+  -h, --help          Show this help.
+  -v, --version       Show version.
+
+Examples:
+  context-engineer detect
+  context-engineer detect /path/to/repo --fail-on P1
+  context-engineer detect --json > findings.json
+  context-engineer detect --only stale-claude-md,secrets-regex
+  context-engineer watch
+`);
+}
+
+async function main(): Promise<void> {
+  const opts = parseArgs(process.argv);
+
+  if (opts.help) {
+    printHelp();
+    return;
+  }
+
+  if (opts.version) {
+    // Read version from package.json at runtime (avoids embedding).
+    const fs = await import('node:fs/promises');
+    const url = await import('node:url');
+    const here = path.dirname(url.fileURLToPath(import.meta.url));
+    try {
+      const pkg = JSON.parse(await fs.readFile(path.join(here, '..', 'package.json'), 'utf8'));
+      console.log(pkg.version);
+    } catch {
+      console.log('unknown');
+    }
+    return;
+  }
+
+  if (opts.command === 'list-rules') {
+    for (const r of rules) {
+      console.log(`${r.id.padEnd(32)} ${r.defaultSeverity}  ${r.description}`);
+    }
+    return;
+  }
+
+  if (opts.command === 'watch' || (opts.command === 'detect' && opts.watchMode)) {
+    const { watch } = await import('./watch.js');
+    await watch({ repoRoot: opts.repoRoot, only: opts.only, skip: opts.skip });
+    return;
+  }
+
+  if (opts.command !== 'detect') {
+    console.error(`Unknown command: ${opts.command}`);
+    printHelp();
+    process.exit(2);
+  }
+
+  const result = await run({
+    repoRoot: opts.repoRoot,
+    rules,
+    only: opts.only,
+    skip: opts.skip,
+  });
+
+  if (opts.format === 'json') {
+    reportJson(result);
+  } else {
+    reportHuman(result);
+  }
+
+  process.exit(exitCodeFor(result, opts.failOn));
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(2);
+});

@@ -1,0 +1,45 @@
+---
+description: <One-sentence description of when this rule applies>
+globs:
+  - <glob 1, e.g. src/**/*.ts>
+  - <glob 2>
+alwaysApply: false
+---
+
+# <Area> conventions
+
+<!-- 3 to 6 rules. One Preferred/Avoid pair each, or a verification command. -->
+
+## Verification
+
+```bash
+<verification command(s) specific to this area>
+```
+
+## Rules
+
+### <Rule 1>
+```<lang>
+// Preferred
+
+// Avoid
+```
+
+### <Rule 2>
+```<lang>
+// Preferred
+
+// Avoid
+```
+
+### <Rule 3>
+```<lang>
+// Preferred
+
+// Avoid
+```
+
+## See also
+
+- `.context/conventions.md` — repo-wide conventions
+- `docs/decisions/` — ADRs

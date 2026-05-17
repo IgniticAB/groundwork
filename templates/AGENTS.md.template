@@ -1,0 +1,54 @@
+# <Project name> — agent context
+
+<!-- AGENTS.md is the cross-tool standard for Codex, generic agents, and any harness that reads it.
+     The content here mirrors CLAUDE.md. Keep both in sync via context-engineer document. -->
+
+## What this project is
+
+<!-- One paragraph. Audience, problem, stack at a glance. -->
+
+## Verification
+
+After any change:
+```bash
+<fast verification command(s)>
+```
+
+Before declaring a task done:
+```bash
+<full verification command(s)>
+```
+
+## The non-negotiables
+
+- Plan mode is required for changes touching more than 3 files, public APIs, refactors, or migrations.
+- No placeholder comments. Ask if you do not have enough context.
+- Use the project's package manager (`<pkg-mgr>`).
+- Run the fast verification after every meaningful change.
+
+## Style
+
+### <Rule 1>
+```<lang>
+// Preferred
+
+// Avoid
+```
+
+### <Rule 2>
+```<lang>
+// Preferred
+
+// Avoid
+```
+
+## Out-of-bounds
+
+- `<path>`: <reason>
+
+## Where to look for more
+
+- `.context/conventions.md` — full conventions
+- `docs/decisions/` — ADRs
+- `docs/decisions/negative-space.md` — rejected paths
+- `docs/mcp-policy.md` — agent access policy, if applicable
