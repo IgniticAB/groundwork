@@ -1,5 +1,5 @@
 {
-  "name": "context-engineer",
+  "name": "@ignitic/groundwork",
   "version": "0.1.0",
   "description": "Deterministic context-engineering detector. Finds stale CLAUDE.md, missing ADR cross-links, MCP misconfigurations, secrets in repo, and other context-engineering anti-patterns. No LLM required.",
   "keywords": [
@@ -11,10 +11,10 @@
     "linter",
     "ci"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "type": "module",
   "bin": {
-    "context-engineer": "./bin/context-engineer.mjs"
+    "groundwork": "./bin/groundwork.mjs"
   },
   "main": "./dist/index.js",
   "files": [

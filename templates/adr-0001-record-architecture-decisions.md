@@ -17,7 +17,7 @@ Both compound into cognitive debt: the gap between the system's structure and th
 
 We record architecture decisions as ADRs in `docs/decisions/`, using the format described in `docs/decisions/README.md`. ADRs are written when a non-obvious choice is made, an obvious choice is made for a non-obvious reason, or a deliberate non-choice was made. Rejected approaches that do not warrant a full ADR go in `docs/decisions/negative-space.md`.
 
-We use the `context-engineer adr` skill command to author them, which enforces the format.
+We use the `groundwork adr` skill command to author them, which enforces the format.
 
 ## Considered alternatives
 

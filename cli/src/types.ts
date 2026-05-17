@@ -1,4 +1,4 @@
-// Core types for the context-engineer detector.
+// Core types for the groundwork detector.
 
 export type Severity = 'P0' | 'P1' | 'P2';
 

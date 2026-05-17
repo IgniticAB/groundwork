@@ -1,7 +1,7 @@
 # <Project name> — agent context
 
 <!-- AGENTS.md is the cross-tool standard for Codex, generic agents, and any harness that reads it.
-     The content here mirrors CLAUDE.md. Keep both in sync via context-engineer document. -->
+     The content here mirrors CLAUDE.md. Keep both in sync via groundwork document. -->
 
 ## What this project is
 

@@ -20,7 +20,7 @@ Before declaring a task done:
 
 ## The non-negotiables
 
-- Plan mode is required for changes touching more than 3 files, public APIs, refactors, or migrations. Draft via `context-engineer plan`.
+- Plan mode is required for changes touching more than 3 files, public APIs, refactors, or migrations. Draft via `groundwork plan`.
 - No placeholder comments. If you do not have enough context to implement something, ask.
 - Use the project's package manager (`<pkg-mgr>`), not its alternatives. Lockfiles are committed.
 - Run the fast verification after every meaningful change. Do not declare done until the full verification passes.

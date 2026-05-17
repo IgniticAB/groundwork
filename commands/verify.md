@@ -1,6 +1,6 @@
 ---
-name: context-engineer-verify
-description: Set up verification loops so the agent can self-correct. Detects test/lint/typecheck/build commands, bakes them into the context files, and wires up a pre-commit hook that keeps context current. The single highest-leverage move in this skill. Triggers on "add verification", "wire up tests for the agent", "self-correcting loop", "/ce verify".
+name: groundwork-verify
+description: Set up verification loops so the agent can self-correct. Detects test/lint/typecheck/build commands, bakes them into the context files, and wires up a pre-commit hook that keeps context current. The single highest-leverage move in this skill. Triggers on "add verification", "wire up tests for the agent", "self-correcting loop", "/gw verify".
 ---
 
 # `verify` — Bake verification into context
@@ -14,7 +14,7 @@ This command makes verification first-class. After running it, every context fil
 - Updates to the per-harness context files (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules/main.mdc`, `.github/copilot-instructions.md`) to include a "Verification" section if it is not already there.
 - A pre-commit hook script at `.context/hooks/check-context.sh` (if not already present).
 - A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected.
-- The `context-engineer` detector wired in: as a pre-commit step and as a CI job.
+- The `groundwork` detector wired in: as a pre-commit step and as a CI job.
 - A short test of each verification command (and the detector) to confirm they work.
 
 ## Procedure
@@ -84,13 +84,13 @@ Also update `.context/conventions.md` to have the canonical version. The per-har
 
 ### Step 5. Wire in the detector
 
-The `context-engineer` CLI is a deterministic detector that complements the verification commands. It catches stale CLAUDE.md, MCP credential leaks, missing verification sections, secrets, and more. Wire it in two places:
+The `groundwork` CLI is a deterministic detector that complements the verification commands. It catches stale CLAUDE.md, MCP credential leaks, missing verification sections, secrets, and more. Wire it in two places:
 
-**Pre-commit**: install via the hook runner (husky/pre-commit/lefthook) using `templates/husky-pre-commit.template` as the model. The hook calls `npx context-engineer detect --fail-on P0`, so a bad commit fails fast.
+**Pre-commit**: install via the hook runner (husky/pre-commit/lefthook) using `templates/husky-pre-commit.template` as the model. The hook calls `npx @ignitic/groundwork detect --fail-on P0`, so a bad commit fails fast.
 
 **CI**: copy `templates/context-check.yml.template` to `.github/workflows/context-check.yml` (if the repo uses GitHub Actions). Adjust `--fail-on P0` if the team wants to gate on P1 too.
 
-Run `npx context-engineer detect .` once now to confirm it runs and to show the user the baseline findings. If there are P0 findings, surface them; let the user decide whether to fix-then-wire-in or wire-in-with-known-issues.
+Run `npx @ignitic/groundwork detect .` once now to confirm it runs and to show the user the baseline findings. If there are P0 findings, surface them; let the user decide whether to fix-then-wire-in or wire-in-with-known-issues.
 
 ### Step 6. Local drift hook
 
@@ -107,7 +107,7 @@ if git diff --cached --name-only | grep -q "^package.json$"; then
   pkg_mgr=$(node -e "console.log(require('./package.json').packageManager || 'npm')" | cut -d@ -f1)
   if [ -f CLAUDE.md ] && ! grep -q "$pkg_mgr" CLAUDE.md; then
     echo "WARNING: package.json changed but CLAUDE.md does not mention $pkg_mgr"
-    echo "Run: context-engineer document"
+    echo "Run: groundwork document"
     exit 1
   fi
 fi
@@ -118,7 +118,7 @@ if git diff --cached --name-only | grep -q "^\.context/conventions\.md$"; then
     : # both updated together, fine
   else
     echo "WARNING: .context/conventions.md changed but per-harness files were not regenerated"
-    echo "Run: context-engineer document"
+    echo "Run: groundwork document"
     exit 1
   fi
 fi

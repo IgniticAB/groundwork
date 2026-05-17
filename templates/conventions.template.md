@@ -64,7 +64,7 @@ Plan mode is required for:
 - Any refactor
 - Any migration
 
-Use `context-engineer plan` (or `/ce plan`) to draft the contract before coding.
+Use `groundwork plan` (or `/gw plan`) to draft the contract before coding.
 
 ## Defensive commits
 

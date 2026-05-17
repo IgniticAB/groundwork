@@ -1,6 +1,6 @@
 ---
-name: context-engineer-audit
-description: Score the repo's context engineering maturity across the five layers and produce an action plan. Use when the user asks "is my repo AI-ready?", "how good is our context setup?", "audit our CLAUDE.md", or before a major migration / handoff / new-hire onboarding. Also triggers for "/ce audit" and "context audit".
+name: groundwork-audit
+description: Score the repo's context engineering maturity across the five layers and produce an action plan. Use when the user asks "is my repo AI-ready?", "how good is our context setup?", "audit our CLAUDE.md", or before a major migration / handoff / new-hire onboarding. Also triggers for "/gw audit" and "context audit".
 ---
 
 # `audit` — Score and find gaps
@@ -97,7 +97,7 @@ Read the last 30 days of merge commits (`git log --merges --since="30 days ago" 
 
 Every decision-shaped merge without an ADR becomes a P1 finding with the merge SHA, the date, and a one-line reason for flagging it. Cap at the 10 most recent so the report stays readable.
 
-For each finding, include a one-line "next step" pointing at the `adr` command's PR-ingest mode (Mode B): `context-engineer adr from PR <url>`. The user can then convert the missing-ADR finding into an actual ADR with one invocation, instead of starting from scratch.
+For each finding, include a one-line "next step" pointing at the `adr` command's PR-ingest mode (Mode B): `groundwork adr from PR <url>`. The user can then convert the missing-ADR finding into an actual ADR with one invocation, instead of starting from scratch.
 
 If the user pushes back ("that wasn't really a decision"), accept it; an audit is a starting point, not a verdict.
 

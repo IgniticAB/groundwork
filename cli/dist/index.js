@@ -46,13 +46,13 @@ function parseArgs(argv) {
     return { command, repoRoot: path.resolve(repoRoot), format, failOn, only, skip, watchMode, help, version };
 }
 function printHelp() {
-    console.log(`context-engineer — deterministic context-engineering detector
+    console.log(`groundwork — deterministic context-engineering detector
 
 Usage:
-  context-engineer detect [path] [options]
-  context-engineer list-rules
-  context-engineer --version
-  context-engineer --help
+  groundwork detect [path] [options]
+  groundwork list-rules
+  groundwork --version
+  groundwork --help
 
 Commands:
   detect [path]       Scan a repo for context-engineering anti-patterns. Default: current directory.
@@ -70,11 +70,11 @@ Options:
   -v, --version       Show version.
 
 Examples:
-  context-engineer detect
-  context-engineer detect /path/to/repo --fail-on P1
-  context-engineer detect --json > findings.json
-  context-engineer detect --only stale-claude-md,secrets-regex
-  context-engineer watch
+  groundwork detect
+  groundwork detect /path/to/repo --fail-on P1
+  groundwork detect --json > findings.json
+  groundwork detect --only stale-claude-md,secrets-regex
+  groundwork watch
 `);
 }
 async function main() {

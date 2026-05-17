@@ -17,7 +17,7 @@ const SEV_COLOR = {
 export function reportHuman(result) {
     const { findings, rulesRun, durationMs } = result;
     if (findings.length === 0) {
-        console.log(green(`✓ context-engineer: no findings (${rulesRun.length} rules, ${durationMs}ms)`));
+        console.log(green(`✓ groundwork: no findings (${rulesRun.length} rules, ${durationMs}ms)`));
         return;
     }
     // Group by severity then by file.

@@ -1,5 +1,5 @@
 # .github/workflows/context-check.yml
-# Runs the context-engineer detector on every PR. Fails the build on P0 findings by default.
+# Runs the groundwork detector on every PR. Fails the build on P0 findings by default.
 # Adjust --fail-on if you want to gate on P1 too.
 
 name: context-check
@@ -27,13 +27,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run context-engineer detect
-        run: npx --yes context-engineer@latest detect . --fail-on P0 --json | tee findings.json
+      - name: Run groundwork detect
+        run: npx --yes @ignitic/groundwork@latest detect . --fail-on P0 --json | tee findings.json
 
       - name: Upload findings
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: context-engineer-findings
+          name: groundwork-findings
           path: findings.json
           retention-days: 14

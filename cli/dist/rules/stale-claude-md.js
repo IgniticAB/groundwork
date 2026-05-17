@@ -36,7 +36,7 @@ export const staleClaudeMd = {
                             severity: 'P0',
                             file: target,
                             message: `${target} mentions "${mgr}" but package.json declares packageManager: ${declaredPkgMgr}.`,
-                            fix: 'Run: context-engineer document',
+                            fix: 'Run: groundwork document',
                         });
                         break;
                     }
@@ -55,7 +55,7 @@ export const staleClaudeMd = {
                             severity: 'P0',
                             file: target,
                             message: `${target} mentions "${fw}" but package.json shows "${otherPresent}".`,
-                            fix: 'Run: context-engineer document',
+                            fix: 'Run: groundwork document',
                         });
                         break;
                     }

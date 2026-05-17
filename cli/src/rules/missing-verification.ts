@@ -27,7 +27,7 @@ export const missingVerification: Rule = {
           message: hasSection
             ? `${target} has a Verification section but no recognizable verification command in it.`
             : `${target} has no Verification section.`,
-          fix: 'Run: context-engineer verify',
+          fix: 'Run: groundwork verify',
         });
       }
     }

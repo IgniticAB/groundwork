@@ -1,6 +1,6 @@
 ---
-name: context-engineer-mcp
-description: Design a Model Context Protocol (MCP) configuration with least-privilege, human-in-the-loop, and auditing baked in. Use this before connecting an agent to a real system (database, deploy pipeline, API, file store). Triggers on "set up MCP for...", "give the agent access to...", "design an MCP server", "least privilege agent access", "/ce mcp".
+name: groundwork-mcp
+description: Design a Model Context Protocol (MCP) configuration with least-privilege, human-in-the-loop, and auditing baked in. Use this before connecting an agent to a real system (database, deploy pipeline, API, file store). Triggers on "set up MCP for...", "give the agent access to...", "design an MCP server", "least privilege agent access", "/gw mcp".
 ---
 
 # `mcp` — Design an MCP configuration

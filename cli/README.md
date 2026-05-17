@@ -1,26 +1,26 @@
-# context-engineer (CLI)
+# Groundwork (CLI)
 
 A deterministic detector for context-engineering anti-patterns. No LLM. Runs in milliseconds. Ships JSON for CI.
 
-Companion to the [context-engineer skill](../). The skill is for authoring; this CLI is for guarding.
+Companion to the [groundwork skill](../). The skill is for authoring; this CLI is for guarding.
 
 ## Install
 
 ```bash
-npm i -g context-engineer
+npm i -g @ignitic/groundwork
 # or
-npx context-engineer detect
+npx @ignitic/groundwork detect
 ```
 
 ## Usage
 
 ```bash
-context-engineer detect              # scan current directory
-context-engineer detect /path/to/repo
-context-engineer detect --json > findings.json
-context-engineer detect --fail-on P1     # exit 1 on P1 or worse (default: P0)
-context-engineer detect --only stale-claude-md,secrets-regex
-context-engineer list-rules
+groundwork detect              # scan current directory
+groundwork detect /path/to/repo
+groundwork detect --json > findings.json
+groundwork detect --fail-on P1     # exit 1 on P1 or worse (default: P0)
+groundwork detect --only stale-claude-md,secrets-regex
+groundwork list-rules
 ```
 
 ## What it detects
@@ -53,7 +53,7 @@ Human (default):
 P0 2 findings
   ● stale-claude-md CLAUDE.md
     CLAUDE.md mentions "yarn" but package.json declares packageManager: pnpm.
-    fix: Run: context-engineer document
+    fix: Run: groundwork document
   ● secrets-regex src/config.ts:14
     Possible GitHub personal access token in committed file.
     > const token = "ghp_****************dEf"
@@ -86,14 +86,14 @@ JSON (for CI):
 GitHub Actions:
 
 ```yaml
-- name: context-engineer
-  run: npx context-engineer detect --fail-on P1
+- name: groundwork
+  run: npx @ignitic/groundwork detect --fail-on P1
 ```
 
 Pre-commit (via husky):
 
 ```bash
-npx context-engineer detect --fail-on P0
+npx @ignitic/groundwork detect --fail-on P0
 ```
 
 ## Extending
@@ -104,4 +104,4 @@ Pluggable design: if a custom rule turns out to be naive (e.g. our secrets regex
 
 ## License
 
-Apache-2.0.
+MIT.

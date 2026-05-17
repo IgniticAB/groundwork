@@ -1,6 +1,6 @@
 ---
-name: context-engineer-document
-description: Scan the codebase and produce or refresh CLAUDE.md / AGENTS.md / .cursor/rules/ with current, correct information. Use this when the repo already has some context files but they are stale, or when adopting context engineering on a mature repo. Triggers on "refresh CLAUDE.md", "update our context files", "document this codebase for the agent", "/ce document".
+name: groundwork-document
+description: Scan the codebase and produce or refresh CLAUDE.md / AGENTS.md / .cursor/rules/ with current, correct information. Use this when the repo already has some context files but they are stale, or when adopting context engineering on a mature repo. Triggers on "refresh CLAUDE.md", "update our context files", "document this codebase for the agent", "/gw document".
 ---
 
 # `document` — Refresh or first-pass-document an existing repo

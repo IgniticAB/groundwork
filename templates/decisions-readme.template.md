@@ -17,7 +17,7 @@ This directory holds the decisions that shape this codebase. ADRs capture the *w
 
 ## Format
 
-We use a MADR-lite format. Use `context-engineer adr` to generate one with the right structure.
+We use a MADR-lite format. Use `groundwork adr` to generate one with the right structure.
 
 Each ADR has:
 

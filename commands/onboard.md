@@ -1,6 +1,6 @@
 ---
-name: context-engineer-onboard
-description: Produce a tailored orientation brief that hands off a task to a fresh agent or engineer with the right context, no more. Surfaces the 3 to 5 most relevant ADRs, recent plans, area-specific conventions, verification commands, and any MCP policy that applies. Use when starting a new chat session on a familiar repo, when handing work to a teammate, when a fresh agent joins a long task, or when you want to "compact" a noisy session into a clean briefing. Triggers on "onboard a new agent to this", "brief me on this area", "what context does this task need", "/ce onboard", "handoff to fresh agent".
+name: groundwork-onboard
+description: Produce a tailored orientation brief that hands off a task to a fresh agent or engineer with the right context, no more. Surfaces the 3 to 5 most relevant ADRs, recent plans, area-specific conventions, verification commands, and any MCP policy that applies. Use when starting a new chat session on a familiar repo, when handing work to a teammate, when a fresh agent joins a long task, or when you want to "compact" a noisy session into a clean briefing. Triggers on "onboard a new agent to this", "brief me on this area", "what context does this task need", "/gw onboard", "handoff to fresh agent".
 ---
 
 # `onboard` — Orientation brief for a fresh agent or engineer

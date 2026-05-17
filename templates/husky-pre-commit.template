@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # .husky/pre-commit
-# Runs the context-engineer detector + the local context-check hook on every commit.
+# Runs the groundwork detector + the local context-check hook on every commit.
 
 # Local drift checks (package.json vs CLAUDE.md, conventions vs per-harness, ADR-coverage).
 if [ -x .context/hooks/check-context.sh ]; then
@@ -8,5 +8,5 @@ if [ -x .context/hooks/check-context.sh ]; then
 fi
 
 # Full anti-pattern scan via the detector. Bypass with `git commit --no-verify`.
-npx --yes --no-install context-engineer detect --fail-on P0 || \
-  npx --yes context-engineer detect --fail-on P0
+npx --yes --no-install @ignitic/groundwork detect --fail-on P0 || \
+  npx --yes @ignitic/groundwork detect --fail-on P0

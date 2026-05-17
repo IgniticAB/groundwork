@@ -1,3 +1,3 @@
-// Core types for the context-engineer detector.
+// Core types for the groundwork detector.
 export {};
 //# sourceMappingURL=types.js.map

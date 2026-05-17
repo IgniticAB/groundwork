@@ -1,9 +1,9 @@
 ---
-name: context-engineer
+name: groundwork
 description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
 ---
 
-# Context Engineer
+# Groundwork
 
 A single skill that teaches an AI agent how to set up and govern the information environment around a codebase, then exposes eight commands for the highest-leverage ContextOps moves.
 
@@ -44,15 +44,15 @@ Each command lives in `commands/<name>.md`. Open the file when invoked; do not t
 | `verify` | Bake test / lint / typecheck commands into context so the agent self-corrects | Every repo, every time. The single highest leverage move. |
 | `onboard` | Produce a task-specific orientation brief for a fresh agent or engineer | Starting a new session, handing off work, compacting a noisy session |
 
-If the user just says `context-engineer` with no command, list the nine options and ask which one they want, or what they are trying to accomplish if they cannot name it.
+If the user just says `groundwork` with no command, list the nine options and ask which one they want, or what they are trying to accomplish if they cannot name it.
 
 ## How to invoke a command
 
 Users invoke commands three ways:
 
 - **Natural language.** "Set up this repo for AI-first development" → triggers `init`. "How good is our AI setup?" → triggers `audit`. The skill's description is pushy enough that the agent picks the right command.
-- **Explicit invocation.** `context-engineer init`, `context-engineer audit`, etc. Works in every harness.
-- **Slash shortcut (Claude Code only, optional).** `/ce init`, `/ce audit`, etc. Requires the user to have installed `slash-commands/ce.md` into `.claude/commands/`. Without that file, `/ce` still works as a trigger phrase but is not a true slash command.
+- **Explicit invocation.** `groundwork init`, `groundwork audit`, etc. Works in every harness.
+- **Slash shortcut (Claude Code only, optional).** `/gw init`, `/gw audit`, etc. Requires the user to have installed `slash-commands/gw.md` into `.claude/commands/`. Without that file, `/gw` still works as a trigger phrase but is not a true slash command.
 
 When the user invokes a command:
 

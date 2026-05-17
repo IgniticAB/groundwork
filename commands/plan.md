@@ -1,6 +1,6 @@
 ---
-name: context-engineer-plan
-description: Produce a Plan Mode contract before any non-trivial change. Names files touched, approach, verification commands, and rollback. Required for any change touching more than three files, any refactor, any public-API change, or any migration. Triggers on "plan this change", "draft a plan for...", "before I start coding...", "/ce plan", "/plan mode".
+name: groundwork-plan
+description: Produce a Plan Mode contract before any non-trivial change. Names files touched, approach, verification commands, and rollback. Required for any change touching more than three files, any refactor, any public-API change, or any migration. Triggers on "plan this change", "draft a plan for...", "before I start coding...", "/gw plan", "/plan mode".
 ---
 
 # `plan` — Plan Mode contract

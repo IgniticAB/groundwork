@@ -1,6 +1,6 @@
 ---
-name: context-engineer-scope
-description: Generate file-pattern-scoped rules so the right context loads for the right files. Use this when the repo has multiple stacks (frontend + backend, app + infra), or when global rules keep firing in the wrong places. Triggers on "scope these rules", "per-directory rules", "frontend rules separate from backend", "/ce scope".
+name: groundwork-scope
+description: Generate file-pattern-scoped rules so the right context loads for the right files. Use this when the repo has multiple stacks (frontend + backend, app + infra), or when global rules keep firing in the wrong places. Triggers on "scope these rules", "per-directory rules", "frontend rules separate from backend", "/gw scope".
 ---
 
 # `scope` — Scoped rules per file pattern

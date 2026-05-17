@@ -1,6 +1,6 @@
 ---
-name: context-engineer-init
-description: Bootstrap a repo with the full context engineering scaffolding. Run this on a new repo or an existing repo that has no CLAUDE.md/AGENTS.md/.cursor/rules/ yet. Triggers on phrases like "initialize this repo for AI", "set up context engineering", "bootstrap CLAUDE.md", "make this AI-first", "/ce init".
+name: groundwork-init
+description: Bootstrap a repo with the full context engineering scaffolding. Run this on a new repo or an existing repo that has no CLAUDE.md/AGENTS.md/.cursor/rules/ yet. Triggers on phrases like "initialize this repo for AI", "set up context engineering", "bootstrap CLAUDE.md", "make this AI-first", "/gw init".
 ---
 
 # `init` — Bootstrap a repo
@@ -114,7 +114,7 @@ Run the verification commands the user picked. If any fail, show the failure cle
 A short summary:
 - Files created (with paths the user can click).
 - Verification status.
-- One-line next moves: "Try `context-engineer plan` next time you have a change touching multiple files."
+- One-line next moves: "Try `groundwork plan` next time you have a change touching multiple files."
 
 No long postamble.
 

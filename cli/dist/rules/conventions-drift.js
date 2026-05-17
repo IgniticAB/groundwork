@@ -32,7 +32,7 @@ export const conventionsDrift = {
                         severity: 'P1',
                         file: target,
                         message: `${target} is older than .context/conventions.md by ${formatDelta(conventionsMtime - s.mtimeMs)}.`,
-                        fix: 'Run: context-engineer document',
+                        fix: 'Run: groundwork document',
                     });
                 }
             }
@@ -51,7 +51,7 @@ export const conventionsDrift = {
                         severity: 'P1',
                         file: f,
                         message: `${f} is older than .context/conventions.md by ${formatDelta(conventionsMtime - s.mtimeMs)}.`,
-                        fix: 'Run: context-engineer document',
+                        fix: 'Run: groundwork document',
                     });
                 }
             }

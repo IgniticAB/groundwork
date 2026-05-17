@@ -1,6 +1,6 @@
 ---
-name: context-engineer-adr
-description: Author an Architecture Decision Record. Captures the why behind a choice so future agents and humans do not have to re-derive it. Triggers on "write an ADR for...", "document why we chose...", "we just decided X, capture it", "create a decision record", "/ce adr".
+name: groundwork-adr
+description: Author an Architecture Decision Record. Captures the why behind a choice so future agents and humans do not have to re-derive it. Triggers on "write an ADR for...", "document why we chose...", "we just decided X, capture it", "create a decision record", "/gw adr".
 ---
 
 # `adr` — Architecture Decision Record
