@@ -1,5 +1,7 @@
 # Groundwork
 
+![Groundwork](docs/hero.png)
+
 A skill (and 9 commands) for setting up and maintaining state of the art context engineering on a project or repo.
 
 Built from the practices in *The 2026 Context Engineering Blueprint*, structured after the model in [impeccable.style](https://impeccable.style): one umbrella skill, with shared foundation files that always load, plus focused commands for the highest-leverage moves.
