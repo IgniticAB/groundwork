@@ -118,7 +118,8 @@ const description =
     .cmd-link:hover .cmd-arrow { color: var(--ember); transform: translateX(2px); }
     .cmd-arrow {
       color: var(--muted);
-      transition: transform 120ms ease, color 120ms ease;
+      transition: transform 200ms var(--ease-out-quart),
+                  color 200ms var(--ease-out-quart);
     }
     .cmd-cell-line { color: var(--ink-soft); }
     .cmd-cell-reach { color: var(--muted); font-size: 0.93rem; }

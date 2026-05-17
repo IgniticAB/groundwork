@@ -62,7 +62,9 @@ const description =
       background: var(--bg);
       text-decoration: none;
       color: var(--ink);
-      transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+      transition: border-color 200ms var(--ease-out-quart),
+                  background 200ms var(--ease-out-quart),
+                  transform 200ms var(--ease-out-quart);
     }
     .found-row:hover {
       border-color: var(--ember);
@@ -91,7 +93,8 @@ const description =
       color: var(--muted);
       font-size: 1.1rem;
       text-align: right;
-      transition: color 120ms ease, transform 120ms ease;
+      transition: color 200ms var(--ease-out-quart),
+                  transform 200ms var(--ease-out-quart);
     }
     .found-row:hover .found-row-arrow {
       color: var(--ember);

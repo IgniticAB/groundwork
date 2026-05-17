@@ -171,7 +171,8 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
         text-decoration-color: var(--rule);
-        transition: text-decoration-color 120ms ease, color 120ms ease;
+        transition: text-decoration-color 160ms var(--ease-out-quart),
+                    color 160ms var(--ease-out-quart);
       }
       a:hover {
         text-decoration-color: var(--ember);
@@ -424,18 +425,13 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
         font-size: 0.85rem;
       }
 
-      /* hero shared */
-      .hero {
-        padding-top: 1.5rem;
-        margin-bottom: 3rem;
-      }
-      .hero h1 { margin-bottom: 1rem; }
-      .hero .lede {
-        font-size: 1.25rem;
+      /* lede paragraph: the first body sentence under a page H1 */
+      .lede {
+        font-size: 1.2rem;
         line-height: 1.55;
         color: var(--ink-soft);
-        margin: 0 0 1.8rem;
-        max-width: 38ch;
+        margin: 0.6rem 0 1.8rem;
+        max-width: 62ch;
       }
 
       /* install command block */
@@ -546,7 +542,8 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
         border: 1px solid var(--rule);
         border-radius: 8px;
         text-decoration: none;
-        transition: border-color 120ms ease, background 120ms ease;
+        transition: border-color 200ms var(--ease-out-quart),
+                    background 200ms var(--ease-out-quart);
         background: var(--bg);
       }
       .pager a:hover {
