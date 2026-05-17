@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+
+const title = 'Groundwork — context engineering for any LLM';
+const description =
+  'A skill (and 9 commands) for setting up and maintaining state of the art context engineering on a project or repo. The boring part that makes the rest actually useful.';
+
+// Normalize BASE_URL to always end with `/` so concatenation works whether or
+// not Astro emits a trailing slash for the configured base path.
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+---
+
+<Base title={title} description={description}>
+  <nav class="nav">
+    <a href={base} class="brand">Groundwork</a>
+    <div>
+      <a href="#commands">Commands</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/IgniticAB/groundwork">GitHub</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Groundwork</h1>
+      <p class="tagline">
+        Context engineering for any LLM. Hand the model the background and constraints
+        it needs before asking for real work. The boring part that makes the rest
+        actually useful.
+      </p>
+      <img class="hero-image" src={`${base}hero.png`} alt="Architectural sketch of foundations and structural supports rising into a tower." />
+      <code class="install-cta">npx skills add IgniticAB/groundwork</code>
+      <p class="install-note">
+        Works with Claude Code, Cursor, Codex, Gemini CLI, OpenCode, and
+        <a href="https://github.com/vercel-labs/skills#supported-agents">50+ more</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>What it is</h2>
+      <p>
+        One skill with nine commands for the highest-leverage moves in context engineering:
+        bootstrap a repo for AI-first development, audit how AI-ready it is, refresh
+        <code>CLAUDE.md</code> and <code>AGENTS.md</code>, plan a non-trivial change before
+        coding, capture decisions as ADRs, scope rules to file patterns, design MCP servers
+        with least-privilege, and bake verification loops into the agent's context.
+      </p>
+      <p>
+        Built from the practices in <em>The 2026 Context Engineering Blueprint</em>,
+        structured after the model in <a href="https://impeccable.style">impeccable.style</a>:
+        one umbrella skill with shared foundation files that always load, plus focused
+        commands for the work worth automating.
+      </p>
+    </section>
+
+    <section id="commands">
+      <h2>The nine commands</h2>
+      <table>
+        <thead>
+          <tr><th>Command</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>init</code></td><td>Bootstrap a repo with full context engineering scaffolding</td></tr>
+          <tr><td><code>audit</code></td><td>Score the repo's context engineering maturity, find gaps</td></tr>
+          <tr><td><code>document</code></td><td>Refresh or first-pass-document an existing repo (delta merge, not rewrite)</td></tr>
+          <tr><td><code>plan</code></td><td>Plan Mode contract before any non-trivial change</td></tr>
+          <tr><td><code>adr</code></td><td>Architecture Decision Record with negative-space section</td></tr>
+          <tr><td><code>scope</code></td><td>File-pattern-scoped rules per area</td></tr>
+          <tr><td><code>mcp</code></td><td>MCP configuration with least-privilege, HITL, audit policy</td></tr>
+          <tr><td><code>verify</code></td><td>Bake test/lint/typecheck commands into context; install drift hook</td></tr>
+          <tr><td><code>onboard</code></td><td>Task-specific orientation brief for a fresh agent or engineer</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="install">
+      <h2>Get started</h2>
+
+      <h3>1. Install the skill</h3>
+      <p>One agent skill with nine commands. The installer auto-detects your harness and places files in the right location.</p>
+      <pre><code>npx skills add IgniticAB/groundwork</code></pre>
+
+      <p>Target specific harnesses with <code>-a</code>:</p>
+      <pre><code>npx skills add IgniticAB/groundwork -a claude-code
+npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
+
+      <p>Install globally with <code>-g</code> so the skill is available across every project:</p>
+      <pre><code>npx skills add IgniticAB/groundwork -g</code></pre>
+
+      <h3>2. Use it</h3>
+      <p>Once installed, invoke the skill by name, by command, or by describing what you want:</p>
+      <pre><code>groundwork init        # bootstrap a repo
+groundwork audit       # score AI readiness
+groundwork plan        # draft a Plan Mode contract</code></pre>
+      <p>
+        Or just describe the outcome: <em>"set up this repo for AI-first development"</em>
+        triggers <code>init</code>; <em>"how good is our AI setup?"</em> triggers <code>audit</code>.
+        In Claude Code, the optional <code>/gw</code> slash shortcut works once you copy
+        <code>slash-commands/gw.md</code> into <code>.claude/commands/</code>.
+      </p>
+
+      <h3>3. Install the CLI <span style="color: var(--muted); font-weight: 400;">(optional)</span></h3>
+      <p>For CI and pre-commit anti-pattern scans outside the skill:</p>
+      <pre><code>npm i -g @ignitic/groundwork</code></pre>
+      <p>Then <code>groundwork detect</code> to scan a project, or <code>npx @ignitic/groundwork detect</code> without installing. Ten deterministic rules, no LLM required, JSON output for build gates.</p>
+      <p>The skill is for authoring context. The CLI is for guarding it.</p>
+
+      <h3>4. Stay updated</h3>
+      <pre><code>npx @ignitic/groundwork skills update</code></pre>
+      <p>Run periodically to pull the latest skill definitions. Or re-install from scratch: <code>npx skills add IgniticAB/groundwork</code>.</p>
+    </section>
+
+    <section>
+      <h2>Source material</h2>
+      <p>
+        <em>The 2026 Context Engineering Blueprint</em>, the source document this skill is built from,
+        lives in the <a href="https://github.com/IgniticAB/groundwork">repo</a> alongside the skill.
+        <a href="https://impeccable.style">impeccable.style</a> is the structural reference for
+        one skill with N commands and always-loaded foundation files.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <div>
+        Built by <a href="https://www.ignitic.se/en">Ignitic</a>. MIT licensed.
+      </div>
+      <div>
+        <a href="https://github.com/IgniticAB/groundwork">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/IgniticAB/groundwork/issues">Issues</a>
+      </div>
+    </footer>
+  </main>
+</Base>

@@ -1,0 +1,221 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+
+// Normalize BASE_URL to always end with `/`.
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <style is:global>
+      :root {
+        --bg: #fafaf7;
+        --ink: #1a1a1a;
+        --muted: #6b6b66;
+        --accent: #1a1a1a;
+        --rule: #e5e3dc;
+        --code-bg: #f1efe8;
+        --max-width: 720px;
+        --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+        --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 17px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      a:hover { text-decoration-thickness: 2px; }
+
+      h1, h2, h3 {
+        font-family: var(--sans);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      h1 { font-size: 2.8rem; font-weight: 700; }
+      h2 { font-size: 1.6rem; font-weight: 600; margin-top: 3rem; }
+      h3 { font-size: 1.1rem; font-weight: 600; margin-top: 2rem; }
+
+      p { margin: 1em 0; }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.92em;
+        background: var(--code-bg);
+        padding: 0.1em 0.35em;
+        border-radius: 3px;
+      }
+
+      pre {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        background: var(--code-bg);
+        padding: 1rem 1.2rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        line-height: 1.5;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        font-size: 0.95rem;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 0.6rem 0.5rem;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      th {
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      td code { font-size: 0.9em; }
+
+      hr {
+        border: none;
+        border-top: 1px solid var(--rule);
+        margin: 3rem 0;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 4rem 1.5rem 6rem;
+      }
+
+      .nav {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 1.5rem 1.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.95rem;
+      }
+
+      .nav .brand {
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .nav a { text-decoration: none; color: var(--muted); margin-left: 1.2rem; }
+      .nav a:hover { color: var(--ink); }
+
+      .hero {
+        text-align: left;
+        margin: 2rem 0 3rem;
+      }
+
+      .hero h1 { margin-bottom: 0.5rem; }
+
+      .hero .tagline {
+        font-size: 1.25rem;
+        color: var(--muted);
+        margin: 0.5rem 0 2rem;
+        line-height: 1.5;
+      }
+
+      .hero-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: 1.5rem 0 2.5rem;
+        border-radius: 4px;
+      }
+
+      .install-cta {
+        background: var(--ink);
+        color: var(--bg);
+        padding: 1rem 1.2rem;
+        border-radius: 6px;
+        font-family: var(--mono);
+        font-size: 0.95rem;
+        display: block;
+        margin: 1rem 0 0.5rem;
+      }
+
+      .install-cta::before {
+        content: "$ ";
+        opacity: 0.5;
+      }
+
+      .install-note {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0 0 1.5rem;
+      }
+
+      .footer {
+        margin-top: 5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--rule);
+        color: var(--muted);
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .footer a { color: var(--muted); }
+      .footer a:hover { color: var(--ink); }
+
+      @media (max-width: 600px) {
+        h1 { font-size: 2.2rem; }
+        h2 { font-size: 1.4rem; }
+        .container { padding: 2rem 1.25rem 4rem; }
+      }
+    </style>
+  </body>
+</html>
