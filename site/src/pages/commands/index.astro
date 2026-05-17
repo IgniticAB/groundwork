@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+import { commands } from '../../data/commands';
+
+const title = 'Commands';
+const description =
+  'Nine commands for the highest-leverage moves in context engineering. Bootstrap, audit, document, plan, decide, scope, secure, verify, onboard.';
+---
+
+<Base title={title} description={description}>
+  <main class="container container--wide commands-index">
+    <span class="hero-eyebrow">The skill</span>
+    <h1>Nine commands. One job each.</h1>
+    <p class="lede">
+      Each command lives in its own file in the skill. Each one is a procedure
+      the agent runs literally — not a vibe. Click through for the
+      <em>why</em>, the <em>when</em>, and the <em>what it produces</em>.
+    </p>
+
+    <table class="cmd-table">
+      <thead>
+        <tr>
+          <th>Command</th>
+          <th>What it does</th>
+          <th>Reach for it when</th>
+        </tr>
+      </thead>
+      <tbody>
+        {commands.map((c) => (
+          <tr>
+            <td>
+              <a class="cmd-link" href={url(`commands/${c.slug}/`)}>
+                <code>{c.name}</code>
+                <span class="cmd-arrow" aria-hidden="true">→</span>
+              </a>
+            </td>
+            <td class="cmd-cell-line">{c.oneLiner}</td>
+            <td class="cmd-cell-reach">{c.reachFor}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <section class="bundle">
+      <h2>How the commands fit together</h2>
+      <p>
+        The commands are independent — pick the one you need. But there is a
+        natural lifecycle:
+      </p>
+      <ol class="bundle-list">
+        <li>
+          <strong>Start</strong> with <a href={url('commands/init/')}><code>init</code></a>
+          (new repo) or <a href={url('commands/document/')}><code>document</code></a>
+          (existing repo with stale context).
+        </li>
+        <li>
+          <strong>Wire verification</strong> with
+          <a href={url('commands/verify/')}><code>verify</code></a>. This is the
+          single highest-leverage move. Do not skip it.
+        </li>
+        <li>
+          <strong>Capture decisions</strong> with
+          <a href={url('commands/adr/')}><code>adr</code></a> as they happen.
+          Before any non-trivial change, draft a contract with
+          <a href={url('commands/plan/')}><code>plan</code></a>.
+        </li>
+        <li>
+          <strong>Refine</strong> with <a href={url('commands/scope/')}><code>scope</code></a>
+          (multi-stack repos), <a href={url('commands/mcp/')}><code>mcp</code></a>
+          (before connecting an agent to production), and
+          <a href={url('commands/onboard/')}><code>onboard</code></a> (fresh
+          session, fresh teammate).
+        </li>
+        <li>
+          <strong>Check yourself</strong> with
+          <a href={url('commands/audit/')}><code>audit</code></a> on a
+          cadence. Quarterly is enough.
+        </li>
+      </ol>
+    </section>
+
+    <section class="related">
+      <h2>The model underneath</h2>
+      <p>
+        Every command is built on a small shared vocabulary — five context
+        layers, a five-stage lifecycle, the kinds of debt AI accelerates, and
+        the anti-patterns to reject. If you have not read
+        <a href={url('foundation/')}>the foundation</a> yet, that is the right
+        first stop. Five short pages.
+      </p>
+      <p>
+        The source material — <em>The 2026 Context Engineering Blueprint</em> —
+        is reproduced in full at <a href={url('blueprint/')}>/blueprint</a>.
+      </p>
+    </section>
+  </main>
+
+  <style>
+    .cmd-table {
+      margin-top: 2rem;
+    }
+    .cmd-table td { padding: 1rem 0.6rem; }
+    .cmd-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 650;
+    }
+    .cmd-link code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 1rem;
+    }
+    .cmd-link:hover { color: var(--ember-ink); }
+    .cmd-link:hover .cmd-arrow { color: var(--ember); transform: translateX(2px); }
+    .cmd-arrow {
+      color: var(--muted);
+      transition: transform 120ms ease, color 120ms ease;
+    }
+    .cmd-cell-line { color: var(--ink-soft); }
+    .cmd-cell-reach { color: var(--muted); font-size: 0.93rem; }
+
+    .bundle {
+      margin-top: 4rem;
+      padding: 2rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+    }
+    .bundle h2 { margin-top: 0; }
+    .bundle-list { line-height: 1.7; }
+    .bundle-list li { margin-bottom: 0.8rem; }
+
+    .related { margin-top: 4rem; }
+
+    @media (max-width: 720px) {
+      .cmd-table { font-size: 0.9rem; }
+      .cmd-cell-reach { display: none; }
+    }
+  </style>
+</Base>

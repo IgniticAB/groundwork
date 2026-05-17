@@ -1,135 +1,370 @@
 ---
 import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+import { commands } from '../data/commands';
+import { foundation } from '../data/foundation';
 
-const title = 'Groundwork — context engineering for any LLM';
+const title = 'Groundwork';
 const description =
-  'A skill (and 9 commands) for setting up and maintaining state of the art context engineering on a project or repo. The boring part that makes the rest actually useful.';
-
-// Normalize BASE_URL to always end with `/` so concatenation works whether or
-// not Astro emits a trailing slash for the configured base path.
-const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+  'Context engineering for any LLM. One skill, nine commands, for setting up and maintaining the boring layer that makes the rest actually useful.';
 ---
 
 <Base title={title} description={description}>
-  <nav class="nav">
-    <a href={base} class="brand">Groundwork</a>
-    <div>
-      <a href="#commands">Commands</a>
-      <a href="#install">Install</a>
-      <a href="https://github.com/IgniticAB/groundwork">GitHub</a>
-    </div>
-  </nav>
-
-  <main class="container">
+  <main class="container container--wide home">
     <section class="hero">
-      <h1>Groundwork</h1>
-      <p class="tagline">
-        Context engineering for any LLM. Hand the model the background and constraints
-        it needs before asking for real work. The boring part that makes the rest
-        actually useful.
+      <span class="hero-eyebrow">v1.1 · Skill + 9 commands</span>
+      <h1>Lay the groundwork.<br />The agent does the rest.</h1>
+      <p class="lede">
+        Context engineering for any LLM. One skill, nine commands. The boring
+        part nobody automates is the only part that compounds.
       </p>
-      <img class="hero-image" src={`${base}hero.png`} alt="Architectural sketch of foundations and structural supports rising into a tower." />
-      <code class="install-cta">npx skills add IgniticAB/groundwork</code>
-      <p class="install-note">
+
+      <div class="hero-cta">
+        <code class="cmd-block">npx skills add IgniticAB/groundwork</code>
+        <a class="hero-link" href={url('install/')}>or read the install guide →</a>
+      </div>
+
+      <p class="hero-support">
         Works with Claude Code, Cursor, Codex, Gemini CLI, OpenCode, and
         <a href="https://github.com/vercel-labs/skills#supported-agents">50+ more</a>.
+        MIT-licensed. No smoke, no mirrors.
       </p>
     </section>
 
-    <section>
-      <h2>What it is</h2>
-      <p>
-        One skill with nine commands for the highest-leverage moves in context engineering:
-        bootstrap a repo for AI-first development, audit how AI-ready it is, refresh
-        <code>CLAUDE.md</code> and <code>AGENTS.md</code>, plan a non-trivial change before
-        coding, capture decisions as ADRs, scope rules to file patterns, design MCP servers
-        with least-privilege, and bake verification loops into the agent's context.
-      </p>
-      <p>
-        Built from the practices in <em>The 2026 Context Engineering Blueprint</em>,
-        structured after the model in <a href="https://impeccable.style">impeccable.style</a>:
-        one umbrella skill with shared foundation files that always load, plus focused
-        commands for the work worth automating.
-      </p>
-    </section>
-
-    <section id="commands">
-      <h2>The nine commands</h2>
-      <table>
-        <thead>
-          <tr><th>Command</th><th>Purpose</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>init</code></td><td>Bootstrap a repo with full context engineering scaffolding</td></tr>
-          <tr><td><code>audit</code></td><td>Score the repo's context engineering maturity, find gaps</td></tr>
-          <tr><td><code>document</code></td><td>Refresh or first-pass-document an existing repo (delta merge, not rewrite)</td></tr>
-          <tr><td><code>plan</code></td><td>Plan Mode contract before any non-trivial change</td></tr>
-          <tr><td><code>adr</code></td><td>Architecture Decision Record with negative-space section</td></tr>
-          <tr><td><code>scope</code></td><td>File-pattern-scoped rules per area</td></tr>
-          <tr><td><code>mcp</code></td><td>MCP configuration with least-privilege, HITL, audit policy</td></tr>
-          <tr><td><code>verify</code></td><td>Bake test/lint/typecheck commands into context; install drift hook</td></tr>
-          <tr><td><code>onboard</code></td><td>Task-specific orientation brief for a fresh agent or engineer</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section id="install">
-      <h2>Get started</h2>
-
-      <h3>1. Install the skill</h3>
-      <p>One agent skill with nine commands. The installer auto-detects your harness and places files in the right location.</p>
-      <pre><code>npx skills add IgniticAB/groundwork</code></pre>
-
-      <p>Target specific harnesses with <code>-a</code>:</p>
-      <pre><code>npx skills add IgniticAB/groundwork -a claude-code
-npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
-
-      <p>Install globally with <code>-g</code> so the skill is available across every project:</p>
-      <pre><code>npx skills add IgniticAB/groundwork -g</code></pre>
-
-      <h3>2. Use it</h3>
-      <p>Once installed, invoke the skill by name, by command, or by describing what you want:</p>
-      <pre><code>groundwork init        # bootstrap a repo
-groundwork audit       # score AI readiness
-groundwork plan        # draft a Plan Mode contract</code></pre>
-      <p>
-        Or just describe the outcome: <em>"set up this repo for AI-first development"</em>
-        triggers <code>init</code>; <em>"how good is our AI setup?"</em> triggers <code>audit</code>.
-        In Claude Code, the optional <code>/gw</code> slash shortcut works once you copy
-        <code>slash-commands/gw.md</code> into <code>.claude/commands/</code>.
-      </p>
-
-      <h3>3. Install the CLI <span style="color: var(--muted); font-weight: 400;">(optional)</span></h3>
-      <p>For CI and pre-commit anti-pattern scans outside the skill:</p>
-      <pre><code>npm i -g @ignitic/groundwork</code></pre>
-      <p>Then <code>groundwork detect</code> to scan a project, or <code>npx @ignitic/groundwork detect</code> without installing. Ten deterministic rules, no LLM required, JSON output for build gates.</p>
-      <p>The skill is for authoring context. The CLI is for guarding it.</p>
-
-      <h3>4. Stay updated</h3>
-      <pre><code>npx @ignitic/groundwork skills update</code></pre>
-      <p>Run periodically to pull the latest skill definitions. Or re-install from scratch: <code>npx skills add IgniticAB/groundwork</code>.</p>
-    </section>
-
-    <section>
-      <h2>Source material</h2>
-      <p>
-        <em>The 2026 Context Engineering Blueprint</em>, the source document this skill is built from,
-        lives in the <a href="https://github.com/IgniticAB/groundwork">repo</a> alongside the skill.
-        <a href="https://impeccable.style">impeccable.style</a> is the structural reference for
-        one skill with N commands and always-loaded foundation files.
-      </p>
-    </section>
-
-    <footer class="footer">
-      <div>
-        Built by <a href="https://www.ignitic.se/en">Ignitic</a>. MIT licensed.
+    <section class="why">
+      <div class="why-stack">
+        <div>
+          <h2>Context is the new code</h2>
+          <p>
+            In 2026, the bottleneck on AI-assisted engineering is not model
+            capability. It is the quality of the context the model sees. Code
+            that ships fast but nobody understands accumulates
+            <em>cognitive debt</em> — the gap between a system's structure and
+            the team's shared theory of how it works.
+          </p>
+          <p>
+            <strong>Groundwork</strong> turns that context into an engineered
+            artifact. Versioned. Reviewed. Wired to the verification commands
+            that prove it works. No vibes, no monolithic prompt bloat, no
+            assumptions about what your agent already knows.
+          </p>
+          <p>
+            <a href={url('blueprint/')}>The 2026 Context Engineering Blueprint →</a>
+          </p>
+        </div>
+        <div class="why-aside">
+          <div class="chip chip--ember">Why it exists</div>
+          <ul class="why-list">
+            <li>
+              <strong>Your CLAUDE.md is one source of truth, not five.</strong>
+              <span>Cursor, Codex, Copilot — same rules, emitted in each format.</span>
+            </li>
+            <li>
+              <strong>Verification is baked in.</strong>
+              <span>The agent self-corrects against your tests. You only review the design.</span>
+            </li>
+            <li>
+              <strong>Decisions outlive the conversation.</strong>
+              <span>ADRs with a "Reconsider if" trigger and a negative-space section.</span>
+            </li>
+            <li>
+              <strong>Drift is a build error.</strong>
+              <span>A pre-commit hook catches stale context before it ships.</span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <a href="https://github.com/IgniticAB/groundwork">GitHub</a>
-        &nbsp;·&nbsp;
-        <a href="https://github.com/IgniticAB/groundwork/issues">Issues</a>
+    </section>
+
+    <section class="commands-preview">
+      <div class="section-head">
+        <div>
+          <h2>The nine commands</h2>
+          <p class="section-sub">
+            One file per command in the skill. One short page per command on this
+            site — the <em>why</em> first, then the <em>how</em>.
+          </p>
+        </div>
+        <a class="section-cta" href={url('commands/')}>All commands →</a>
       </div>
-    </footer>
+
+      <div class="cmd-grid">
+        {commands.map((c) => (
+          <a class="cmd-card" href={url(`commands/${c.slug}/`)}>
+            <div class="cmd-card-head">
+              <span class="cmd-name"><code>{c.name}</code></span>
+              <span class="cmd-arrow" aria-hidden="true">→</span>
+            </div>
+            <p class="cmd-line">{c.oneLiner}</p>
+            <p class="cmd-when"><span>Reach for it when:</span> {c.reachFor}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="foundation-preview">
+      <div class="section-head">
+        <div>
+          <h2>The foundation</h2>
+          <p class="section-sub">
+            Seven short files load on every invocation. They are the shared
+            vocabulary the commands assume you already speak.
+          </p>
+        </div>
+        <a class="section-cta" href={url('foundation/')}>All foundation pages →</a>
+      </div>
+
+      <div class="found-grid">
+        {foundation.map((f) => (
+          <a class="found-card" href={url(`foundation/${f.slug}/`)}>
+            <div class="found-title">{f.title}</div>
+            <p class="found-line">{f.oneLiner}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="closing-inner">
+        <h2>Stop writing context like prose. Start engineering it.</h2>
+        <p class="lede">
+          Bootstrap a repo in one command. Audit one that already exists. Or
+          start with the philosophy and pick your battles.
+        </p>
+        <div class="closing-cta">
+          <a class="btn btn--primary" href={url('install/')}>Install Groundwork</a>
+          <a class="btn btn--ghost" href={url('commands/init/')}>See <code>init</code> in detail</a>
+          <a class="btn btn--ghost" href={url('foundation/cognitive-debt/')}>Why cognitive debt is the real risk</a>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <style>
+    .home .hero h1 {
+      max-width: 18ch;
+    }
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem 1.2rem;
+      margin-bottom: 1.2rem;
+      max-width: 640px;
+    }
+    .hero-cta .cmd-block { flex: 1 1 380px; }
+    .hero-link { font-size: 0.95rem; color: var(--muted); white-space: nowrap; }
+    .hero-link:hover { color: var(--ember-ink); }
+    .hero-support {
+      color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 60ch;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 4rem;
+      margin-bottom: 1.4rem;
+    }
+    .section-head h2 { margin-top: 0; }
+    .section-sub {
+      color: var(--muted);
+      margin: 0.4rem 0 0;
+      max-width: 56ch;
+    }
+    .section-cta {
+      color: var(--ember-ink);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .section-cta:hover { color: var(--ember); }
+
+    .why-stack {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 2.5rem;
+      margin-top: 1rem;
+    }
+    .why-aside .chip { margin-bottom: 1rem; }
+    .why-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .why-list li {
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg-soft);
+      line-height: 1.5;
+    }
+    .why-list li strong { display: block; margin-bottom: 0.2rem; }
+    .why-list li span { color: var(--muted); font-size: 0.94rem; }
+
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .cmd-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      background: var(--bg);
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+    }
+    .cmd-card:hover {
+      border-color: var(--ember);
+      background: var(--bg-soft);
+      transform: translateY(-1px);
+    }
+    .cmd-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cmd-name code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 1.05rem;
+      font-weight: 650;
+      color: var(--ink);
+    }
+    .cmd-arrow {
+      color: var(--muted);
+      transition: color 120ms ease, transform 120ms ease;
+    }
+    .cmd-card:hover .cmd-arrow {
+      color: var(--ember);
+      transform: translateX(2px);
+    }
+    .cmd-line {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .cmd-when {
+      margin: 0.3rem 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .cmd-when span {
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    .found-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .found-card {
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg);
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+    .found-card:hover {
+      border-color: var(--ember);
+      background: var(--bg-soft);
+    }
+    .found-title {
+      font-weight: 650;
+      margin-bottom: 0.25rem;
+    }
+    .found-line {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .closing {
+      margin-top: 5rem;
+      padding: 3rem 2rem;
+      background: var(--ember-soft);
+      border-radius: 14px;
+      border: 1px solid color-mix(in srgb, var(--ember), transparent 70%);
+    }
+    .closing h2 {
+      margin-top: 0;
+      color: var(--ember-ink);
+      max-width: 22ch;
+    }
+    .closing .lede { color: var(--ink-soft); }
+    .closing-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.6rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    }
+    .btn--primary {
+      background: var(--ember);
+      color: var(--bg);
+      border: 1px solid var(--ember);
+    }
+    .btn--primary:hover {
+      background: var(--ember-ink);
+      border-color: var(--ember-ink);
+      color: var(--bg);
+    }
+    .btn--ghost {
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid var(--rule);
+    }
+    .btn--ghost:hover {
+      border-color: var(--ember);
+      color: var(--ember-ink);
+    }
+    .btn code {
+      background: none;
+      padding: 0;
+      border: 0;
+      font-size: 0.94em;
+      color: inherit;
+    }
+
+    @media (max-width: 900px) {
+      .why-stack { grid-template-columns: 1fr; gap: 1.5rem; }
+      .cmd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .cmd-grid { grid-template-columns: 1fr; }
+      .found-grid { grid-template-columns: 1fr; }
+      .closing { padding: 2rem 1.25rem; }
+    }
+  </style>
 </Base>

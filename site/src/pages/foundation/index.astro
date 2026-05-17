@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+import { foundation } from '../../data/foundation';
+
+const title = 'Foundation';
+const description =
+  'The seven shared files every Groundwork command relies on. The five-layer stack, ContextOps lifecycle, cognitive debt, good practices, anti-patterns, MCP principles, harness reference.';
+---
+
+<Base title={title} description={description}>
+  <main class="container container--wide foundation-index">
+    <span class="hero-eyebrow">Philosophy</span>
+    <h1>The foundation</h1>
+    <p class="lede">
+      Seven short files. The shared vocabulary every command in this skill
+      assumes you already speak. Read them once. They are intentionally short.
+    </p>
+
+    <div class="found-list">
+      {foundation.map((f, i) => (
+        <a class="found-row" href={url(`foundation/${f.slug}/`)}>
+          <div class="found-row-num">{String(i + 1).padStart(2, '0')}</div>
+          <div class="found-row-body">
+            <h2 class="found-row-title">{f.title}</h2>
+            <p class="found-row-line">{f.oneLiner}</p>
+          </div>
+          <div class="found-row-arrow" aria-hidden="true">→</div>
+        </a>
+      ))}
+    </div>
+
+    <section class="src">
+      <h2>Where this comes from</h2>
+      <p>
+        Every page on this site distils the same source document:
+        <em>The 2026 Context Engineering Blueprint</em>. It argues that
+        context — not model capability — is the bottleneck on AI-assisted
+        engineering, and that the discipline of <em>engineering</em> it is the
+        defining R&D skill of the year.
+      </p>
+      <p>
+        <a class="src-link" href={url('blueprint/')}>Read the full Blueprint →</a>
+      </p>
+    </section>
+  </main>
+
+  <style>
+    .found-list {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .found-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 30px;
+      gap: 1.25rem;
+      align-items: center;
+      padding: 1.25rem 1.2rem;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      background: var(--bg);
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+    }
+    .found-row:hover {
+      border-color: var(--ember);
+      background: var(--bg-soft);
+      transform: translateY(-1px);
+    }
+    .found-row-num {
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .found-row-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 650;
+      color: var(--ink);
+    }
+    .found-row-line {
+      margin: 0.2rem 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .found-row-arrow {
+      color: var(--muted);
+      font-size: 1.1rem;
+      text-align: right;
+      transition: color 120ms ease, transform 120ms ease;
+    }
+    .found-row:hover .found-row-arrow {
+      color: var(--ember);
+      transform: translateX(2px);
+    }
+
+    .src {
+      margin-top: 4rem;
+      padding: 2rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+    }
+    .src h2 { margin-top: 0; }
+    .src-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--ember-ink);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .src-link:hover { color: var(--ember); }
+
+    @media (max-width: 560px) {
+      .found-row { grid-template-columns: 1fr; gap: 0.4rem; }
+      .found-row-num { font-size: 0.75rem; letter-spacing: 0.1em; }
+      .found-row-arrow { display: none; }
+    }
+  </style>
+</Base>

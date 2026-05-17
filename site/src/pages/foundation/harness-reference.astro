@@ -1,0 +1,137 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import Callout from '../../components/Callout.astro';
+import FoundationPager from '../../components/FoundationPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'Harness reference';
+const description =
+  'Where each AI coding harness expects to find its context files. Claude Code, Cursor, Codex, Copilot, Cowork — locations, formats, frontmatter conventions.';
+---
+
+<Doc title={title} description={description} section="foundation" eyebrow="Foundation · 07">
+  <p class="doc-lede">
+    Where each AI coding harness expects to find its context files. This page
+    is the source of truth that
+    <a href={url('commands/init/')}><code>init</code></a>,
+    <a href={url('commands/document/')}><code>document</code></a> and
+    <a href={url('commands/scope/')}><code>scope</code></a> read from when
+    deciding what to emit.
+  </p>
+
+  <h2>Claude Code</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Project rules</td><td><code>CLAUDE.md</code> at repo root</td><td>Always loaded when Claude Code opens the repo</td></tr>
+      <tr><td>Skills</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>Directory per skill. YAML frontmatter with <code>name</code>, <code>description</code></td></tr>
+      <tr><td>Slash commands</td><td><code>.claude/commands/&lt;name&gt;.md</code></td><td>Invoked as <code>/&lt;name&gt;</code></td></tr>
+      <tr><td>Sub-agents</td><td><code>.claude/agents/&lt;name&gt;.md</code></td><td>YAML frontmatter with <code>name</code>, <code>description</code>, <code>tools</code></td></tr>
+      <tr><td>Hooks</td><td><code>.claude/hooks.json</code></td><td>Pre/post tool hooks</td></tr>
+      <tr><td>Memory</td><td><code>.claude/memory/</code></td><td>Per-user, not committed</td></tr>
+    </tbody>
+  </table>
+  <p><code>CLAUDE.md</code> is the single most important file. Keep it under 200 lines.</p>
+
+  <h2>Cursor</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Project rules</td><td><code>.cursor/rules/&lt;name&gt;.mdc</code></td><td>Modern format. YAML frontmatter for file-scoping.</td></tr>
+      <tr><td>Legacy rules</td><td><code>.cursorrules</code></td><td>Deprecated. Migrate to <code>.cursor/rules/</code></td></tr>
+      <tr><td>Indexing config</td><td>Cursor settings UI</td><td>Not in repo</td></tr>
+      <tr><td>Composer instructions</td><td><code>.cursor/rules/composer.mdc</code></td><td>Optional, scope to <code>**/*</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>Cursor <code>.mdc</code> frontmatter:</p>
+  <pre><code>---
+description: When this rule should be applied
+globs:
+  - src/components/**/*.tsx
+  - src/components/**/*.jsx
+alwaysApply: false
+---
+
+# Rule body in Markdown</code></pre>
+
+  <p><code>alwaysApply: true</code> means the rule loads every time. Use sparingly.</p>
+
+  <h2>Codex / generic agents</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Project rules</td><td><code>AGENTS.md</code> at repo root</td><td>The emerging cross-tool standard</td></tr>
+      <tr><td>Skills</td><td><code>.agents/skills/</code> (repo) or <code>~/.agents/skills/</code> (user)</td><td>Codex-compatible</td></tr>
+    </tbody>
+  </table>
+
+  <p><code>AGENTS.md</code> should be a near-duplicate of <code>CLAUDE.md</code>. Same content; both files emitted by <code>init</code> and <code>document</code>.</p>
+
+  <h2>GitHub Copilot</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Repo-wide instructions</td><td><code>.github/copilot-instructions.md</code></td><td>Loaded automatically by Copilot Chat</td></tr>
+      <tr><td>Path-specific</td><td><code>.github/instructions/&lt;name&gt;.instructions.md</code></td><td>YAML frontmatter with <code>applyTo</code> glob</td></tr>
+    </tbody>
+  </table>
+
+  <p>Copilot path-specific frontmatter:</p>
+  <pre><code>---
+applyTo: "src/components/**/*.tsx"
+---</code></pre>
+
+  <h2>Cowork</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Skills</td><td>Workspace folder, <code>&lt;skill-name&gt;/SKILL.md</code></td><td>Loose files work; can be packaged as <code>.plugin</code></td></tr>
+      <tr><td>Plugins</td><td><code>.plugin</code> files</td><td>Use <code>create-cowork-plugin</code> skill</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What goes in which file</h2>
+
+  <p>
+    When emitting the same rules across multiple harnesses, the body is
+    identical. Only the wrapping changes:
+  </p>
+  <ul>
+    <li><code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>.github/copilot-instructions.md</code>: plain Markdown, frontmatter optional.</li>
+    <li><code>.cursor/rules/*.mdc</code>: YAML frontmatter with <code>description</code>, <code>globs</code>, <code>alwaysApply</code>.</li>
+    <li><code>.github/instructions/*.instructions.md</code>: YAML frontmatter with <code>applyTo</code>.</li>
+  </ul>
+  <p>
+    <a href={url('commands/init/')}><code>init</code></a> takes a single
+    canonical set of rules and emits them in each format. Never write rules
+    five times by hand.
+  </p>
+
+  <h2>Which harnesses to target</h2>
+
+  <p>Default reasoning:</p>
+  <ul>
+    <li>Claude Code or Cowork mentioned → <code>CLAUDE.md</code> + <code>AGENTS.md</code>.</li>
+    <li>Cursor mentioned → add <code>.cursor/rules/</code>.</li>
+    <li>Codex mentioned → ensure <code>AGENTS.md</code> exists.</li>
+    <li>Copilot mentioned → add <code>.github/copilot-instructions.md</code>.</li>
+    <li>None mentioned → ask. Do not assume.</li>
+  </ul>
+  <p>Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero once the canonical rules are written.</p>
+
+  <Callout label="Source" tone="mute">
+    <p>
+      Drawn from the 2026 Blueprint sections on
+      <a href={url('blueprint/#harnesses')}>Claude Code, Cursor, and Codex
+      operational best practices</a>, plus first-hand evolution since.
+    </p>
+  </Callout>
+
+  <FoundationPager slug="harness-reference" />
+</Doc>

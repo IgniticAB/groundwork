@@ -1,0 +1,35 @@
+---
+import { url } from '../lib/url';
+import { foundation } from '../data/foundation';
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const i = foundation.findIndex((f) => f.slug === slug);
+const prev = i > 0 ? foundation[i - 1] : null;
+const next = i < foundation.length - 1 ? foundation[i + 1] : null;
+---
+
+<nav class="pager" aria-label="Foundation navigation">
+  {prev ? (
+    <a href={url(`foundation/${prev.slug}/`)} class="pager-prev">
+      <div class="pager-label">← Previous</div>
+      <div class="pager-title">{prev.title}</div>
+    </a>
+  ) : (
+    <a href={url('foundation/')} class="pager-prev">
+      <div class="pager-label">← Back</div>
+      <div class="pager-title">Foundation index</div>
+    </a>
+  )}
+  {next ? (
+    <a href={url(`foundation/${next.slug}/`)} class="pager-next">
+      <div class="pager-label">Next →</div>
+      <div class="pager-title">{next.title}</div>
+    </a>
+  ) : (
+    <a href={url('commands/')} class="pager-next">
+      <div class="pager-label">Up next →</div>
+      <div class="pager-title">The commands</div>
+    </a>
+  )}
+</nav>

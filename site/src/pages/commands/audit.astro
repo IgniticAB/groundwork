@@ -1,0 +1,153 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import Callout from '../../components/Callout.astro';
+import CommandPager from '../../components/CommandPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'audit';
+const description =
+  'Score a repo across the five context layers. Find the gaps. Recommend two or three commands worth running. Evidence, not vibes.';
+---
+
+<Doc title={title} description={description} section="commands" eyebrow="Command">
+  <p class="doc-lede">
+    A structured assessment of how well a repo's information environment serves
+    an AI agent. Maturity score per layer, prioritised findings, and the next
+    two or three commands worth running. Defensible numbers. No vibes.
+  </p>
+
+  <h2>Why this command exists</h2>
+  <p>
+    "How AI-ready is our repo?" is one of those questions a team asks once,
+    looks at <code>CLAUDE.md</code>, says "looks fine", and moves on. That is
+    not an answer. It is a guess dressed up as one.
+  </p>
+  <p>
+    <code>audit</code> replaces the guess with evidence. It maps what exists
+    against the five-layer stack, scores each layer 0 to 5 with one sentence
+    of justification, walks the
+    <a href={url('foundation/anti-patterns/')}>anti-patterns</a> against the
+    actual files, and tries to run a small change end-to-end as a conformity
+    check. The output is one file (<code>docs/context-audit-&lt;date&gt;.md</code>)
+    a teammate can read in five minutes and know what to do next.
+  </p>
+  <p>
+    The recommended next commands at the bottom are the leverage point. Three
+    moves, no more. A list of twelve findings means nothing gets done.
+  </p>
+
+  <Callout label="Read first" tone="ember">
+    <p>
+      The audit is the Measure stage of the
+      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
+      Scoring is grounded in the
+      <a href={url('foundation/five-layer-stack/')}>five-layer stack</a> and
+      the <a href={url('foundation/anti-patterns/')}>anti-patterns</a> catalog.
+    </p>
+  </Callout>
+
+  <h2>When to reach for it</h2>
+  <ul>
+    <li>Before a major refactor, migration, or stack change.</li>
+    <li>Before onboarding a new hire — the audit doubles as a context-quality report.</li>
+    <li>On a cadence. Quarterly is enough for most teams.</li>
+    <li>After your first month using Groundwork, to see what is still rough.</li>
+    <li>When the team is complaining that "AI is unreliable" — usually the audit will show why.</li>
+  </ul>
+
+  <h2>What it produces</h2>
+  <p>One file:</p>
+  <pre><code>docs/context-audit-&lt;YYYY-MM-DD&gt;.md</code></pre>
+  <p>Plus a 10-15 line chat summary with:</p>
+  <ul>
+    <li>Overall maturity (0–100).</li>
+    <li>Per-layer scores with one-line notes.</li>
+    <li>The three highest-priority findings (P0, P1, P2).</li>
+    <li>The two or three recommended next commands.</li>
+  </ul>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>
+      <strong>Map the repo</strong> against each layer. What exists? What is
+      missing? Read the actual files, do not guess.
+    </li>
+    <li>
+      <strong>Score each layer 0–5.</strong> Every score gets a sentence of
+      justification — the evidence the score rests on.
+    </li>
+    <li>
+      <strong>Run a conformity check.</strong> Pick a small task the agent
+      could plausibly handle, have it attempt it in a scratch branch, run
+      verification. Record whether it passed without modification. If you
+      cannot run this, say so explicitly. Never fabricate a result.
+    </li>
+    <li>
+      <strong>Scan for missing ADRs.</strong> Walk the last 30 days of merge
+      commits. Anything "decision-shaped" (more than 5 source files touched, or
+      a new top-level directory, or merge-message language like "migrating to")
+      that lacks an ADR becomes a finding. Each one links to
+      <code>groundwork adr from PR &lt;url&gt;</code>.
+    </li>
+    <li>
+      <strong>Sort findings P0 / P1 / P2.</strong> P0 is "the agent will do
+      the wrong thing right now". P2 is "could be nicer". Specific filenames
+      and absences only. Vague findings are rejected before they reach the
+      report.
+    </li>
+    <li>
+      <strong>Recommend three commands.</strong> Not six. The highest-leverage
+      moves for the highest-priority findings.
+    </li>
+  </ol>
+
+  <Callout label="The quality bar" tone="mute">
+    <p>
+      Scores are defensible — every one has a sentence of evidence. Findings
+      are specific (filename + line, or a specific absence). "Documentation
+      could be better" is a vibe, not a finding. The recommendations are
+      commands, not principles.
+    </p>
+  </Callout>
+
+  <h2>Failure modes the command guards against</h2>
+  <ul>
+    <li>
+      <strong>Scoring on intuition.</strong> Every score has justification or
+      it does not exist.
+    </li>
+    <li>
+      <strong>Praising absence.</strong> "Has no anti-patterns" is not a 5; it
+      is a 3 if the good practices are also absent.
+    </li>
+    <li>
+      <strong>Listing twelve findings.</strong> If everything is a finding,
+      nothing is. Ruthless prioritisation.
+    </li>
+    <li>
+      <strong>Skipping the conformity check.</strong> It is the only piece of
+      evidence that tells you whether the context is actually working.
+    </li>
+  </ul>
+
+  <h2>Related ideas</h2>
+  <ul>
+    <li>
+      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a> —
+      the Measure stage.
+    </li>
+    <li>
+      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> — what the
+      audit walks the repo against.
+    </li>
+    <li>
+      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a> —
+      what is being scored.
+    </li>
+    <li>
+      <a href={url('blueprint/#contextops')}>2026 Blueprint — conformity rate</a>
+    </li>
+  </ul>
+
+  <CommandPager slug="audit" />
+</Doc>

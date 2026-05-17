@@ -1,0 +1,186 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import Callout from '../../components/Callout.astro';
+import FoundationPager from '../../components/FoundationPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'Anti-patterns';
+const description =
+  'Ten things that look like good context engineering and are not. Reject every one of them — including in your own output.';
+---
+
+<Doc title={title} description={description} section="foundation" eyebrow="Foundation · 05">
+  <p class="doc-lede">
+    Things that look like good context engineering and are not. Reject every
+    one of them — including in your own output.
+  </p>
+
+  <h2>1. Monolithic prompt bloat</h2>
+  <p>
+    <strong>Symptom.</strong> A <code>CLAUDE.md</code> or system prompt that
+    runs to thousands of words and includes the product roadmap, customer
+    personas, architecture diagram, and brand voice guidelines.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> The model has a finite attention budget.
+    Burying the actual rules under marketing copy means the rules get ignored.
+    Every token of bloat also costs money on every invocation.
+  </p>
+  <p>
+    <strong>Fix.</strong> One kind of content per file. Reference docs are
+    pulled in on demand via <code>@docs</code> or filepath mentions. The
+    Project layer file stays under 200 lines.
+  </p>
+
+  <h2>2. Vague principles without examples</h2>
+  <p>
+    <strong>Symptom.</strong> Rules like "use good judgment", "write clean
+    code", "follow our style guide".
+  </p>
+  <p>
+    <strong>Why it fails.</strong> "Clean" is a vibe, not a rule. The agent
+    has seen every "clean code" book in training and will pick whichever
+    interpretation produces the most output.
+  </p>
+  <p>
+    <strong>Fix.</strong> Every principle gets a concrete <em>Preferred</em>
+    vs <em>Avoid</em> pair with actual code.
+  </p>
+
+  <h2>3. Placeholder comments</h2>
+  <p>
+    <strong>Symptom.</strong> The agent leaves <code>// TODO: implement
+    this</code> or <code>pass  # come back later</code> in shipped code.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> TODOs never come back. They become
+    permanent. The next agent reading the file thinks "implement this" is a
+    real instruction and writes something speculative.
+  </p>
+  <p>
+    <strong>Fix.</strong> Every function is either fully implemented or not
+    included. If the agent does not have enough context to implement, it
+    stops and asks.
+  </p>
+
+  <h2>4. Implicit local assumptions</h2>
+  <p>
+    <strong>Symptom.</strong> Instructions like "use the local Postgres" or
+    "open the file in VS Code" without specifying which.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> The agent does not know your timezone, OS,
+    shell, Node version, default browser, or scratch directory. It will guess
+    — and the guess is statistically wrong.
+  </p>
+  <p>
+    <strong>Fix.</strong> State the assumption explicitly in the Session
+    layer, or have the agent ask before assuming. Never bake
+    personal-environment assumptions into the Project layer.
+  </p>
+
+  <h2>5. Over-exposing tools</h2>
+  <p>
+    <strong>Symptom.</strong> An MCP configuration that exposes every tool
+    the agent could possibly need, "just in case".
+  </p>
+  <p>
+    <strong>Why it fails.</strong> Every tool description costs tokens. Twenty
+    tool descriptions means twenty competing things to consider before doing
+    anything. The agent picks wrong more often, costs more, and the security
+    blast radius is huge.
+  </p>
+  <p>
+    <strong>Fix.</strong> Route tools by intent. See
+    <a href={url('foundation/mcp-principles/')}>MCP principles</a>.
+  </p>
+
+  <h2>6. Rules that fire everywhere</h2>
+  <p>
+    <strong>Symptom.</strong> A <code>.cursor/rules/global.mdc</code> that
+    applies to every file in the repo and contains both frontend and backend
+    conventions.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> When the agent edits a React component, it
+    does not need SQL migration conventions. They distract.
+  </p>
+  <p>
+    <strong>Fix.</strong> Scope rules to file patterns. The
+    <a href={url('commands/scope/')}><code>scope</code></a> command exists for
+    this.
+  </p>
+
+  <h2>7. Stale context</h2>
+  <p>
+    <strong>Symptom.</strong> A <code>CLAUDE.md</code> that still says "we use
+    Yarn 1" three months after the team migrated to pnpm.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> The agent confidently follows the stale
+    instructions and produces non-working scripts. The team blames AI when
+    the real failure is ContextOps.
+  </p>
+  <p>
+    <strong>Fix.</strong> Pre-commit hook that validates context files against
+    detected stack. <a href={url('commands/verify/')}><code>verify</code></a>
+    sets this up; <a href={url('commands/audit/')}><code>audit</code></a>
+    catches existing drift.
+  </p>
+
+  <h2>8. Treating memory as repo context</h2>
+  <p>
+    <strong>Symptom.</strong> "Magnus prefers terse responses" written into
+    <code>CLAUDE.md</code>.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> That is a fact about Magnus, not about the
+    repo. Another engineer joins, reads the file, and the agent now thinks
+    they prefer terse responses too. Cross-contamination.
+  </p>
+  <p>
+    <strong>Fix.</strong> User preferences live in agent memory or per-user
+    config, not in versioned repo files. The Project layer describes the
+    <em>project</em>, not the <em>people</em>.
+  </p>
+
+  <h2>9. Negative-space silence</h2>
+  <p>
+    <strong>Symptom.</strong> No record anywhere of approaches the team
+    considered and rejected.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> The agent will eventually suggest the
+    rejected approach — every time, forever — because it does not know it was
+    rejected.
+  </p>
+  <p>
+    <strong>Fix.</strong> Capture rejections in ADRs with a "Considered
+    alternatives" section, or in a dedicated <code>docs/decisions/negative-space.md</code>.
+  </p>
+
+  <h2>10. Verification as an afterthought</h2>
+  <p>
+    <strong>Symptom.</strong> Context files that tell the agent what to do
+    but not how to check the result.
+  </p>
+  <p>
+    <strong>Why it fails.</strong> The agent has no way to self-correct. The
+    human becomes the verification step, which is slow and unreliable.
+  </p>
+  <p>
+    <strong>Fix.</strong> Every instruction that produces an artifact also
+    names the command that verifies it. Bake it in with
+    <a href={url('commands/verify/')}><code>verify</code></a>.
+  </p>
+
+  <Callout label="Source" tone="mute">
+    <p>
+      <a href={url('blueprint/#good-practices')}>2026 Context Engineering
+      Blueprint — Practices to Avoid</a>. The flipside is
+      <a href={url('foundation/good-practices/')}>good practices</a>.
+    </p>
+  </Callout>
+
+  <FoundationPager slug="anti-patterns" />
+</Doc>

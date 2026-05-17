@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import Callout from '../components/Callout.astro';
+import { url } from '../lib/url';
+
+const title = 'Install';
+const description =
+  'Install the Groundwork skill in any AI coding harness. Claude Code, Cursor, Codex, Copilot, Gemini, OpenCode — 50+ supported. Plus the optional detector CLI for CI.';
+---
+
+<Base title={title} description={description}>
+  <main class="container install">
+    <span class="hero-eyebrow">Get started</span>
+    <h1>Install Groundwork</h1>
+    <p class="lede">
+      One command installs the skill. The installer detects your harness and
+      drops the files where they belong. The skill takes it from there.
+    </p>
+
+    <h2>1. Install the skill</h2>
+    <p>
+      The Groundwork skill is one umbrella entry with nine commands. It works
+      anywhere the open <a href="https://github.com/vercel-labs/skills">skills</a>
+      installer runs — that means Claude Code, Cursor, Codex, Gemini CLI,
+      OpenCode, and
+      <a href="https://github.com/vercel-labs/skills#supported-agents">50+ more</a>.
+    </p>
+
+    <pre><code>npx skills add IgniticAB/groundwork</code></pre>
+
+    <p>That is it. Open the agent, type <code>groundwork</code>, and the menu appears.</p>
+
+    <h3>Target a specific harness</h3>
+    <p>If you only want files for one or two harnesses, pass <code>-a</code>:</p>
+    <pre><code>npx skills add IgniticAB/groundwork -a claude-code
+npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
+
+    <h3>Install globally</h3>
+    <p>
+      To make the skill available across every project, install once with
+      <code>-g</code>:
+    </p>
+    <pre><code>npx skills add IgniticAB/groundwork -g</code></pre>
+
+    <Callout label="Where files land" tone="mute">
+      <p>
+        Files are placed in the location each harness expects —
+        <code>.claude/skills/groundwork/</code>, <code>.cursor/skills/groundwork/</code>,
+        <code>.agents/skills/groundwork/</code>, and so on. No magic, no editing
+        your dotfiles. See
+        <a href={url('foundation/harness-reference/')}>Harness reference</a> for
+        the full map.
+      </p>
+    </Callout>
+
+    <h2>2. Use it</h2>
+    <p>Three ways to invoke a command:</p>
+    <ul>
+      <li>
+        <strong>By name.</strong> <code>groundwork init</code>,
+        <code>groundwork audit</code>, <code>groundwork plan</code>. Works in
+        every harness.
+      </li>
+      <li>
+        <strong>By natural language.</strong>
+        <em>"Set up this repo for AI-first development"</em> triggers
+        <code>init</code>. <em>"How good is our AI setup?"</em> triggers
+        <code>audit</code>. The skill's description is opinionated enough that
+        the agent picks the right command.
+      </li>
+      <li>
+        <strong>By slash shortcut</strong> (Claude Code only, optional).
+        <code>/gw init</code>, <code>/gw audit</code>. Requires
+        <code>slash-commands/gw.md</code> in <code>.claude/commands/</code> —
+        ships with the skill.
+      </li>
+    </ul>
+
+    <p>
+      Common first move on a fresh repo:
+    </p>
+    <pre><code>groundwork init</code></pre>
+
+    <p>
+      Or, on a repo with existing stale context files:
+    </p>
+    <pre><code>groundwork document</code></pre>
+
+    <h2>3. Install the CLI (optional)</h2>
+    <p>
+      The Groundwork CLI is a deterministic detector. Ten rules. No LLM. JSON
+      output that build gates can consume. Use it where you cannot run an agent:
+      CI, pre-commit, IDE checks.
+    </p>
+    <pre><code>npm i -g @ignitic/groundwork</code></pre>
+    <p>
+      Then run <code>groundwork detect</code> from any project, or skip the
+      install:
+    </p>
+    <pre><code>npx @ignitic/groundwork detect</code></pre>
+
+    <Callout label="Skill vs. CLI" tone="ember">
+      <p>
+        The skill <strong>authors</strong> context. The CLI <strong>guards</strong>
+        it. They complement each other. Most teams run both — the skill for
+        humans iterating with the agent, the CLI in CI as a hard gate.
+      </p>
+    </Callout>
+
+    <h2>4. Stay updated</h2>
+    <p>The skill evolves. Pull the latest definitions periodically:</p>
+    <pre><code>npx @ignitic/groundwork skills update</code></pre>
+    <p>
+      Or re-install from scratch:
+      <code>npx skills add IgniticAB/groundwork</code>.
+    </p>
+
+    <h2>What to do next</h2>
+    <ul>
+      <li>
+        <strong>Brand new repo?</strong>
+        Run <a href={url('commands/init/')}><code>groundwork init</code></a>.
+      </li>
+      <li>
+        <strong>Existing repo with stale CLAUDE.md?</strong>
+        Run <a href={url('commands/document/')}><code>groundwork document</code></a>.
+      </li>
+      <li>
+        <strong>Not sure where you stand?</strong>
+        Run <a href={url('commands/audit/')}><code>groundwork audit</code></a> first.
+      </li>
+      <li>
+        <strong>Want to understand the model before installing?</strong>
+        Read <a href={url('foundation/')}>the foundation</a>.
+      </li>
+    </ul>
+
+    <Callout label="A note on memory" tone="mute">
+      <p>
+        Groundwork governs <strong>context</strong> — the files your repo
+        commits. It does not govern <strong>memory</strong> — your agent's
+        long-term notes about you. If you ask the skill to write your personal
+        preferences into <code>CLAUDE.md</code>, it will push back. Those go in
+        memory, not in the repo.
+      </p>
+    </Callout>
+  </main>
+
+  <style>
+    .install pre { max-width: 100%; }
+    .install h2 { border-top: 1px solid var(--rule); padding-top: 2rem; }
+    .install h2:first-of-type { border-top: none; padding-top: 0; }
+  </style>
+</Base>

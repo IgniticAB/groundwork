@@ -1,0 +1,186 @@
+---
+import Base from './Base.astro';
+import { url, isActive } from '../lib/url';
+import { commands } from '../data/commands';
+import { foundation } from '../data/foundation';
+
+interface Props {
+  title: string;
+  description: string;
+  /** "commands" | "foundation" — controls which sidebar list is active. */
+  section: 'commands' | 'foundation';
+  /** Optional eyebrow label above the H1. */
+  eyebrow?: string;
+}
+
+const { title, description, section, eyebrow } = Astro.props;
+const here = Astro.url.pathname;
+
+const sidebar =
+  section === 'commands'
+    ? {
+        heading: 'Commands',
+        indexHref: 'commands/',
+        items: commands.map((c) => ({
+          href: `commands/${c.slug}/`,
+          label: c.name,
+          hint: c.oneLiner,
+        })),
+      }
+    : {
+        heading: 'Foundation',
+        indexHref: 'foundation/',
+        items: foundation.map((f) => ({
+          href: `foundation/${f.slug}/`,
+          label: f.title,
+          hint: f.oneLiner,
+        })),
+      };
+---
+
+<Base title={title} description={description}>
+  <div class="doc">
+    <aside class="doc-sidebar" aria-label={`${sidebar.heading} navigation`}>
+      <div class="doc-sidebar-inner">
+        <a
+          href={url(sidebar.indexHref)}
+          class:list={['doc-sidebar-heading', isActive(here, sidebar.indexHref) && !isActive(here, sidebar.items[0].href) ? 'is-current' : '']}
+        >
+          {sidebar.heading}
+        </a>
+        <ul class="doc-sidebar-list">
+          {sidebar.items.map((item) => (
+            <li>
+              <a
+                href={url(item.href)}
+                class:list={['doc-sidebar-link', isActive(here, item.href) ? 'is-current' : '']}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+
+    <article class="doc-article">
+      {eyebrow && <div class="doc-eyebrow">{eyebrow}</div>}
+      <h1 class="doc-title">{title}</h1>
+      <slot />
+    </article>
+  </div>
+
+  <style is:global>
+    .doc {
+      max-width: var(--doc-max-width);
+      margin: 0 auto;
+      padding: 2.5rem var(--gutter) 4rem;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .doc-sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      font-size: 0.92rem;
+    }
+    .doc-sidebar-inner {
+      border-left: 1px solid var(--rule);
+      padding-left: 1rem;
+    }
+    .doc-sidebar-heading {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 650;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+      text-decoration: none;
+    }
+    .doc-sidebar-heading:hover { color: var(--ember-ink); }
+    .doc-sidebar-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+    .doc-sidebar-link {
+      display: block;
+      padding: 0.35rem 0;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      margin-left: -1rem;
+      padding-left: 1rem;
+      transition: color 120ms ease, border-color 120ms ease;
+    }
+    .doc-sidebar-link:hover {
+      color: var(--ink);
+    }
+    .doc-sidebar-link.is-current {
+      color: var(--ink);
+      font-weight: 600;
+      border-left-color: var(--ember);
+    }
+
+    .doc-article { min-width: 0; }
+    .doc-article > p:first-of-type,
+    .doc-article > .doc-lede {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+    .doc-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.74rem;
+      font-weight: 650;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ember-ink);
+      background: var(--ember-soft);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1.2rem;
+    }
+    .doc-title { margin-bottom: 1rem; }
+
+    @media (max-width: 880px) {
+      .doc {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .doc-sidebar {
+        position: static;
+      }
+      .doc-sidebar-inner {
+        border-left: none;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        padding: 1rem 0;
+      }
+      .doc-sidebar-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+      }
+      .doc-sidebar-link {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+      }
+      .doc-sidebar-link.is-current {
+        border-left: none;
+        border-bottom-color: var(--ember);
+      }
+    }
+  </style>
+</Base>

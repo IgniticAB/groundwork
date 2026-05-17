@@ -1,0 +1,113 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import Callout from '../../components/Callout.astro';
+import FoundationPager from '../../components/FoundationPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'Good practices';
+const description =
+  'Ten practices high-performing AI-first teams have converged on. Every one of them has a Groundwork command that operationalises it.';
+---
+
+<Doc title={title} description={description} section="foundation" eyebrow="Foundation · 04">
+  <p class="doc-lede">
+    Ten practices high-performing AI-first teams have converged on. Every one
+    of them has a Groundwork command behind it.
+  </p>
+
+  <h2>1. Negative space documentation</h2>
+  <p>
+    Document what was <em>not</em> done and why. Future agents (and humans)
+    read this and stop re-suggesting rejected paths. The
+    <strong>Reconsider if</strong> line is the magic — it tells future
+    engineers when the rejection should be revisited and when it should stay
+    closed.
+  </p>
+  <p>Command: <a href={url('commands/adr/')}><code>adr</code></a>.</p>
+
+  <h2>2. Defensive commits</h2>
+  <p>
+    Make a git commit before any large refactor or agent-driven change. Not
+    version-control hygiene — data loss prevention. Long agent sessions touch
+    dozens of files; without a checkpoint, partial rollback is painful.
+  </p>
+  <p>Command: <a href={url('commands/plan/')}><code>plan</code></a> includes a checkpoint step.</p>
+
+  <h2>3. Interface-first development</h2>
+  <p>
+    Define the types, the function signatures, the API contract,
+    <em>before</em> the implementation. The agent then has a hard constraint
+    and cannot invent a sprawling abstraction. The model is good at filling in
+    a defined shape. It is bad at choosing the shape.
+  </p>
+
+  <h2>4. Verification-driven logic</h2>
+  <p>
+    Every agent task ships with a verification command. The agent iterates
+    until verification passes. Without it, you become the reviewer for
+    syntax-level details. With it, you only review the design.
+  </p>
+  <p>Command: <a href={url('commands/verify/')}><code>verify</code></a>.</p>
+
+  <h2>5. Plan Mode discipline</h2>
+  <p>
+    Before any non-trivial implementation, the agent produces a plan. The
+    plan is reviewed and approved as a contract before any code is written.
+    The plan names what, where, how, and how to roll back.
+  </p>
+  <p>Command: <a href={url('commands/plan/')}><code>plan</code></a>.</p>
+
+  <h2>6. Standardised initialisation</h2>
+  <p>
+    Every new repo starts with the same scaffolding. A single command does it
+    so it is not skipped. The skipping is what kills teams: one repo without
+    context files becomes the one where the agent always misbehaves, and then
+    "AI is unreliable" becomes the team's narrative.
+  </p>
+  <p>Command: <a href={url('commands/init/')}><code>init</code></a>.</p>
+
+  <h2>7. Delta updates over rewrites</h2>
+  <p>
+    When a convention changes, do not rewrite the file. Add the new
+    convention with a date, mark the old one deprecated with a date and a
+    reason, and keep both visible. The <em>why</em> of the old convention is
+    often still relevant context.
+  </p>
+  <p>Command: <a href={url('commands/document/')}><code>document</code></a>.</p>
+
+  <h2>8. Scoped rules</h2>
+  <p>
+    Rules apply where they make sense. Frontend rules in frontend files;
+    database rules in migrations; nothing applies "globally" unless it really
+    is global (like "no placeholder comments").
+  </p>
+  <p>Command: <a href={url('commands/scope/')}><code>scope</code></a>.</p>
+
+  <h2>9. Least-privilege tooling</h2>
+  <p>
+    Agent access to live systems is partitioned. Read-only context is one
+    server; write actions are another. Destructive actions require human
+    approval. Operational, not just security: it also makes the agent's
+    mental model cleaner. "I am in read mode" produces better suggestions
+    than "I have all the tools".
+  </p>
+  <p>Command: <a href={url('commands/mcp/')}><code>mcp</code></a>.</p>
+
+  <h2>10. Measure conformity</h2>
+  <p>
+    The single metric worth tracking: percentage of generated code that
+    passes the project's own checks (tests, lint, types) without human
+    modification. Anything below 80% means the context is not communicating.
+  </p>
+  <p>Command: <a href={url('commands/audit/')}><code>audit</code></a> reports this.</p>
+
+  <Callout label="Source" tone="mute">
+    <p>
+      <a href={url('blueprint/#good-practices')}>2026 Context Engineering
+      Blueprint — Good Practices vs. High-Risk Anti-Patterns</a>. For the
+      flipside, see <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
+    </p>
+  </Callout>
+
+  <FoundationPager slug="good-practices" />
+</Doc>

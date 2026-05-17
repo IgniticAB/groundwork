@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+import Callout from '../components/Callout.astro';
+import { url } from '../lib/url';
+
+const title = 'The 2026 Blueprint';
+const description =
+  'The 2026 Context Engineering Blueprint — the source document Groundwork is built from. Architecting autonomous R&D and mitigating cognitive debt.';
+---
+
+<Base title={title} description={description}>
+  <main class="container blueprint">
+    <span class="hero-eyebrow">Source material</span>
+    <h1>The 2026 Context Engineering Blueprint</h1>
+    <p class="lede">
+      Architecting autonomous R&amp;D and mitigating cognitive debt. The source
+      document Groundwork is built from — distilled here, with the original
+      preserved in full in the repo.
+    </p>
+
+    <Callout label="The full text" tone="ember">
+      <p>
+        The full source —
+        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI-First%20R%26D%20Context%20Engineering%20101.md">
+          AI-First R&amp;D Context Engineering 101.md
+        </a>
+        — lives in the repo with its references and citations. This page is the
+        navigable summary, with anchors the rest of the site links back to.
+      </p>
+    </Callout>
+
+    <h2>The premise</h2>
+    <p>
+      In 2026, the bottleneck on AI-assisted engineering is no longer model
+      capability, it is the <em>context wall</em> — the limit of how
+      effectively an AI agent can reason over a codebase without being
+      overwhelmed by noise or misguided by ambiguity. Context engineering has
+      replaced prompt engineering as the foundational discipline. The
+      Anthropic 2026 Agentic Coding Trends Report names it as the single most
+      important skill shift for developers, citing a 40% reduction in "bad
+      suggestion" sessions among teams who master it.
+    </p>
+
+    <h2 id="five-layer">The five-layer context stack</h2>
+    <p>
+      A mature 2026 context strategy is built on a five-layer stack that
+      ensures the AI agent has the situational awareness it needs to act with
+      precision.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Description</th><th>Persistence</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>System</td><td>Role, persona, hard constraints, safety guardrails, output format</td><td>High · static</td></tr>
+        <tr><td>Project</td><td>Repo-level rules: <code>CLAUDE.md</code>, <code>.cursorrules</code>, tech stack</td><td>Medium · versioned</td></tr>
+        <tr><td>Codebase</td><td>Semantic indices, repo maps, documentation <code>@mentions</code></td><td>Medium · dynamic</td></tr>
+        <tr><td>Session</td><td>Chat history, task progress, recent error logs</td><td>Low · transient</td></tr>
+        <tr><td>Tooling</td><td>MCP servers, CLI access, API definitions</td><td>Medium · infrastructure</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The synergy between these layers prevents the common 2025 failure mode
+      where an agent would fix a local bug but inadvertently refactor
+      adjacent code in a way that violated project conventions.
+    </p>
+    <p><a href={url('foundation/five-layer-stack/')}>→ Foundation page: The five-layer stack</a></p>
+
+    <h2 id="cognitive-debt">Cognitive debt — the hidden risk</h2>
+    <p>
+      The most pervasive risk in the rapid adoption of AI-generated code is
+      the accumulation of cognitive debt: the gap between a system's evolving
+      structure and the team's shared understanding of how and why that
+      system works. AI agents reduce technical debt by automating refactors
+      and test generation. They simultaneously accelerate cognitive debt by
+      producing code faster than humans can internalise it.
+    </p>
+    <p>
+      Cognitive debt manifests through "cognitive surrender" — developers
+      adopt AI outputs with minimal scrutiny, bypassing deliberate reasoning.
+      Code functions and passes tests, but the human responsible for it has
+      "lost the plot". The danger is invisibility: unlike a linter, cognitive
+      debt only surfaces during a crisis.
+    </p>
+    <p>The four practices high-performing teams have converged on:</p>
+    <ul>
+      <li><strong>Atomic interaction and review.</strong> Large features broken into small, atomic changes. Each reviewed individually.</li>
+      <li><strong>Externalising intent.</strong> Architecture Decision Records and "negative space documentation" — explicitly recording what was <em>not</em> done and why.</li>
+      <li><strong>Mandatory Plan Mode.</strong> Before any implementation, the agent enters a plan that serves as a contract.</li>
+      <li><strong>Verification-first workflows.</strong> Rock-solid tests, linters, browser-based agents — the agent self-corrects against verification.</li>
+    </ul>
+    <p><a href={url('foundation/cognitive-debt/')}>→ Foundation page: Cognitive debt</a></p>
+
+    <h2 id="contextops">Maintainable architecture — ContextOps</h2>
+    <p>
+      A maintainable 2026 architecture is "AI-readable" without sacrificing
+      human clarity. The discipline is increasingly codified as
+      <strong>ContextOps</strong>: a systematic lifecycle for context
+      management that mirrors the DevOps revolution.
+    </p>
+    <ol>
+      <li><strong>Build.</strong> Automated tools scan repositories to detect patterns and generate initial standards and commands.</li>
+      <li><strong>Distribute.</strong> Rules generated in the specific formats each tool requires.</li>
+      <li><strong>Maintain.</strong> Pre-commit hooks and CI checks validate context files are updated alongside code changes.</li>
+      <li><strong>Update.</strong> Context evolution handled through delta updates rather than full rewrites, preserving historical knowledge.</li>
+      <li><strong>Measure.</strong> Track the conformity rate of generated code against defined standards to identify where context is failing.</li>
+    </ol>
+    <p>
+      Context-modular patterns standardised in 2026: <strong>scoped
+      rules</strong> with file-pattern frontmatter, <strong>agent persona
+      specialisation</strong> (the "copilot squad"), and
+      <strong>persistent project context</strong> (<code>CLAUDE.md</code>,
+      <code>AGENTS.md</code>) at the repo root.
+    </p>
+    <p><a href={url('foundation/contextops-lifecycle/')}>→ Foundation page: The ContextOps lifecycle</a></p>
+
+    <h2 id="harnesses">The 2026 toolchain</h2>
+    <p>
+      Three dominant tools, each with a distinct role and each effective only
+      to the extent the context fed to them is well-engineered.
+    </p>
+    <ul>
+      <li>
+        <strong>Claude Code</strong> — the autonomous CLI specialist for
+        high-autonomy tasks like complex refactoring and git-intensive
+        workflows. Best practices: <code>/init</code> as foundation,
+        verification loops in every prompt, <code>/compact</code> for long
+        sessions, CLI access only with strict security boundaries.
+      </li>
+      <li>
+        <strong>Cursor</strong> — the context-aware IDE. Daily driver for
+        most developers. Modern <code>.cursor/rules/*.mdc</code> with YAML
+        frontmatter; documentation indexing via the settings panel; git
+        worktrees for parallel feature development; BugBot integration on
+        GitHub for eight-pass review.
+      </li>
+      <li>
+        <strong>OpenAI Codex</strong> — full-featured macOS command center
+        for parallel agents. Cloud sandboxing for risky operations; agent
+        personalities per task type; Cerebras-powered speed bursts for urgent
+        work.
+      </li>
+    </ul>
+    <p><a href={url('foundation/harness-reference/')}>→ Foundation page: Harness reference</a></p>
+
+    <h2 id="management">Managing an AI-first R&amp;D department</h2>
+    <p>
+      Operating an R&amp;D department in 2026 requires a shift from measuring
+      "lines of code" to measuring <em>architectural consistency</em> and
+      <em>systemic health</em>. Data from the 2026 State of AI-First
+      Operations Report shows a measurable gap between high-performing
+      organisations and underperformers — driven primarily by tool
+      consolidation, ROI measurement frequency, and tracking the business
+      impact of AI.
+    </p>
+    <p>The role shifts:</p>
+    <ul>
+      <li><strong>The Orchestrator role.</strong> Engineers reskilled to act as agent coordinators, focusing on high-level design and quality evaluation rather than tactical implementation.</li>
+      <li><strong>Surge staffing.</strong> With context formalised, onboarding times collapse. Organisations can "surge" talent onto a project by feeding the existing context into the agentic team — full productivity within hours rather than weeks.</li>
+      <li><strong>Democratisation.</strong> Agentic tools enable non-technical stakeholders to build self-service tools, shifting R&amp;D's focus toward providing secure infrastructure and context playbooks for the rest of the company.</li>
+    </ul>
+
+    <h2 id="mcp">MCP — the protocols of the new perimeter</h2>
+    <p>
+      The Model Context Protocol has emerged as the "USB-C port for AI",
+      providing a standard interface for connecting models to real-world data
+      and tools. In 2026 it is the backbone of any serious AI-first
+      architecture.
+    </p>
+    <p>Three primitives:</p>
+    <ul>
+      <li><strong>Resources.</strong> Read-only data sources (e.g. PostgreSQL URIs) the model can access for context.</li>
+      <li><strong>Tools.</strong> Executable actions with defined JSON-schema inputs that the model can invoke to trigger side effects.</li>
+      <li><strong>Prompts.</strong> Reusable templates the host application can render.</li>
+    </ul>
+    <p>Three non-negotiables for security and governance:</p>
+    <ul>
+      <li><strong>Least-privilege binding.</strong> Agents granted only the minimum permissions required. Read-only context servers physically separated from mutation-capable tool servers.</li>
+      <li><strong>Human-in-the-loop (HITL).</strong> High-stakes actions like production deployments or destructive queries must require explicit human approval via a consent UI.</li>
+      <li><strong>Centralised auditing.</strong> Every tool invocation — agent identity, parameters, response — logged for real-time alerting on unusual patterns or unauthorised access.</li>
+    </ul>
+    <p><a href={url('foundation/mcp-principles/')}>→ Foundation page: MCP principles</a></p>
+
+    <h2 id="pruning">Context pruning — overcoming the context wall</h2>
+    <p>
+      To handle the context wall problem, 2026 R&amp;D departments have moved
+      beyond simple token limits toward task-aware, adaptive pruning.
+      <strong>SWE-Pruner</strong> uses a lightweight model to selectively skim
+      source code, capturing the raw context and filtering it down to lines
+      relevant to the agent's stated goal. <strong>Semantic
+      de-duplication</strong> uses embeddings to detect and merge
+      semantically similar instructions in persistent context files.
+      <strong>Incremental delta updates</strong> (the ACE framework) perform
+      localised updates that accumulate new insights while preserving
+      historical knowledge.
+    </p>
+
+    <h2 id="good-practices">Good practices and high-risk anti-patterns</h2>
+
+    <h3>Practices to embrace</h3>
+    <ul>
+      <li><strong>Negative space documentation.</strong> Documenting rejected paths prevents the AI from suggesting them repeatedly.</li>
+      <li><strong>Defensive commits.</strong> Creating a git checkpoint before refactoring protects against data loss during long sessions.</li>
+      <li><strong>Interface-first development.</strong> Defining types before implementation prevents the AI from building sprawling, incorrect abstractions.</li>
+      <li><strong>Verification-driven logic.</strong> Providing test commands allows the agent to self-correct.</li>
+      <li><strong>Standardised <code>/init</code> commands.</strong> Automating the creation of context files ensures every repo starts with a baseline of rules.</li>
+    </ul>
+
+    <h3>Practices to avoid</h3>
+    <ul>
+      <li><strong>Monolithic prompt bloat.</strong> System prompts as a dumping ground for product docs wastes tokens and pushes important context away from the model's attention.</li>
+      <li><strong>Vague principles without examples.</strong> "Use good judgment" is useless. Anchor every principle to concrete Preferred vs Avoid pairs.</li>
+      <li><strong>Placeholder comments.</strong> Never allow <code>// TODO: implement this</code>. Functions are either complete or absent.</li>
+      <li><strong>Implicit local assumptions.</strong> The agent does not know your timezone, device, or permissions. State them in the Session layer.</li>
+      <li><strong>Over-exposing tools.</strong> Route tools by intent — every tool description costs tokens and adds attention noise.</li>
+    </ul>
+
+    <p>
+      <a href={url('foundation/good-practices/')}>→ Foundation page: Good practices</a><br />
+      <a href={url('foundation/anti-patterns/')}>→ Foundation page: Anti-patterns</a>
+    </p>
+
+    <h2>Actionable strategy for 2026</h2>
+    <ol>
+      <li><strong>Immediate initialisation.</strong> Audit all core repositories and establish <code>CLAUDE.md</code> and <code>.cursor/rules/</code> directories. This formalises the Project context layer and reduces AI rework by up to 80%.</li>
+      <li><strong>Adopt ContextOps.</strong> Implement a versioned lifecycle for context management. Ensure architectural decisions (ADRs) are automatically converted into context files agents can act upon.</li>
+      <li><strong>Harden the MCP layer.</strong> Move integrations to the Model Context Protocol standard. Focus on least-privilege and human-in-the-loop for any destructive operation.</li>
+      <li><strong>Incentivise understanding.</strong> Repay cognitive debt by making "understanding" a core metric. Reward teams that prioritise active plan review and rationale documentation over raw feature velocity.</li>
+      <li><strong>Scale through orchestration.</strong> Reskill the workforce to act as agent coordinators. Shift engineering focus toward strategic problem decomposition and system-wide architectural consistency.</li>
+    </ol>
+
+    <Callout label="The core argument" tone="ember">
+      <p>
+        Context engineering has shifted the R&amp;D narrative from technology
+        in isolation to a strategy of deep integration. <strong>Context is the
+        new code, and engineering it is the new mandate.</strong> The
+        organisations that pull ahead are not those with the best models, but
+        those with the most refined and governed information environments.
+      </p>
+    </Callout>
+
+    <h2>Where to go from here</h2>
+    <ul>
+      <li><a href={url('foundation/')}>The foundation</a> — seven short pages distilling the model.</li>
+      <li><a href={url('commands/')}>The commands</a> — nine operational moves that put the model to work.</li>
+      <li><a href={url('install/')}>Install</a> — one command, every harness.</li>
+      <li>
+        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI-First%20R%26D%20Context%20Engineering%20101.md">
+          The full source document (with references)
+        </a>
+      </li>
+    </ul>
+  </main>
+
+  <style>
+    .blueprint h2 {
+      border-top: 1px solid var(--rule);
+      padding-top: 2rem;
+      scroll-margin-top: 2rem;
+    }
+    .blueprint h2:first-of-type { border-top: none; padding-top: 0; }
+    .blueprint h3 { scroll-margin-top: 2rem; }
+  </style>
+</Base>

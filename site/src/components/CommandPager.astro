@@ -1,0 +1,42 @@
+---
+import { url } from '../lib/url';
+import { getCommandNeighbors } from '../data/commands';
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const { prev, next } = getCommandNeighbors(slug);
+---
+
+<nav class="pager" aria-label="Command navigation">
+  {prev ? (
+    <a href={url(`commands/${prev.slug}/`)} class="pager-prev">
+      <div class="pager-label">← Previous command</div>
+      <div class="pager-title"><code>{prev.name}</code></div>
+    </a>
+  ) : (
+    <a href={url('commands/')} class="pager-prev">
+      <div class="pager-label">← Back</div>
+      <div class="pager-title">All commands</div>
+    </a>
+  )}
+  {next ? (
+    <a href={url(`commands/${next.slug}/`)} class="pager-next">
+      <div class="pager-label">Next command →</div>
+      <div class="pager-title"><code>{next.name}</code></div>
+    </a>
+  ) : (
+    <a href={url('foundation/')} class="pager-next">
+      <div class="pager-label">Up next →</div>
+      <div class="pager-title">The foundation</div>
+    </a>
+  )}
+
+  <style>
+    .pager a code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-weight: 700;
+    }
+  </style>
+</nav>
