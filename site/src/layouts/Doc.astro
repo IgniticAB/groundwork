@@ -9,11 +9,9 @@ interface Props {
   description: string;
   /** "commands" | "foundation": controls which sidebar list is active. */
   section: 'commands' | 'foundation';
-  /** Optional eyebrow label above the H1. */
-  eyebrow?: string;
 }
 
-const { title, description, section, eyebrow } = Astro.props;
+const { title, description, section } = Astro.props;
 const here = Astro.url.pathname;
 
 const sidebar =
@@ -64,7 +62,6 @@ const sidebar =
     </aside>
 
     <article class="doc-article">
-      {eyebrow && <div class="doc-eyebrow">{eyebrow}</div>}
       <h1 class="doc-title">{title}</h1>
       <slot />
     </article>
@@ -93,13 +90,12 @@ const sidebar =
     }
     .doc-sidebar-heading {
       display: block;
-      font-size: 0.74rem;
-      font-weight: 650;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink);
       margin-bottom: 0.8rem;
       text-decoration: none;
+      letter-spacing: -0.005em;
     }
     .doc-sidebar-heading:hover { color: var(--ember-ink); }
     .doc-sidebar-list {
@@ -137,20 +133,6 @@ const sidebar =
       font-size: 1.15rem;
       line-height: 1.6;
       color: var(--ink-soft);
-    }
-    .doc-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.74rem;
-      font-weight: 650;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ember-ink);
-      background: var(--ember-soft);
-      padding: 0.3rem 0.65rem;
-      border-radius: 999px;
-      margin-bottom: 1.2rem;
     }
     .doc-title { margin-bottom: 1rem; }
 
