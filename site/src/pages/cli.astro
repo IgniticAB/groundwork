@@ -5,7 +5,7 @@ import { url } from '../lib/url';
 
 const title = 'CLI';
 const description =
-  'The Groundwork CLI is a deterministic detector for context engineering anti-patterns. No LLM. Runs in milliseconds. Outputs JSON for CI gates. Ten rules covering the highest-value mechanical checks.';
+  'The Groundwork CLI is a deterministic detector for context engineering anti-patterns. No LLM. Runs in milliseconds. Outputs JSON for CI gates. Twelve rules covering the highest-value mechanical checks.';
 ---
 
 <Base title={title} description={description}>
@@ -13,7 +13,7 @@ const description =
     <h1>The Groundwork CLI</h1>
     <p class="lede">
       A deterministic detector for context engineering anti-patterns. No LLM,
-      no inference, no opinions. Ten rules, JSON output, runs in milliseconds.
+      no inference, no opinions. Twelve rules, JSON output, runs in milliseconds.
       The thing you wire into CI so context drift never ships.
     </p>
 
@@ -72,9 +72,9 @@ groundwork list-rules</code></pre>
       </tbody>
     </table>
 
-    <h2>The ten rules</h2>
+    <h2>The twelve rules</h2>
     <p>
-      Version 0.1 ships ten rules, covering the highest-value mechanical
+      The CLI ships twelve rules, covering the highest-value mechanical
       checks an LLM cannot reliably perform itself.
     </p>
 
@@ -133,6 +133,16 @@ groundwork list-rules</code></pre>
           <td>P2</td>
           <td><code>TODO</code> / <code>FIXME</code> / <code>HACK</code> markers above the noise threshold (25 in v0.1).</td>
         </tr>
+        <tr>
+          <td><code>agents-claude-sync</code></td>
+          <td>P1</td>
+          <td><code>AGENTS.md</code> and <code>CLAUDE.md</code> exist as separate files with diverging content. Agents reading one see different rules from agents reading the other.</td>
+        </tr>
+        <tr>
+          <td><code>oversized-cursor-rule</code></td>
+          <td>P2</td>
+          <td>A <code>.cursor/rules/*.mdc</code> file exceeds the word budget for its trigger level. Always-applied rules pay attention cost on every prompt; P1 at that tier.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -161,7 +171,7 @@ groundwork list-rules</code></pre>
     &gt; const token = "ghp_****************dEf"
     fix: Rotate the credential and remove from history (BFG / git-filter-repo).
 
-10 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
+12 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
 
     <p>JSON for build gates and reporting:</p>
     <pre><code>{`{`}
@@ -241,7 +251,7 @@ import { something } from './generated';
       <li><code>todo-comments</code></li>
     </ul>
     <p>
-      The other six rules check structural facts about specific files
+      The other eight rules check structural facts about specific files
       (<code>CLAUDE.md</code> length, presence of a Verification section,
       package-manager drift, ADR cross-links). Inline suppression does not
       apply there; if you want to skip those checks, use <code>--only</code>

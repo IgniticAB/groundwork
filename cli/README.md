@@ -36,7 +36,7 @@ This is a thin wrapper around `npx skills update groundwork` from the [vercel-la
 
 ## What it detects
 
-Ten rules in v0.1, covering the highest-value mechanical checks:
+Twelve rules, covering the highest-value mechanical checks:
 
 | Rule | Severity | What it catches |
 | --- | --- | --- |
@@ -50,6 +50,8 @@ Ten rules in v0.1, covering the highest-value mechanical checks:
 | `secrets-regex` | P0 | AWS / GitHub / OpenAI / Anthropic / Slack / PEM / JWT / Google keys in committed files |
 | `missing-license-header` | P2 | Repo is copyleft-licensed but source files lack SPDX headers |
 | `todo-comments` | P2 | TODO / FIXME / HACK markers (noise threshold: 25) |
+| `agents-claude-sync` | P1 | AGENTS.md and CLAUDE.md exist as separate files with diverging content |
+| `oversized-cursor-rule` | P2 | `.cursor/rules/*.mdc` exceeds word budget for its trigger level (P1 for `alwaysApply: true`) |
 
 Severity:
 - **P0** — fix before next agent session. The agent will actively do the wrong thing.
@@ -70,7 +72,7 @@ P0 2 findings
     > const token = "ghp_****************dEf"
     fix: Rotate the credential and remove from history (BFG / git-filter-repo).
 
-10 rules, 47ms — 2 P0 · 0 P1 · 0 P2
+12 rules, 47ms — 2 P0 · 0 P1 · 0 P2
 ```
 
 JSON (for CI):

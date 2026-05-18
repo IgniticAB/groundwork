@@ -10,6 +10,8 @@ import { missingVerification } from './missing-verification.js';
 import { secretsRegex } from './secrets-regex.js';
 import { missingLicenseHeader } from './missing-license-header.js';
 import { todoComments } from './todo-comments.js';
+import { agentsClaudeSync } from './agents-claude-sync.js';
+import { oversizedCursorRule } from './oversized-cursor-rule.js';
 
 export const rules: Rule[] = [
   staleClaudeMd,
@@ -22,4 +24,6 @@ export const rules: Rule[] = [
   secretsRegex,
   missingLicenseHeader,
   todoComments,
+  agentsClaudeSync,
+  oversizedCursorRule,
 ];
