@@ -1,6 +1,6 @@
 {
   "name": "@ignitic/groundwork",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Deterministic context-engineering detector. Finds stale CLAUDE.md, missing ADR cross-links, MCP misconfigurations, secrets in repo, and other context-engineering anti-patterns. No LLM required.",
   "keywords": [
     "context-engineering",
