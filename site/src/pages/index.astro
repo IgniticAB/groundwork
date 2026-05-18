@@ -55,7 +55,15 @@ const tree = [
       </p>
 
       <div class="hero-cta">
-        <code class="cmd-block">npx skills add IgniticAB/groundwork</code>
+        <button
+          type="button"
+          class="cmd-block cmd-block--copy"
+          data-copy="npx skills add IgniticAB/groundwork"
+          aria-label="Copy install command to clipboard"
+        >
+          <span class="cmd-text">npx skills add IgniticAB/groundwork</span>
+          <span class="cmd-state" aria-hidden="true">copy</span>
+        </button>
         <div class="hero-cta-links">
           <a class="hero-arrow" href={url('install/')}>Install guide<span aria-hidden="true">→</span></a>
           <a class="hero-arrow" href={url('commands/')}>The nine commands<span aria-hidden="true">→</span></a>
@@ -279,7 +287,7 @@ const tree = [
     .hero-status { font-variant-numeric: tabular-nums; }
 
     .hero-display {
-      font-size: clamp(4.8rem, 18vw, 16rem);
+      font-size: clamp(4.8rem, 14vw, 16rem);
       line-height: 0.84;
       margin: 0;
       color: var(--cream);
@@ -295,6 +303,24 @@ const tree = [
       vertical-align: 0.05em;
       background: var(--ember-glow);
       border-radius: 999px;
+      animation: ignite 760ms var(--ease-out-quart) both;
+    }
+    @keyframes ignite {
+      0% {
+        transform: scale(0);
+        box-shadow: 0 0 0 0 rgba(255, 161, 75, 0);
+      }
+      55% {
+        transform: scale(1.25);
+        box-shadow: 0 0 0 0.12em rgba(255, 161, 75, 0.36);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 161, 75, 0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-display-stop { animation: none; }
     }
 
     .hero-tag {
@@ -348,6 +374,46 @@ const tree = [
       border-bottom-color: var(--cream);
     }
     .hero-arrow:hover span { transform: translateX(3px); }
+
+    /* click-to-copy install command */
+    button.cmd-block,
+    button.cmd-block--copy {
+      font: inherit;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+    .cmd-block .cmd-text {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cmd-block .cmd-state {
+      flex: 0 0 auto;
+      margin-left: 1rem;
+      font-family: var(--sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: rgba(255, 249, 236, 0.55);
+      transition: color 160ms var(--ease-out-quart),
+                  opacity 160ms var(--ease-out-quart);
+    }
+    .cmd-block:hover .cmd-state {
+      color: var(--ember-glow);
+    }
+    .cmd-block:focus-visible .cmd-state {
+      color: var(--ember-glow);
+    }
+    .cmd-block[data-state="copied"] .cmd-state {
+      color: var(--cream);
+    }
+    .cmd-block[data-state="copied"]::before {
+      color: var(--cream);
+    }
 
     .hero-ledge {
       max-width: var(--hero-max-width);
@@ -893,4 +959,57 @@ const tree = [
       .closing-head { font-size: clamp(2rem, 11vw, 3rem); }
     }
   </style>
+
+  <script>
+    // click-to-copy on the hero install command
+    document.querySelectorAll<HTMLElement>('[data-copy]').forEach((el) => {
+      el.addEventListener('click', async () => {
+        const text = el.dataset.copy;
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          // fall back: select the inner text node so the user can Cmd+C
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+          return;
+        }
+        el.setAttribute('data-state', 'copied');
+        const state = el.querySelector('.cmd-state');
+        const previous = state?.textContent ?? 'copy';
+        if (state) state.textContent = 'copied';
+        window.setTimeout(() => {
+          el.removeAttribute('data-state');
+          if (state) state.textContent = previous;
+        }, 1800);
+      });
+    });
+
+    // a note for the curious
+    const title = [
+      'color:#ffa14b',
+      'font-family:Bricolage Grotesque,system-ui,sans-serif',
+      'font-size:1.1rem',
+      'font-weight:700',
+      'letter-spacing:-0.02em',
+    ].join(';');
+    const body = [
+      'color:#6a635e',
+      'font-family:system-ui,sans-serif',
+      'font-size:0.85rem',
+      'line-height:1.55',
+    ].join(';');
+    const link = [
+      'color:#8a4d04',
+      'font-family:ui-monospace,monospace',
+      'font-size:0.85rem',
+      'font-weight:600',
+    ].join(';');
+    console.log('%cGroundwork.', title);
+    console.log('%cContext engineering for any LLM. This site was built with the same skill we ship.', body);
+    console.log('%cgithub.com/IgniticAB/groundwork', link);
+  </script>
 </Base>
