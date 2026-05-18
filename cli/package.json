@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "groundwork": "./bin/groundwork.mjs"
+    "groundwork": "bin/groundwork.mjs"
   },
   "main": "./dist/index.js",
   "files": [
