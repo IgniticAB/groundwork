@@ -179,6 +179,87 @@ groundwork list-rules</code></pre>
   ]
 {`}`}</code></pre>
 
+    <h2>Ignoring findings</h2>
+    <p>
+      Three layers, lightest to heaviest. Use the lightest one that does the job.
+    </p>
+
+    <h3>Default directory skips</h3>
+    <p>
+      The detector never walks into these directories. They are hardcoded; you
+      do not need to configure anything.
+    </p>
+    <pre><code>node_modules · .git · dist · build · .next · .turbo
+coverage · .cache · target · __pycache__ · vendor</code></pre>
+    <p>
+      This means generated code, vendored dependencies, and tool caches are
+      always excluded. If you build into a non-standard directory (say
+      <code>out/</code> or <code>public/build/</code>) and you do not want it
+      scanned, the simplest move is to rename to one of the names above or
+      mark the build output with a file-level ignore (below).
+    </p>
+
+    <h3>Inline: <code>ce-ignore</code></h3>
+    <p>
+      Suppress a single finding by putting <code>ce-ignore</code> as a
+      whole-word marker on the offending line, or on the line directly above
+      it. The match is case-insensitive and works inside any comment syntax,
+      so this works in TypeScript, Python, Go, shell, YAML, anywhere a
+      comment can live.
+    </p>
+    <pre><code>{`// ce-ignore: test fixture below, not a real secret
+const aws_key = "AKIAIOSFODNN7EXAMPLE";
+
+const token = "ghp_example1234567890example"; // ce-ignore: literal example
+`}</code></pre>
+    <p>
+      Modeled on <code>eslint-disable-next-line</code>. Use it when the
+      finding is a known false positive (a test fixture, a documentation
+      example, a deliberately committed sample). Keep the comment specific
+      so the next reader understands why the line is exempted; "ce-ignore"
+      alone is fine but a short reason ages better.
+    </p>
+
+    <h3>Whole-file: <code>ce-ignore-file</code></h3>
+    <p>
+      Opt the entire file out by placing <code>ce-ignore-file</code> anywhere
+      in its <strong>first five lines</strong>. Useful for vendored snippets,
+      generated fixtures, or any source file whose contents are not your code
+      to fix.
+    </p>
+    <pre><code>{`// ce-ignore-file: vendored from upstream, do not edit
+import { something } from './generated';
+// ...
+`}</code></pre>
+
+    <h3>Which rules respect inline and file markers</h3>
+    <p>The four pattern-matching rules:</p>
+    <ul>
+      <li><code>placeholder-comments</code></li>
+      <li><code>secrets-regex</code></li>
+      <li><code>mcp-literal-credentials</code></li>
+      <li><code>todo-comments</code></li>
+    </ul>
+    <p>
+      The other six rules check structural facts about specific files
+      (<code>CLAUDE.md</code> length, presence of a Verification section,
+      package-manager drift, ADR cross-links). Inline suppression does not
+      apply there; if you want to skip those checks, use <code>--only</code>
+      to run a subset, or fix the underlying issue.
+    </p>
+
+    <Callout label="What is not yet supported" tone="mute">
+      <p>
+        No <code>.gitignore</code> parsing, no <code>.groundworkignore</code>
+        file, no <code>--ignore</code> CLI flag. Default skips and the two
+        comment markers cover the common cases; if you hit a real need that
+        these do not solve, open an issue at
+        <a href="https://github.com/IgniticAB/groundwork/issues">IgniticAB/groundwork</a>
+        with the specific pattern. Most likely outcome: a new default-skip
+        directory ships in the next minor.
+      </p>
+    </Callout>
+
     <h2>CI integration</h2>
     <p>One line in GitHub Actions:</p>
     <pre><code>{`- name: groundwork
