@@ -78,6 +78,7 @@ alwaysApply: false
     <tbody>
       <tr><td>Repo-wide instructions</td><td><code>.github/copilot-instructions.md</code></td><td>Loaded automatically by Copilot Chat</td></tr>
       <tr><td>Path-specific</td><td><code>.github/instructions/&lt;name&gt;.instructions.md</code></td><td>YAML frontmatter with <code>applyTo</code> glob</td></tr>
+      <tr><td>Domain-specific agent profiles</td><td><code>.github/agents/&lt;name&gt;.agent.md</code></td><td>YAML frontmatter; invoked via <code>/agent &lt;name&gt;</code></td></tr>
     </tbody>
   </table>
 
@@ -85,6 +86,39 @@ alwaysApply: false
   <pre><code>---
 applyTo: "src/components/**/*.tsx"
 ---</code></pre>
+
+  <p>Copilot agent-profile frontmatter:</p>
+  <pre><code>---
+name: data-validator
+description: Parses JSON configs and audits schema structures.
+tools: [read, grep]
+---</code></pre>
+
+  <p>
+    Agent profiles let you carve out narrow, domain-specific contexts that
+    only load when the user invokes <code>/agent data-validator</code> (or
+    similar). Examples: an <code>error-handler.agent.md</code> that only
+    audits catch blocks; a <code>migration.agent.md</code> that knows your DB
+    migration conventions. Keeps the main completion context lean.
+  </p>
+
+  <h2 id="windsurf">Windsurf</h2>
+
+  <table>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Workspace rules (single file)</td><td><code>.windsurfrules</code></td><td>Max 6,000 characters; legacy single-file style</td></tr>
+      <tr><td>Workspace rules (directory)</td><td><code>.windsurf/rules/&lt;name&gt;.md</code></td><td>Multiple scoped files; 12,000 character total budget across all rule files</td></tr>
+      <tr><td>Persistent agent memories</td><td><code>.windsurfmemories</code></td><td>Cascade auto-writes cross-session facts here (stack shifts, architectural discoveries). Agent-managed; humans rarely edit.</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    Windsurf rules support global workspace scope, file-pattern glob matching,
+    or model-driven activation, depending on how each rule file is structured.
+    The character budgets are hard limits; exceeding them silently truncates
+    content.
+  </p>
 
   <h2>Cowork</h2>
 
@@ -117,19 +151,43 @@ applyTo: "src/components/**/*.tsx"
 
   <p>Default reasoning:</p>
   <ul>
-    <li>Claude Code or Cowork mentioned → <code>CLAUDE.md</code> + <code>AGENTS.md</code>.</li>
+    <li>Claude Code or Cowork mentioned → <code>AGENTS.md</code> with <code>CLAUDE.md</code> as a symlink to it (default; see <a href={url('foundation/good-practices/')}>good practices</a> for the rationale).</li>
     <li>Cursor mentioned → add <code>.cursor/rules/</code>.</li>
-    <li>Codex mentioned → ensure <code>AGENTS.md</code> exists.</li>
-    <li>Copilot mentioned → add <code>.github/copilot-instructions.md</code>.</li>
+    <li>Codex mentioned → <code>AGENTS.md</code> already covers it.</li>
+    <li>Copilot mentioned → add <code>.github/copilot-instructions.md</code>; add <code>.github/agents/</code> for domain profiles.</li>
+    <li>Windsurf mentioned → add <code>.windsurf/rules/</code> (preferred) or <code>.windsurfrules</code>.</li>
     <li>None mentioned → ask. Do not assume.</li>
   </ul>
   <p>Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero once the canonical rules are written.</p>
 
+  <h2>Numeric-prefix naming for <code>.claude/rules/</code></h2>
+
+  <p>
+    When emitting <code>.claude/rules/&lt;name&gt;.md</code> files, prefix
+    with two digits to set the load order via filename sort. Suggested ranges:
+  </p>
+
+  <ul>
+    <li><code>00-09</code>: orientation</li>
+    <li><code>10-29</code>: global style and naming</li>
+    <li><code>30-49</code>: verification and build</li>
+    <li><code>50-69</code>: per-area conventions (frontend, db, infra)</li>
+    <li><code>70-89</code>: security, MCP, credentials</li>
+    <li><code>90-99</code>: exceptions and overrides</li>
+  </ul>
+
+  <p>
+    Leave gaps between numbers so future rules slot in without renumbering.
+    The same pattern is recommended for any harness with directory-loaded
+    rule files (Cursor's <code>.cursor/rules/</code>, Windsurf's
+    <code>.windsurf/rules/</code>).
+  </p>
+
   <Callout label="Source" tone="mute">
     <p>
-      Drawn from the 2026 Blueprint sections on
-      <a href={url('blueprint/#harnesses')}>Claude Code, Cursor, and Codex
-      operational best practices</a>, plus first-hand evolution since.
+      Drawn from both source documents at
+      <a href={url('blueprint/#harnesses')}>/blueprint § harnesses</a>, plus
+      first-hand evolution since.
     </p>
   </Callout>
 

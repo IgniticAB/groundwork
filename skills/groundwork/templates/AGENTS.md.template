@@ -1,7 +1,15 @@
 # <Project name> — agent context
 
-<!-- AGENTS.md is the cross-tool standard for Codex, generic agents, and any harness that reads it.
-     The content here mirrors CLAUDE.md. Keep both in sync via groundwork document. -->
+<!-- AGENTS.md is the canonical cross-tool source for every harness that reads it
+     (Codex, Copilot, generic agents). CLAUDE.md in this repo is a symlink to
+     this file, so editing here updates both. If your environment cannot create
+     symlinks (rare; some Windows + git core.symlinks=false setups), CLAUDE.md
+     is kept as a copy and `.context/hooks/check-context.sh` verifies parity
+     on commit.
+
+     Aim under ~400 tokens (roughly 80 lines) in this file. Move stable rules,
+     long examples, and per-area conventions to `.claude/rules/<NN>-<name>.md`
+     and reference them via the See also section. -->
 
 ## What this project is
 
@@ -28,11 +36,17 @@ Before declaring a task done:
 
 ## Style
 
+<!-- 3 to 6 most critical rules. Every rule is behaviorally anchored: it names
+     the exact technology, command, or pattern. Each has a Preferred / Avoid
+     pair. Full set lives in .context/conventions.md and .claude/rules/. -->
+
 ### <Rule 1>
 ```<lang>
 // Preferred
+<code>
 
 // Avoid
+<code>
 ```
 
 ### <Rule 2>
@@ -42,13 +56,23 @@ Before declaring a task done:
 // Avoid
 ```
 
-## Out-of-bounds
+## Boundaries
 
-- `<path>`: <reason>
+<!-- Three explicit tiers replace the older flat "out-of-bounds" framing. -->
+
+**Always**: <things the agent must do without asking>
+- <path or behavior>
+
+**Ask first**: <things the agent must propose before doing>
+- <path or behavior>
+
+**Never**: <things the agent is forbidden from touching>
+- <path>: <reason>
 
 ## Where to look for more
 
-- `.context/conventions.md` — full conventions
+- `.context/conventions.md` — full conventions, with the three-tier boundary breakdown
+- `.claude/rules/` — split rule files loaded on demand (numeric prefix sets load order)
 - `docs/decisions/` — ADRs
 - `docs/decisions/negative-space.md` — rejected paths
 - `docs/mcp-policy.md` — agent access policy, if applicable

@@ -6,6 +6,21 @@ globs:
 alwaysApply: false
 ---
 
+<!-- Cursor trigger-level word budgets. Pick the level that matches how often
+     this rule needs to be in the agent's active window. Smaller is better.
+
+       Always Apply        alwaysApply: true,  globs: []      <  200 words
+       Auto-Attached       alwaysApply: false, globs: set     200–500 words
+       Agent-Requested     alwaysApply: false, description    500–800 words
+       Manual              alwaysApply: false (referenced     no strict cap
+                            via @rule-name from chat)
+
+     The budget refers to the body of this file (not the frontmatter). Longer
+     bodies cost tokens on every Cursor inference, on every file that matches.
+     If your rule has grown past the budget, split it across multiple .mdc
+     files scoped to narrower globs, or move long examples into
+     .claude/rules/ and reference them. -->
+
 # <Area> conventions
 
 <!-- 3 to 6 rules. One Preferred/Avoid pair each, or a verification command. -->
@@ -42,4 +57,5 @@ alwaysApply: false
 ## See also
 
 - `.context/conventions.md` — repo-wide conventions
+- `.claude/rules/` — split rule files for Claude Code
 - `docs/decisions/` — ADRs

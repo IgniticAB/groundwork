@@ -1,26 +1,37 @@
+const SOFT_LIMIT = 80; // lean-root spirit (~400 tokens)
+const HARD_LIMIT = 200; // attention-bloat ceiling
 const TARGETS = [
-    { path: 'CLAUDE.md', limit: 200 },
-    { path: 'AGENTS.md', limit: 200 },
-    { path: '.github/copilot-instructions.md', limit: 200 },
+    'CLAUDE.md',
+    'AGENTS.md',
+    '.github/copilot-instructions.md',
 ];
 export const oversizedClaudeMd = {
     id: 'oversized-claude-md',
-    description: 'A Project-layer context file is over its line budget (default 200).',
+    description: 'A Project-layer context file is over its line budget. Soft warning at 80 lines (lean-root spirit, ~400 tokens), hard ceiling at 200 lines.',
     defaultSeverity: 'P1',
     async run(ctx) {
         const findings = [];
-        for (const t of TARGETS) {
-            const body = await ctx.readFile(t.path);
+        for (const path of TARGETS) {
+            const body = await ctx.readFile(path);
             if (!body)
                 continue;
             const lines = body.split('\n').length;
-            if (lines > t.limit) {
+            if (lines > HARD_LIMIT) {
                 findings.push({
                     ruleId: 'oversized-claude-md',
                     severity: 'P1',
-                    file: t.path,
-                    message: `${t.path} is ${lines} lines (limit ${t.limit}). Move detail to dedicated docs and reference them.`,
-                    fix: 'Split content into docs/ files and reference from this one.',
+                    file: path,
+                    message: `${path} is ${lines} lines (hard ceiling ${HARD_LIMIT}). Attention bloat. Move stable rules into .claude/rules/<NN>-<name>.md and long detail into .context/conventions.md.`,
+                    fix: 'Adopt the split-file architecture: lean root + .claude/rules/ directory. Run `groundwork document` after splitting.',
+                });
+            }
+            else if (lines > SOFT_LIMIT) {
+                findings.push({
+                    ruleId: 'oversized-claude-md',
+                    severity: 'P2',
+                    file: path,
+                    message: `${path} is ${lines} lines (soft target ${SOFT_LIMIT}, ~400 tokens). The root file should be a lean entry point; move stable conventions to .claude/rules/<NN>-<name>.md.`,
+                    fix: 'Consider splitting per the lean-root architecture. See foundation/good-practices.md § split-file.',
                 });
             }
         }

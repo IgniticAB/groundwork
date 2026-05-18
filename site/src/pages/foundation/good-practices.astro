@@ -101,11 +101,94 @@ const description =
   </p>
   <p>Command: <a href={url('commands/audit/')}><code>audit</code></a> reports this.</p>
 
+  <h2 id="split-file">11. Split-file architecture (lean root, fat directory)</h2>
+
+  <p>
+    A single <code>CLAUDE.md</code> that grows over time becomes a dumping
+    ground. The agent treats it as mutable and appends narrow, session-specific
+    rules. Over weeks the file is unreadable and the model's attention is
+    diluted.
+  </p>
+
+  <p>
+    The fix is structural. Keep the root <code>AGENTS.md</code> (with
+    <code>CLAUDE.md</code> as a symlink to it) <strong>lean</strong>: under
+    roughly 400 tokens, or about 80 lines. Move stable, long-form, or per-area
+    conventions into <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>. A
+    numeric prefix sets load order via filename sort.
+  </p>
+
+  <pre><code>AGENTS.md                       ← lean entry point (under ~400 tokens)
+CLAUDE.md -&gt; AGENTS.md          ← symlink; single source of truth
+.claude/rules/
+  00-conventions.md             ← points at .context/conventions.md
+  10-style-imports.md
+  30-verification.md
+  50-frontend-tailwind.md
+  70-secrets.md</code></pre>
+
+  <p>
+    Why the symlink. <code>AGENTS.md</code> is the emerging cross-tool
+    standard (Codex, Copilot, generic). <code>CLAUDE.md</code> is
+    Anthropic-specific. A symlink lets a single edit feed every harness. On
+    environments that cannot create symlinks (some Windows + <code>git config
+    core.symlinks=false</code> setups), <a href={url('commands/init/')}><code>init</code></a>
+    emits two files and the pre-commit hook verifies parity.
+  </p>
+
+  <p>
+    Command: <a href={url('commands/init/')}><code>init</code></a> sets up
+    this layout. <a href={url('commands/audit/')}><code>audit</code></a> flags
+    root files that have crept past the threshold.
+  </p>
+
+  <h2 id="boundary-tiers">12. Three-tier boundary layout</h2>
+
+  <p>
+    The older "out-of-bounds" framing is a single bucket. Real projects have
+    three:
+  </p>
+
+  <ul>
+    <li><strong>Always.</strong> Things the agent does without asking (run fast verification, regenerate per-harness files when conventions change).</li>
+    <li><strong>Ask first.</strong> Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).</li>
+    <li><strong>Never.</strong> Hard forbids (generated paths, vendored upstream, anything inside <code>&lt;!-- CE:PRESERVE --&gt;</code> tags).</li>
+  </ul>
+
+  <p>
+    State all three explicitly in <code>.context/conventions.md</code> and in
+    the per-harness files. The "ask first" tier is the most often missing
+    one; it's also the one that prevents the most scope creep.
+  </p>
+
+  <h2>13. HTML preservation tags</h2>
+
+  <p>
+    When a piece of code must not be edited by an agent (legacy compromises,
+    performance-tuned hot paths, compatibility shims whose subtleties an
+    agent will miss), wrap it in HTML preservation markers:
+  </p>
+
+  <pre><code>{`<!-- CE:PRESERVE: legacy auth flow, removed in v3. Do not modernize. -->
+function legacyHash(input: string): string {
+  // ...
+}
+<!-- /CE:PRESERVE -->`}</code></pre>
+
+  <p>Rules:</p>
+  <ul>
+    <li>Always include a one-line reason in the opening tag.</li>
+    <li>Use sparingly. A growing pile of CE:PRESERVE pairs is a smell.</li>
+    <li>Audit the count in code review.</li>
+  </ul>
+
   <Callout label="Source" tone="mute">
     <p>
-      <a href={url('blueprint/#good-practices')}>2026 Context Engineering
-      Blueprint: Good Practices vs. High-Risk Anti-Patterns</a>. For the
-      flipside, see <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
+      Drawn from both source documents synthesised at
+      <a href={url('blueprint/#good-practices')}>/blueprint § good
+      practices</a> and <a href={url('blueprint/#split-file')}>§ split-file
+      architecture</a>. For the flipside, see
+      <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
     </p>
   </Callout>
 

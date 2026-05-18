@@ -22,10 +22,10 @@ These seven files are the shared vocabulary every command uses. Read them once a
 
 - `foundation/five-layer-stack.md` — System, Project, Codebase, Session, Tooling. What goes in each layer and why mixing them causes drift.
 - `foundation/contextops-lifecycle.md` — Build, Distribute, Maintain, Update, Measure. The DevOps-style discipline that keeps context from rotting.
-- `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, and the four practices that repay it.
-- `foundation/anti-patterns.md` — The things never to do. Monolithic prompt bloat, vague principles, placeholder comments, implicit assumptions, tool over-exposure.
-- `foundation/good-practices.md` — Negative space documentation, defensive commits, interface-first development, verification-driven logic, plan mode.
-- `foundation/harness-reference.md` — Where files live for Claude Code, Cursor, Codex, Copilot, Cowork. Naming, scoping, frontmatter formats.
+- `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, the Context Rot taxonomy (Poisoning / Distraction / Confusion / Clash), and the four repayment practices.
+- `foundation/anti-patterns.md` — The things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure.
+- `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, split-file architecture (AGENTS.md canonical + CLAUDE.md symlink + `.claude/rules/`), three-tier boundaries, HTML preservation tags.
+- `foundation/harness-reference.md` — Where files live for Claude Code, Cursor, Codex, Copilot, Windsurf, Cowork. Naming, scoping, frontmatter formats, numeric-prefix convention for `.claude/rules/`.
 - `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
 
 ## The nine commands
@@ -74,7 +74,7 @@ Across every command, hold the line on these:
 
 ## A note on harness choice
 
-This skill is harness-agnostic. The `init`, `document`, `scope`, and `verify` commands all ask the user which harnesses they want to target (Claude Code, Cursor, Codex, Copilot, or several) and emit the right files for each. `foundation/harness-reference.md` is the source of truth for where each harness expects files.
+This skill is harness-agnostic. The `init`, `document`, `scope`, and `verify` commands all ask the user which harnesses they want to target (Claude Code, Cursor, Codex, Copilot, Windsurf, or several) and emit the right files for each. `foundation/harness-reference.md` is the source of truth for where each harness expects files.
 
 Default to asking. Do not assume Claude Code just because this skill ships with Claude Code conventions internally.
 

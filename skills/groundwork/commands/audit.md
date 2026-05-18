@@ -106,10 +106,21 @@ If the user pushes back ("that wasn't really a decision"), accept it; an audit i
 Walk the anti-patterns from `foundation/anti-patterns.md` and check each one against what you mapped. Combine with the ADR-coverage findings from step 4. Priority:
 
 - **P0**: anything that will make the agent actively do the wrong thing right now (stale stack info, contradictory rules, missing verification commands, exposed credentials in an MCP config).
-- **P1**: anything that produces silent drift over weeks (missing ADRs flagged in step 4, no scoped rules, no pre-commit hook, oversized CLAUDE.md).
+- **P1**: anything that produces silent drift over weeks (missing ADRs flagged in step 4, no scoped rules, no pre-commit hook, oversized CLAUDE.md, AGENTS.md and CLAUDE.md out of sync).
 - **P2**: niceties (negative-space docs are sparse, conventions could be more example-driven).
 
 For each finding, name the specific file or absence. Vague findings ("documentation could be better") are not findings; they are vibes. Reject your own vague findings before they reach the report.
+
+#### Context Rot check (cross-file consistency)
+
+Beyond the per-file anti-patterns, the audit also looks for the four Context Rot patterns named in `foundation/cognitive-debt.md`:
+
+- **Poisoning**: any `CLAUDE.md` / `AGENTS.md` / `.cursor/rules/*` mention of a package manager, framework version, or API that no longer matches `package.json` (or equivalent). The CLI's `stale-claude-md` rule catches most of these; the audit confirms.
+- **Distraction**: rules at the top level that apply to one area only. If a global rule says "use Tailwind utility classes" but the repo has a Python backend that doesn't render UI, the rule distracts when editing backend files. Flag for `scope`.
+- **Confusion**: domain terms that the codebase uses interchangeably or contradictorily across context files. Example: `AGENTS.md` says "User" while `.cursor/rules/db.mdc` says "Account" for the same entity. Flag specifics.
+- **Clash**: contradictions between context files. Example: `AGENTS.md` requires Vitest, but `.cursor/rules/test.mdc` mentions Jest. The pre-commit hook should catch most of these; if it didn't, surface as P0.
+
+Each Context Rot finding gets a one-line description plus the specific files in conflict. The recommended next command for clashes is usually `document` (delta-merge to resolve) or `scope` (if a rule should have been scoped from the start).
 
 ### Step 6. Recommended next commands
 

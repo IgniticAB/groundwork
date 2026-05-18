@@ -115,3 +115,53 @@ Command: `mcp`.
 The single metric worth tracking: percentage of generated code that passes the project's own checks (tests, lint, types) without human modification. Anything below 80% means the context is not communicating.
 
 Command: `audit` reports this as part of the maturity score.
+
+## 11. Split-file architecture (lean root, fat directory)
+
+A single `CLAUDE.md` that grows over time becomes a dumping ground. The agent treats it as mutable and appends narrow, session-specific rules. Over weeks the file is unreadable and the model's attention is diluted.
+
+The fix is structural. Keep the root `AGENTS.md` (with `CLAUDE.md` as a symlink to it) **lean**: under roughly 400 tokens, or about 80 lines. Move stable, long-form, or per-area conventions into `.claude/rules/<NN>-<name>.md`. A numeric prefix sets load order via filename sort.
+
+```
+AGENTS.md                       ← lean entry point (under ~400 tokens)
+CLAUDE.md -> AGENTS.md          ← symlink; single source of truth
+.claude/rules/
+  00-conventions.md             ← points at .context/conventions.md
+  10-style-imports.md
+  30-verification.md
+  50-frontend-tailwind.md
+  70-secrets.md
+```
+
+Why the symlink. `AGENTS.md` is the emerging cross-tool standard (Codex, Copilot, generic). `CLAUDE.md` is Anthropic-specific. A symlink lets a single edit feed every harness. On environments that cannot create symlinks (some Windows + `git config core.symlinks=false`), the `init` command emits two files and the pre-commit hook verifies parity.
+
+Command: `init` sets up this layout. `audit` flags root files that have crept past the threshold.
+
+## 12. Three-tier boundary layout
+
+The older "out-of-bounds" framing is a single bucket. Real projects have three:
+
+- **Always.** Things the agent does without asking (run fast verification, regenerate per-harness files when conventions change).
+- **Ask first.** Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).
+- **Never.** Hard forbids (generated paths, vendored upstream, anything inside `<!-- CE:PRESERVE -->` tags).
+
+State all three explicitly in `.context/conventions.md` and in the per-harness files. The "ask first" tier is the most often missing one; it's also the one that prevents the most scope creep.
+
+## 13. HTML preservation tags
+
+When a piece of code must not be edited by an agent (legacy compromises, performance-tuned hot paths, compatibility shims whose subtleties an agent will miss), wrap it in HTML preservation markers:
+
+```ts
+<!-- CE:PRESERVE: legacy auth flow, removed in v3. Do not modernize. -->
+function legacyHash(input: string): string {
+  // ...
+}
+<!-- /CE:PRESERVE -->
+```
+
+Rules:
+- Always include a one-line reason in the opening tag.
+- Use sparingly. A growing pile of CE:PRESERVE pairs is a smell.
+- Audit the count in code review.
+
+The `audit` command counts preservation tags as a soft signal; the `verify` hook does not currently enforce non-editing inside them (that's an agent-policy concern, not a build-time check).

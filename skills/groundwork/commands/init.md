@@ -37,14 +37,15 @@ Build a short summary of what you found and show it to the user before asking qu
 
 ### Step 2. Ask
 
-Use AskUserQuestion (or numbered options in prose if unavailable). Four questions, in order:
+Use AskUserQuestion (or numbered options in prose if unavailable). Five questions, in order:
 
-1. **Which harnesses should I emit files for?** Multi-select. Options: Claude Code, Cursor, Codex / generic, GitHub Copilot. Recommend the ones the user most likely uses given their tooling; do not assume.
+1. **Which harnesses should I emit files for?** Multi-select. Options: Claude Code, Cursor, Codex / generic, GitHub Copilot, Windsurf. Recommend the ones the user most likely uses given their tooling; do not assume.
 2. **Which verification commands should the agent run?** Show the ones you detected as preselected. Common shapes: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pytest`, `cargo test`, `go test ./...`. Let the user adjust.
 3. **What naming / style conventions should I bake in?** Multi-select with sensible defaults: no placeholder comments, plan-mode for >3 file changes, defensive commits before refactors, interface-first for typed languages. Let the user untick what does not apply.
-4. **Anything to flag as out-of-bounds?** Free text. Things the agent should not touch (e.g. `infra/terraform/`, `vendor/`, anything generated). One-liner. Default empty.
+4. **Three-tier boundaries.** Free text, three slots, default empty: **Always** (things the agent does without asking), **Ask first** (things the agent proposes before doing), **Never** (paths the agent must not touch, e.g. `infra/terraform/`, `vendor/`, anything generated).
+5. **Symlink CLAUDE.md to AGENTS.md, or keep two files?** Default symlink (single canonical source; lower drift). Offer the two-file fallback for Windows users or any repo with `git config core.symlinks=false` set. If the user does not know which they want, default to symlink and mention they can switch later.
 
-Do not ask more than four. Do not ask things you could have detected from the repo.
+Do not ask more than five. Do not ask things you could have detected from the repo.
 
 ### Step 3. Write the canonical conventions
 
@@ -64,21 +65,29 @@ The structure (do not deviate):
 ## Style and naming
 [the conventions the user picked, with one Preferred/Avoid pair each]
 
-## Out-of-bounds
-[the user's free-text list, or "None declared" if empty]
+## Boundaries
+### Always
+[user's free-text "Always" slot, or sensible defaults]
+### Ask first
+[user's free-text "Ask first" slot]
+### Never
+[user's free-text "Never" slot, or "None declared" if empty]
+
+## Preserved regions
+[short paragraph explaining HTML preservation tags; one example block]
 
 ## Plan mode
 [when plan mode is required; default is >3 files or public API change]
 
 ## References
-[pointers to docs/decisions/, MCP policy if exists, etc.]
+[pointers to docs/decisions/, MCP policy if exists, .claude/rules/, etc.]
 ```
 
 Keep it under 200 lines. If it is heading over, it means a section has turned into a doc; move it out and link.
 
 ### Step 4. Emit per-harness files
 
-For each harness the user picked, emit the corresponding file by transforming `.context/conventions.md` into the right format. Use `templates/CLAUDE.md.template`, `templates/AGENTS.md.template`, `templates/cursor-rule.mdc.template`, `templates/copilot-instructions.md.template` as bases.
+For each harness the user picked, emit the corresponding file by transforming `.context/conventions.md` into the right format. Use `templates/AGENTS.md.template`, `templates/CLAUDE.md.template`, `templates/cursor-rule.mdc.template`, `templates/copilot-instructions.md.template` as bases.
 
 The per-harness file is short. Its job is to:
 
@@ -88,6 +97,27 @@ The per-harness file is short. Its job is to:
 4. Name the verification commands inline.
 
 Do not duplicate everything. The whole point of `.context/conventions.md` is that it is the source; the per-harness files are thin pointers.
+
+#### AGENTS.md as canonical; CLAUDE.md handling
+
+Treat `AGENTS.md` as the canonical cross-tool source. Then, per the user's answer in step 2 question 5:
+
+- **Symlink** (default): write `AGENTS.md` from the template. From the repo root, run `ln -sf AGENTS.md CLAUDE.md`. One file feeds both harnesses; edits in `AGENTS.md` apply automatically to `CLAUDE.md`.
+- **Two files**: write `AGENTS.md` and `CLAUDE.md` from their templates. The pre-commit hook (`.context/hooks/check-context.sh`) will verify parity between the two on every commit. If they drift, the hook fails the commit and tells the user to run `groundwork document`.
+
+In either mode, the per-harness files emitted for Cursor (`.cursor/rules/main.mdc`), Copilot (`.github/copilot-instructions.md`), and Windsurf (`.windsurf/rules/main.md` or `.windsurfrules`) are written independently from the AGENTS.md content.
+
+#### Optional: scaffold `.claude/rules/`
+
+After writing the per-harness files, ask the user: *"Scaffold `.claude/rules/` for the split-file architecture? (Y/n)"*
+
+If yes, emit:
+- `.claude/rules/README.md` from `templates/claude-rules-readme.md`.
+- `.claude/rules/00-conventions.md` — a one-line file pointing at `.context/conventions.md` (so Claude Code loads the canonical source on every session).
+
+Tell the user they can add more rule files later (numeric prefix sets load order: `10-style.md`, `30-verification.md`, etc.). The split-file pattern keeps `AGENTS.md` lean (under ~400 tokens) over time.
+
+If the user declines, skip. The split-file pattern is opt-in; for small projects a lean `AGENTS.md` alone is fine.
 
 ### Step 5. Set up ADRs
 

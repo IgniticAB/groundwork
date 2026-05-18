@@ -12,11 +12,23 @@ Things that look like good context engineering and are not. Reject every one of 
 
 ## 2. Vague principles without examples
 
-**Symptom.** Rules like "Use good judgment", "Write clean code", "Follow our style guide".
+**Symptom.** Rules like "Use good judgment", "Write clean code", "Follow our style guide", "Maintain high test coverage".
 
 **Why it fails.** "Clean" is a vibe, not a rule. The agent has seen every "clean code" book in training and will pick whichever interpretation produces the most output. There is no shared definition.
 
-**Fix.** Every principle gets a concrete example pair. "Preferred" and "Avoid", with actual code snippets:
+**Fix.** Every rule is **behaviorally anchored**: it names the exact technology, command, or pattern the agent should reach for. Anchored beats abstract in every category.
+
+| Category | Anchored (good) | Vague (bad) |
+| --- | --- | --- |
+| Error handling | Wrap external API calls in try/catch; log via `Logger`; never swallow exceptions. | "Write robust error handling." |
+| Styling | Tailwind utilities only; conditional classes via `cn()`; assets in `/assets/`. | "Use clean styling patterns." |
+| Testing | Vitest; assert on user actions; run `npm run test:coverage` before staging. | "Maintain high test coverage." |
+| Git workflow | Conventional Commits; one-file scope where reasonable; humans sole authors of record. | "Commit often with helpful messages." |
+| Dependencies | Pin critical packages; named imports; `npm run build` to verify types on modified modules. | "Keep dependencies updated." |
+
+Anchored rules carry: a verb, a named tool or pattern, and a verification path. Vague rules carry an adjective and hope.
+
+The Preferred/Avoid code pair is the canonical pattern for showing an anchored rule:
 
 ```typescript
 // Preferred

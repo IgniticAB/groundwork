@@ -1,6 +1,23 @@
 # <Project name> — Claude Code context
 
-<!-- Keep this file under 200 lines. The canonical source is .context/conventions.md. -->
+<!-- This file is intentionally short.
+
+     In the recommended layout, CLAUDE.md is a symlink to AGENTS.md so a single
+     file feeds every harness (Claude Code, Codex, Copilot, generic). If you
+     are reading this template literally, your environment opted out of the
+     symlink (Windows, `git config core.symlinks=false`, or `groundwork init`
+     was answered "two files"), and `.context/hooks/check-context.sh` enforces
+     parity with AGENTS.md on commit.
+
+     If your environment supports symlinks, run from the repo root:
+       ln -sf AGENTS.md CLAUDE.md
+     and then delete this template body. The canonical content lives in
+     AGENTS.md and .context/conventions.md.
+
+     If you keep two files, mirror the AGENTS.md structure below. Keep this
+     file under 200 lines (the CLI's oversized-claude-md rule's hard ceiling)
+     and ideally under ~80 lines / ~400 tokens to stay in the lean-root spirit.
+     Stable, long-form content belongs in .claude/rules/. -->
 
 ## What this project is
 
@@ -27,7 +44,9 @@ Before declaring a task done:
 
 ## Style
 
-<!-- The 3 to 6 most critical rules. Each with a Preferred/Avoid pair. Full set in .context/conventions.md. -->
+<!-- The 3 to 6 most critical rules. Each behaviorally anchored, with a
+     Preferred/Avoid pair. Full set lives in .context/conventions.md
+     and .claude/rules/. -->
 
 ### <Rule 1>
 ```<lang>
@@ -45,14 +64,21 @@ Before declaring a task done:
 // Avoid
 ```
 
-## Out-of-bounds
+## Boundaries
 
-<!-- Paths the agent should not modify unless explicitly asked. -->
-- `<path>`: <reason>
+**Always**: <things the agent must do without asking>
+- <path or behavior>
+
+**Ask first**: <things the agent must propose before doing>
+- <path or behavior>
+
+**Never**: <paths or behaviors forbidden>
+- <path>: <reason>
 
 ## Where to look for more
 
 - `.context/conventions.md` — full conventions
+- `.claude/rules/` — split rule files
 - `docs/decisions/` — ADRs explaining why choices were made
 - `docs/decisions/negative-space.md` — paths we considered and rejected
 - `docs/mcp-policy.md` — agent access policy, if applicable

@@ -52,7 +52,20 @@ b) **Ask**. Show what you detected and let the user confirm/edit/add. Three or f
 
 ### Step 4. Write the scoped files
 
-For each (area × harness), emit one file. Templates:
+For each (area × harness), emit one file.
+
+**Cursor rule trigger levels and word budgets.** Cursor activates `.mdc` files via four mechanisms. The body length must match the trigger; the agent pays a token cost on every match. Use the smallest level that works.
+
+| Trigger | Frontmatter | Body budget | Typical use |
+| --- | --- | --- | --- |
+| Always Apply | `alwaysApply: true`, `globs: []` | under 200 words | Core stack metadata, global lint targets, framework pins |
+| Auto-Attached | `alwaysApply: false`, `globs: [...]` | 200–500 words | Component libraries, DB ORM patterns, test files |
+| Agent-Requested | `alwaysApply: false`, `description: <when>` | 500–800 words | Stripe/SendGrid integration rules, auth flows |
+| Manual | `alwaysApply: false`, referenced via `@rule-name` | no strict cap | Rare migration targets, complex onboarding |
+
+Pick the level based on how often the rule needs to be in the agent's active window. If a rule's body exceeds its budget, split it across narrower-globbed `.mdc` files or move long examples into `.claude/rules/` and reference them.
+
+Templates:
 
 **Cursor** (`.cursor/rules/<area>.mdc`):
 
@@ -67,7 +80,7 @@ alwaysApply: false
 
 # <Area> conventions
 
-[3-5 rules with Preferred/Avoid pairs]
+[3-5 rules with Preferred/Avoid pairs, sized to fit the trigger budget above]
 
 ## Verification
 [The specific commands that verify changes in this area]

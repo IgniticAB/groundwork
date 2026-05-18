@@ -124,6 +124,58 @@ const description =
     </p>
   </Callout>
 
+  <h2>Cursor trigger levels and word budgets</h2>
+  <p>
+    Cursor activates <code>.mdc</code> files via four mechanisms. The body
+    length must match the trigger because the agent pays a token cost on every
+    match. Pick the smallest level that does the job.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Trigger</th>
+        <th>Frontmatter</th>
+        <th>Body budget</th>
+        <th>Typical use</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Always Apply</td>
+        <td><code>alwaysApply: true</code>, <code>globs: []</code></td>
+        <td>under 200 words</td>
+        <td>Core stack metadata, global lint targets, framework pins</td>
+      </tr>
+      <tr>
+        <td>Auto-Attached</td>
+        <td><code>alwaysApply: false</code>, <code>globs: [...]</code></td>
+        <td>200 to 500 words</td>
+        <td>Component libraries, DB ORM patterns, test files</td>
+      </tr>
+      <tr>
+        <td>Agent-Requested</td>
+        <td><code>alwaysApply: false</code>, <code>description</code> set</td>
+        <td>500 to 800 words</td>
+        <td>Stripe / SendGrid / auth integrations</td>
+      </tr>
+      <tr>
+        <td>Manual</td>
+        <td><code>alwaysApply: false</code>, referenced via <code>@rule-name</code></td>
+        <td>no strict cap</td>
+        <td>Rare migrations, complex onboarding guides</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    If a rule body exceeds its budget, split into narrower-glob
+    <code>.mdc</code> files or move long examples into
+    <code>.claude/rules/</code> and reference them. The templates emitted by
+    <code>scope</code> carry this guidance inline so future maintainers see it
+    in the file they are editing.
+  </p>
+
   <h2>Failure modes the command guards against</h2>
   <ul>
     <li>

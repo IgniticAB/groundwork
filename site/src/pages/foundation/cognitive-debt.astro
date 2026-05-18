@@ -70,6 +70,56 @@ const description =
     reverse-engineer the choices from scratch.
   </p>
 
+  <h2 id="context-rot">Context Rot: four failure modes in long sessions</h2>
+
+  <p>
+    Even with good context files in place, long-running agent sessions
+    degrade. The conversation history accumulates, the agent runtime compacts
+    it, and the original rules get summarised into vague generalisations. The
+    same agent that wrote pristine type-safe code in hour one starts writing
+    unannotated functions in hour four.
+  </p>
+
+  <p>The 2026 playbook taxonomy names four distinct rot patterns. Each has a different mitigation.</p>
+
+  <table>
+    <thead>
+      <tr><th>Rot</th><th>What it looks like</th><th>Mitigation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Poisoning</strong></td>
+        <td>The agent uses deprecated APIs, outdated parameters, or stale syntax. The model's training data contradicts the current code.</td>
+        <td>Version-controlled deprecation logs; explicit "do not use X, use Y" rules; the <a href={url('commands/audit/')}><code>audit</code></a> command's stale-context check.</td>
+      </tr>
+      <tr>
+        <td><strong>Distraction</strong></td>
+        <td>Irrelevant rules fire while the agent is editing in an unrelated area. SQL conventions distract while editing a React component.</td>
+        <td>Scoped rules via <a href={url('commands/scope/')}><code>scope</code></a>; strict token budgets in always-apply rules; the split-file architecture.</td>
+      </tr>
+      <tr>
+        <td><strong>Confusion</strong></td>
+        <td>The agent conflates two similar-but-distinct objects. <code>User</code> and <code>UserAccount</code>, <code>Order</code> and <code>Invoice</code>.</td>
+        <td>Precise namespace mapping in conventions; before/after code examples; ADRs that name the distinction.</td>
+      </tr>
+      <tr>
+        <td><strong>Clash</strong></td>
+        <td>Two rules in active memory contradict. Output paralysis, or whichever rule the agent saw last "wins" silently.</td>
+        <td>Cross-file consistency check in <code>audit</code>; one canonical source (<code>.context/conventions.md</code>); centralised governance.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The most common rot at hour two of a session is Distraction; at hour four
+    it's Poisoning (the original rules have been summarised away). The
+    <a href={url('commands/verify/')}><code>verify</code></a> hook plus the
+    <a href={url('commands/audit/')}><code>audit</code></a> command catch
+    most cases. Frequent session clears (<code>/clear</code> in Claude Code,
+    equivalent elsewhere) force the agent to reload fresh configurations from
+    disk rather than relying on compacted history.
+  </p>
+
   <h2>The four repayment practices</h2>
 
   <p>The moves high-performing teams have converged on. Every command in this skill is built to support at least one.</p>

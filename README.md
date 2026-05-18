@@ -139,8 +139,9 @@ groundwork/
         onboard.md
       templates/                         files the commands emit
         conventions.template.md
-        CLAUDE.md.template
-        AGENTS.md.template
+        AGENTS.md.template                canonical cross-tool source
+        CLAUDE.md.template                stub; CLAUDE.md is a symlink to AGENTS.md by default
+        claude-rules-readme.md            README for .claude/rules/ split files
         cursor-rule.mdc.template
         copilot-instructions.md.template
         adr.template.md
@@ -148,6 +149,7 @@ groundwork/
         decisions-readme.template.md
         negative-space.template.md
         plan.template.md
+        briefing.template.md
         mcp-config.template.json
         mcp-policy.template.md
         hook.sh.template
@@ -173,7 +175,13 @@ This skill follows five rules in its own design, the same rules it teaches.
 
 ## Source material
 
-- *The 2026 Context Engineering Blueprint*, the source document this skill is built from. Lives in this same repo.
+Two source documents back this skill. Both live in this repo:
+
+- `AI-First R&D Context Engineering 101.md`. The architectural view: five-layer stack, cognitive debt, ContextOps lifecycle, MCP principles.
+- `AI Agent Context Engineering Best Practices.md`. The operational view: rule composition, split-file architecture, tool-specific patterns (Cursor trigger budgets, Windsurf memories, Copilot agent profiles), Context Rot taxonomy, three-tier boundaries.
+
+The site at `/blueprint` synthesizes both into a single navigable summary.
+
 - [impeccable.style](https://impeccable.style), the structural reference for "one skill, N commands" with always-loaded foundation files.
 
 ## Status and scope
