@@ -290,6 +290,17 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
       }
       td code { font-size: 0.9em; }
 
+      /* Tables that aren't already responsive get a horizontal-scroll fallback
+         on narrow viewports. Commands index handles its own column collapse. */
+      @media (max-width: 720px) {
+        table:not(.cmd-table) {
+          display: block;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          max-width: 100%;
+        }
+      }
+
       hr {
         border: none;
         border-top: 1px solid var(--rule);

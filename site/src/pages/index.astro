@@ -471,6 +471,9 @@ const tree = [
       text-decoration: none;
       font-size: 0.97rem;
       margin-top: 1.2rem;
+      border-bottom: 1.5px solid transparent;
+      padding-bottom: 2px;
+      transition: border-bottom-color 160ms var(--ease-out-quart);
     }
     .link-arrow code {
       background: none;
@@ -483,10 +486,7 @@ const tree = [
       transition: transform 200ms var(--ease-out-quart);
     }
     .link-arrow:hover {
-      text-decoration: underline;
-      text-decoration-color: var(--ember);
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 4px;
+      border-bottom-color: var(--ember);
     }
     .link-arrow:hover span { transform: translateX(3px); }
 
@@ -821,10 +821,14 @@ const tree = [
       .found-feature { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
-      .hero-display { font-size: clamp(3.6rem, 22vw, 7rem); }
-      .hero-ledge { font-size: 0.7rem; letter-spacing: 0.15em; }
+      .hero-display { font-size: clamp(2.6rem, 13vw, 5.5rem); }
+      .hero-divider { display: none; }
+      .hero-meta { gap: 0.6rem 0.9rem; font-size: 0.86rem; }
+      .hero-cta { gap: 0.9rem; }
+      .hero-cta-links { gap: 0.9rem 1.2rem; }
+      .hero-ledge { font-size: 0.7rem; letter-spacing: 0.15em; gap: 0.6rem; }
       .featured-card { padding: 1.3rem 1.1rem; }
-      .rest-row { grid-template-columns: 6rem minmax(0, 1fr) auto; gap: 0.7rem; }
+      .rest-row { grid-template-columns: 5.4rem minmax(0, 1fr) auto; gap: 0.7rem; }
       .closing-head { font-size: clamp(2rem, 11vw, 3rem); }
     }
   </style>
