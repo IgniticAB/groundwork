@@ -84,24 +84,24 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
     </p>
     <pre><code>groundwork document</code></pre>
 
-    <h2>3. Install the CLI (optional)</h2>
+    <h2>3. Add the CLI for CI (optional)</h2>
     <p>
-      The Groundwork CLI is a deterministic detector. Ten rules. No LLM. JSON
-      output that build gates can consume. Use it where you cannot run an agent:
-      CI, pre-commit, IDE checks.
+      The Groundwork CLI is a deterministic detector for context-engineering
+      anti-patterns. Ten rules, no LLM, JSON output for build gates. Wire it
+      into CI and pre-commit so context drift never ships.
     </p>
-    <pre><code>npm i -g @ignitic/groundwork</code></pre>
+    <pre><code>npx @ignitic/groundwork detect --fail-on P0</code></pre>
     <p>
-      Then run <code>groundwork detect</code> from any project, or skip the
-      install:
+      Full reference, every flag, the ten rules, CI snippets:
+      <a href={url('cli/')}>the CLI page</a>.
     </p>
-    <pre><code>npx @ignitic/groundwork detect</code></pre>
 
     <Callout label="Skill vs. CLI" tone="ember">
       <p>
-        The skill <strong>authors</strong> context. The CLI <strong>guards</strong>
-        it. They complement each other. Most teams run both: the skill for
-        humans iterating with the agent, the CLI in CI as a hard gate.
+        The skill <strong>authors</strong> context. The CLI
+        <strong>guards</strong> it. The skill is conversational and
+        iterative; the CLI is mechanical and deterministic. Most teams run
+        both.
       </p>
     </Callout>
 

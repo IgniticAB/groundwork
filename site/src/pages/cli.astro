@@ -1,0 +1,287 @@
+---
+import Base from '../layouts/Base.astro';
+import Callout from '../components/Callout.astro';
+import { url } from '../lib/url';
+
+const title = 'CLI';
+const description =
+  'The Groundwork CLI is a deterministic detector for context engineering anti-patterns. No LLM. Runs in milliseconds. Outputs JSON for CI gates. Ten rules covering the highest-value mechanical checks.';
+---
+
+<Base title={title} description={description}>
+  <div class="container cli">
+    <h1>The Groundwork CLI</h1>
+    <p class="lede">
+      A deterministic detector for context engineering anti-patterns. No LLM,
+      no inference, no opinions. Ten rules, JSON output, runs in milliseconds.
+      The thing you wire into CI so context drift never ships.
+    </p>
+
+    <Callout label="Skill vs. CLI" tone="ember">
+      <p>
+        The <a href={url('commands/')}>skill</a> <strong>authors</strong>
+        context. The CLI <strong>guards</strong> it. The skill is iterative
+        and conversational; the CLI is mechanical and deterministic. Most
+        teams run both: the skill for humans iterating with the agent, the
+        CLI as a hard gate in CI and pre-commit.
+      </p>
+    </Callout>
+
+    <h2>Install</h2>
+    <p>Global install for repeated use:</p>
+    <pre><code>npm i -g @ignitic/groundwork</code></pre>
+    <p>Or run it without installing (recommended for CI):</p>
+    <pre><code>npx @ignitic/groundwork detect</code></pre>
+    <p>Node 18 or later. Two dependencies (<code>fast-glob</code>, <code>chokidar</code>). MIT licensed.</p>
+
+    <h2>The <code>detect</code> command</h2>
+    <p>
+      The primary command. Scans the current directory (or a path you pass)
+      against all enabled rules and reports findings. Default exit code is
+      non-zero if any P0 finding is detected.
+    </p>
+    <pre><code>groundwork detect                  # scan current directory
+groundwork detect /path/to/repo
+groundwork detect --json &gt; findings.json
+groundwork detect --fail-on P1     # exit 1 on P1 or worse
+groundwork detect --only stale-claude-md,secrets-regex
+groundwork list-rules</code></pre>
+
+    <h3>Flags</h3>
+    <table>
+      <thead>
+        <tr><th>Flag</th><th>What it does</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--json</code></td>
+          <td>Machine-readable output for piping into CI logs, GitHub annotations, or your own reporting layer.</td>
+        </tr>
+        <tr>
+          <td><code>--fail-on &lt;severity&gt;</code></td>
+          <td>Exit non-zero at this severity level or worse. Default <code>P0</code>. Set to <code>P1</code> in CI once your repo is clean, to <code>none</code> to never fail.</td>
+        </tr>
+        <tr>
+          <td><code>--only &lt;rules&gt;</code></td>
+          <td>Comma-separated rule IDs. Runs only the rules you name. Useful for fast pre-commit hooks that gate on a subset.</td>
+        </tr>
+        <tr>
+          <td><code>list-rules</code></td>
+          <td>Subcommand that prints every rule the CLI knows about, with its default severity.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>The ten rules</h2>
+    <p>
+      Version 0.1 ships ten rules, covering the highest-value mechanical
+      checks an LLM cannot reliably perform itself.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Rule</th><th>Severity</th><th>What it catches</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>stale-claude-md</code></td>
+          <td>P0</td>
+          <td><code>CLAUDE.md</code> or <code>AGENTS.md</code> names a package manager or framework that is not in <code>package.json</code>. The agent will confidently follow stale instructions.</td>
+        </tr>
+        <tr>
+          <td><code>mcp-literal-credentials</code></td>
+          <td>P0</td>
+          <td>MCP configuration contains literal credentials instead of env var references. Secrets in the repo.</td>
+        </tr>
+        <tr>
+          <td><code>placeholder-comments</code></td>
+          <td>P0</td>
+          <td><code>TODO: implement</code>, <code>[fill this in]</code>, <code>not implemented</code> in source files. Placeholders never come back; they ship.</td>
+        </tr>
+        <tr>
+          <td><code>secrets-regex</code></td>
+          <td>P0</td>
+          <td>AWS, GitHub, OpenAI, Anthropic, Slack, PEM, JWT, Google API keys detected in committed files. Rotate immediately.</td>
+        </tr>
+        <tr>
+          <td><code>conventions-drift</code></td>
+          <td>P1</td>
+          <td><code>.context/conventions.md</code> is newer than the per-harness files. The canonical source moved; the wrappers did not catch up.</td>
+        </tr>
+        <tr>
+          <td><code>oversized-claude-md</code></td>
+          <td>P1</td>
+          <td><code>CLAUDE.md</code> / <code>AGENTS.md</code> over 200 lines. Prompt bloat. The Project layer is doing the Codebase layer's job.</td>
+        </tr>
+        <tr>
+          <td><code>missing-verification</code></td>
+          <td>P1</td>
+          <td>Per-harness file has no Verification section. The agent has no way to self-correct.</td>
+        </tr>
+        <tr>
+          <td><code>missing-adr-xref</code></td>
+          <td>P2</td>
+          <td>Decision-shaped statements without an ADR cross-link. Intent debt accruing.</td>
+        </tr>
+        <tr>
+          <td><code>missing-license-header</code></td>
+          <td>P2</td>
+          <td>Repo is copyleft-licensed but source files lack SPDX headers.</td>
+        </tr>
+        <tr>
+          <td><code>todo-comments</code></td>
+          <td>P2</td>
+          <td><code>TODO</code> / <code>FIXME</code> / <code>HACK</code> markers above the noise threshold (25 in v0.1).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Severity bands</h3>
+    <ul>
+      <li>
+        <strong>P0.</strong> Fix before the next agent session. The agent
+        will actively do the wrong thing.
+      </li>
+      <li>
+        <strong>P1.</strong> Fix this sprint. Silent drift over weeks.
+      </li>
+      <li>
+        <strong>P2.</strong> Backlog. Hygiene.
+      </li>
+    </ul>
+
+    <h2>Output</h2>
+    <p>Human-readable by default:</p>
+    <pre><code>P0 2 findings
+  ● stale-claude-md CLAUDE.md
+    CLAUDE.md mentions "yarn" but package.json declares packageManager: pnpm.
+    fix: Run: groundwork document
+  ● secrets-regex src/config.ts:14
+    Possible GitHub personal access token in committed file.
+    &gt; const token = "ghp_****************dEf"
+    fix: Rotate the credential and remove from history (BFG / git-filter-repo).
+
+10 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
+
+    <p>JSON for build gates and reporting:</p>
+    <pre><code>{`{`}
+  "version": 1,
+  "durationMs": 47,
+  "rulesRun": ["stale-claude-md", "..."],
+  "findings": [
+    {`{`}
+      "ruleId": "stale-claude-md",
+      "severity": "P0",
+      "file": "CLAUDE.md",
+      "message": "...",
+      "fix": "..."
+    {`}`}
+  ]
+{`}`}</code></pre>
+
+    <h2>CI integration</h2>
+    <p>One line in GitHub Actions:</p>
+    <pre><code>{`- name: groundwork
+  run: npx @ignitic/groundwork detect --fail-on P1`}</code></pre>
+
+    <p>
+      Start with <code>--fail-on P0</code> on a repo that already has known
+      P1 findings. Move to <code>P1</code> once the backlog is cleared. The
+      detector is fast enough (typically under 100ms on a medium repo) that
+      you can run it in every CI job without measurable overhead.
+    </p>
+
+    <Callout label="Where the detector belongs in your pipeline" tone="mute">
+      <p>
+        Run it <strong>after</strong> tests and lint, not before. It is
+        about context-file hygiene, not code correctness. If tests are red,
+        context drift can wait. If tests are green and the detector is red,
+        the agent will misbehave on the next change; that is when blocking
+        the merge actually pays off.
+      </p>
+    </Callout>
+
+    <h2>Pre-commit hook</h2>
+    <p>
+      With husky, pre-commit, or lefthook already installed, add a hook
+      that runs the detector with <code>--fail-on P0</code>:
+    </p>
+    <pre><code>npx @ignitic/groundwork detect --fail-on P0</code></pre>
+    <p>
+      The <a href={url('commands/verify/')}><code>verify</code></a> skill
+      command writes this hook for you, alongside the per-harness drift
+      script in <code>.context/hooks/check-context.sh</code>. Two complementary
+      gates: the detector catches mechanical anti-patterns, the drift script
+      catches project-specific cross-file invariants.
+    </p>
+
+    <h2>Updating the installed skill</h2>
+    <p>
+      The CLI also wraps the open <a href="https://github.com/vercel-labs/skills">skills</a>
+      updater, scoped to the Groundwork skill so you do not have to remember
+      the source path:
+    </p>
+    <pre><code>npx @ignitic/groundwork skills update</code></pre>
+    <p>
+      Forward flags like <code>-g</code> (global), <code>-p</code> (project),
+      <code>-y</code> (no prompt) work as expected. See
+      <code>groundwork skills --help</code> for the full surface.
+    </p>
+
+    <h2>Extending</h2>
+    <p>
+      Rules live in <code>cli/src/rules/&lt;name&gt;.ts</code>. Each exports
+      a <code>Rule</code> with <code>id</code>, <code>description</code>,
+      <code>defaultSeverity</code>, and an async <code>run(ctx)</code>. Add
+      to the registry in <code>cli/src/rules/index.ts</code>.
+    </p>
+    <p>
+      The design is pluggable. If a built-in rule turns out to be naive
+      against a better tool (the v0.1 secrets regex is a fraction of what
+      gitleaks does), drop in a rule that shells out to the better tool.
+      The CLI is not trying to be everything; it is trying to ship a
+      defensible default in milliseconds.
+    </p>
+
+    <h2>What it does <em>not</em> do</h2>
+    <ul>
+      <li>It does not call an LLM. Every check is deterministic.</li>
+      <li>It does not author content. That is the <a href={url('commands/')}>skill's</a> job.</li>
+      <li>It does not scan git history. Only the working tree.</li>
+      <li>
+        It does not replace dedicated security tools.
+        <code>secrets-regex</code> is a first-pass tripwire; pair it with
+        gitleaks, trufflehog, or your provider's native secret scanning for
+        defence in depth.
+      </li>
+      <li>
+        It does not enforce style. <code>eslint</code>, <code>prettier</code>,
+        <code>biome</code>, <code>ruff</code> already do that better.
+      </li>
+    </ul>
+
+    <h2>Roadmap</h2>
+    <p>
+      Version 0.1 is the minimum-viable detector. Next on the list (no
+      committed dates):
+    </p>
+    <ul>
+      <li>More rules: <code>missing-negative-space</code>, <code>oversized-mcp-config</code>, <code>generated-files-in-context</code>.</li>
+      <li>Per-rule configuration via <code>.context/groundwork.config.json</code>.</li>
+      <li>Watch mode (<code>chokidar</code> is already a dependency).</li>
+      <li>GitHub Action wrapper for richer PR annotations.</li>
+    </ul>
+    <p>
+      Pull requests welcome at
+      <a href="https://github.com/IgniticAB/groundwork">IgniticAB/groundwork</a>.
+      Issues for missing rules, false positives, or naive matchers especially appreciated.
+    </p>
+  </div>
+
+  <style>
+    .cli pre { max-width: 100%; }
+    .cli h2 { border-top: 1px solid var(--rule); padding-top: 2rem; }
+    .cli h2:first-of-type { border-top: none; padding-top: 0; }
+    .cli h3 { margin-top: 1.6rem; }
+  </style>
+</Base>
