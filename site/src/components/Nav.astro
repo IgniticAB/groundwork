@@ -13,20 +13,74 @@ const links = [
 ];
 ---
 
-<nav class="nav">
+<nav class="nav" data-nav>
   <a href={url('')} class="brand" aria-label="Groundwork home">
     <span class="brand-mark" aria-hidden="true"></span>
     <span>Groundwork</span>
   </a>
-  <div class="nav-links">
-    {links.map((l) => (
-      <a
-        href={url(l.href)}
-        class:list={['nav-link', isActive(here, l.href) ? 'is-active' : '']}
-      >
-        {l.label}
-      </a>
-    ))}
-    <a class="nav-link nav-link--ext" href="https://github.com/IgniticAB/groundwork">GitHub</a>
+
+  <button
+    class="nav-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="primary-nav"
+    aria-label="Open menu"
+    data-nav-toggle
+  >
+    <svg class="nav-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <line class="line line--top" x1="4" y1="7"  x2="20" y2="7"  />
+      <line class="line line--mid" x1="4" y1="12" x2="20" y2="12" />
+      <line class="line line--bot" x1="4" y1="17" x2="20" y2="17" />
+    </svg>
+  </button>
+
+  <div class="nav-menu" id="primary-nav">
+    <div class="nav-links">
+      {links.map((l) => (
+        <a
+          href={url(l.href)}
+          class:list={['nav-link', isActive(here, l.href) ? 'is-active' : '']}
+        >
+          {l.label}
+        </a>
+      ))}
+      <a class="nav-link nav-link--ext" href="https://github.com/IgniticAB/groundwork">GitHub</a>
+    </div>
   </div>
 </nav>
+
+<script>
+  const nav = document.querySelector('[data-nav]');
+  if (nav) {
+    const toggle = nav.querySelector('[data-nav-toggle]');
+    const menu = nav.querySelector('.nav-menu');
+
+    const setOpen = (open) => {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(!nav.classList.contains('is-open'));
+    });
+
+    menu.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    const wide = window.matchMedia('(min-width: 960px)');
+    const onChange = (ev) => {
+      if (ev.matches) setOpen(false);
+    };
+    if (wide.addEventListener) wide.addEventListener('change', onChange);
+    else wide.addListener(onChange); // Safari < 14
+  }
+</script>

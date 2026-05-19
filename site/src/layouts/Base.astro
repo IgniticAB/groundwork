@@ -390,6 +390,106 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
       }
       .nav-link--ext::after { content: ' ↗'; opacity: 0.5; }
 
+      /* mobile menu toggle */
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        padding: 0;
+        width: 44px;
+        height: 44px;
+        cursor: pointer;
+        color: var(--ink);
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      }
+      .nav-toggle:hover { color: var(--ember-ink); }
+      .nav-toggle-icon {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+      .nav-toggle-icon .line {
+        stroke: currentColor;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        transform-box: view-box;
+        transform-origin: 12px 12px;
+        transition: transform 0.24s var(--ease-out-quart),
+                    opacity 0.18s var(--ease-out-quart);
+      }
+      /* On desktop the menu wrapper is layout-invisible; the .nav-links flex row sits directly inside .nav */
+      .nav-menu { display: contents; }
+
+      /* mobile breakpoint: collapse 7 items behind the hamburger */
+      @media (max-width: 959px) {
+        .nav { flex-wrap: wrap; }
+        .nav-toggle { display: inline-flex; }
+
+        .nav-menu {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.3s var(--ease-out-quart);
+          flex-basis: 100%;
+          order: 3;
+        }
+        .nav.is-open .nav-menu { grid-template-rows: 1fr; }
+
+        .nav-menu .nav-links {
+          overflow: hidden;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+          padding: 0.25rem 0 0.75rem;
+        }
+
+        .nav-menu .nav-link {
+          padding: 0.65rem 0.25rem;
+          min-height: 44px;
+          opacity: 0;
+          transform: translateY(-4px);
+          transition: opacity 0.18s var(--ease-out-quart),
+                      transform 0.18s var(--ease-out-quart);
+        }
+        .nav.is-open .nav-menu .nav-link {
+          animation: nav-item-in 0.32s var(--ease-out-quart) both;
+        }
+        .nav.is-open .nav-menu .nav-link:nth-child(1) { animation-delay: 0.08s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(2) { animation-delay: 0.12s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(3) { animation-delay: 0.16s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(4) { animation-delay: 0.20s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(5) { animation-delay: 0.24s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(6) { animation-delay: 0.28s; }
+        .nav.is-open .nav-menu .nav-link:nth-child(7) { animation-delay: 0.32s; }
+        @keyframes nav-item-in {
+          from { opacity: 0; transform: translateY(-4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-menu .nav-link.is-active::after { bottom: 6px; }
+
+        /* hamburger morph to × on open */
+        .nav.is-open .nav-toggle-icon .line--top {
+          transform: rotate(45deg) translate(0, 5px);
+        }
+        .nav.is-open .nav-toggle-icon .line--mid {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        .nav.is-open .nav-toggle-icon .line--bot {
+          transform: rotate(-45deg) translate(0, -5px);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .nav-menu,
+        .nav-menu .nav-links,
+        .nav-toggle-icon .line {
+          transition: none;
+        }
+      }
+
       /* footer */
       .footer {
         max-width: var(--doc-max-width);
@@ -578,8 +678,7 @@ const fullTitle = title === 'Groundwork' ? title : `${title} · Groundwork`;
         }
       }
       @media (max-width: 560px) {
-        .nav { padding-top: 1rem; flex-wrap: wrap; }
-        .nav-links { gap: 1rem; font-size: 0.9rem; }
+        .nav { padding-top: 1rem; }
         .container { padding: 2rem var(--gutter) 3rem; }
         .footer-inner { grid-template-columns: 1fr; gap: 1.5rem; }
         .pager { grid-template-columns: 1fr; }
