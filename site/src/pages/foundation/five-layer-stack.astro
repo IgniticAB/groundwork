@@ -18,38 +18,138 @@ const description =
 
   <h2>The five layers</h2>
 
-  <table>
-    <thead>
-      <tr><th>Layer</th><th>What lives here</th><th>Persistence</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>System</strong></td>
-        <td>Role, persona, hard guardrails, output-format constraints</td>
-        <td>High · static</td>
-      </tr>
-      <tr>
-        <td><strong>Project</strong></td>
-        <td>Repo-level rules and conventions everyone shares</td>
-        <td>Medium · versioned</td>
-      </tr>
-      <tr>
-        <td><strong>Codebase</strong></td>
-        <td>Deep awareness of the actual code: indices, repo maps, on-demand reads</td>
-        <td>Medium · dynamic</td>
-      </tr>
-      <tr>
-        <td><strong>Session</strong></td>
-        <td>The state of the task right now (chat history, recent tool output, the file just opened)</td>
-        <td>Low · transient</td>
-      </tr>
-      <tr>
-        <td><strong>Tooling</strong></td>
-        <td>What the agent can do: MCP servers, CLI permissions, API definitions</td>
-        <td>Medium · infrastructure</td>
-      </tr>
-    </tbody>
-  </table>
+  <p class="stack-intro">
+    Click each layer to see what lives there, an example or two, and how
+    long it persists.
+  </p>
+
+  <section class="layer-stack" aria-label="The five context layers, interactive">
+    <details class="layer">
+      <summary>
+        <span class="layer-num">01</span>
+        <span class="layer-name">System</span>
+        <span class="layer-tagline">Role, persona, hard guardrails.</span>
+        <span class="layer-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="layer-detail">
+        <p>
+          <strong>What lives here.</strong> Role definition, persona,
+          safety guardrails, output-format constraints. The model's
+          character before it sees any project.
+        </p>
+        <p>
+          <strong>Examples.</strong> The harness's built-in role prompt,
+          safety filters, an "always respond as JSON" output rule.
+        </p>
+        <p class="layer-persistence">
+          <span class="persistence-key">Persistence</span>
+          <span class="persistence-value">High <span class="persistence-sep">·</span> static</span>
+        </p>
+      </div>
+    </details>
+
+    <details class="layer">
+      <summary>
+        <span class="layer-num">02</span>
+        <span class="layer-name">Project</span>
+        <span class="layer-tagline">Repo-level rules everyone shares.</span>
+        <span class="layer-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="layer-detail">
+        <p>
+          <strong>What lives here.</strong> Rules and conventions every
+          contributor working in this repo inherits. Versioned alongside
+          the code.
+        </p>
+        <p>
+          <strong>Examples.</strong> <code>AGENTS.md</code> (canonical),
+          <code>CLAUDE.md</code> as a symlink to it,
+          <code>.cursor/rules/</code>, the lean root plus the split files
+          in <code>.claude/rules/</code>.
+        </p>
+        <p class="layer-persistence">
+          <span class="persistence-key">Persistence</span>
+          <span class="persistence-value">Medium <span class="persistence-sep">·</span> versioned</span>
+        </p>
+      </div>
+    </details>
+
+    <details class="layer">
+      <summary>
+        <span class="layer-num">03</span>
+        <span class="layer-name">Codebase</span>
+        <span class="layer-tagline">Deep awareness of the actual code.</span>
+        <span class="layer-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="layer-detail">
+        <p>
+          <strong>What lives here.</strong> Indices and pointers into the
+          real code, loaded on demand. Not statically written rules, but
+          references that fetch the source of truth when the agent
+          actually needs it.
+        </p>
+        <p>
+          <strong>Examples.</strong> Semantic search indices, file
+          mentions in chat, <code>@</code>-references to docs that load
+          when the agent asks for them.
+        </p>
+        <p class="layer-persistence">
+          <span class="persistence-key">Persistence</span>
+          <span class="persistence-value">Medium <span class="persistence-sep">·</span> dynamic</span>
+        </p>
+      </div>
+    </details>
+
+    <details class="layer">
+      <summary>
+        <span class="layer-num">04</span>
+        <span class="layer-name">Session</span>
+        <span class="layer-tagline">The state of the task right now.</span>
+        <span class="layer-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="layer-detail">
+        <p>
+          <strong>What lives here.</strong> Everything specific to the
+          current conversation: chat history, recent tool output, the
+          file just opened, the user's machine state.
+        </p>
+        <p>
+          <strong>Examples.</strong> The last twenty messages, the lint
+          errors from a minute ago, the variable the user just renamed,
+          the agent's working directory.
+        </p>
+        <p class="layer-persistence">
+          <span class="persistence-key">Persistence</span>
+          <span class="persistence-value">Low <span class="persistence-sep">·</span> transient</span>
+        </p>
+      </div>
+    </details>
+
+    <details class="layer">
+      <summary>
+        <span class="layer-num">05</span>
+        <span class="layer-name">Tooling</span>
+        <span class="layer-tagline">What the agent can do.</span>
+        <span class="layer-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="layer-detail">
+        <p>
+          <strong>What lives here.</strong> The agent's capabilities and
+          the wiring to them: MCP servers, CLI permissions, API
+          definitions, scoped credentials.
+        </p>
+        <p>
+          <strong>Examples.</strong> A "deploy" MCP server limited to
+          staging, a read-only database connection, the
+          <code>.agents/skills/</code> directory the agent can invoke.
+        </p>
+        <p class="layer-persistence">
+          <span class="persistence-key">Persistence</span>
+          <span class="persistence-value">Medium <span class="persistence-sep">·</span> infrastructure</span>
+        </p>
+      </div>
+    </details>
+  </section>
 
   <h2>Why mixing layers breaks things</h2>
 
@@ -130,4 +230,137 @@ For Python tooling see `pyproject.toml`. For deploy steps see `docs/deploy.md`.<
   </p>
 
   <FoundationPager slug="five-layer-stack" />
+
+  <style>
+    .stack-intro {
+      color: var(--ink-soft);
+      margin-bottom: 1.25rem;
+    }
+
+    .layer-stack {
+      border-top: 1px solid var(--rule);
+      margin: 1.5rem 0 2.5rem;
+    }
+    .layer {
+      border-bottom: 1px solid var(--rule);
+    }
+    .layer summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1.5rem 0.25rem;
+      display: grid;
+      grid-template-columns: 3rem minmax(7rem, max-content) 1fr 2rem;
+      gap: 1.25rem;
+      align-items: baseline;
+      transition: background 0.18s var(--ease-out-quart);
+    }
+    .layer summary::-webkit-details-marker { display: none; }
+    .layer summary::marker { content: ""; }
+    .layer:hover summary { background: var(--bg-soft); }
+
+    .layer-num {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      transition: color 0.2s var(--ease-out-quart);
+      padding-left: 0.5rem;
+    }
+    .layer-name {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .layer-tagline {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+    .layer-toggle {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      color: var(--muted);
+      transition: transform 0.28s var(--ease-out-quart), color 0.18s var(--ease-out-quart);
+      display: inline-block;
+      line-height: 1;
+      transform-origin: 50% 55%;
+      padding-right: 0.5rem;
+      text-align: right;
+    }
+    .layer[open] .layer-num { color: var(--ember); }
+    .layer[open] .layer-toggle {
+      transform: rotate(45deg);
+      color: var(--ember);
+    }
+
+    .layer-detail {
+      padding: 0 0.5rem 1.75rem calc(3rem + 1.25rem + 0.5rem);
+      max-width: 60ch;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      animation: layer-reveal 0.32s var(--ease-out-quart);
+    }
+    .layer-detail p { margin: 0 0 0.85rem; }
+    .layer-detail p:last-child { margin-bottom: 0; }
+    .layer-detail strong { color: var(--ink); font-weight: 650; }
+    .layer-detail code {
+      font-family: var(--mono);
+      font-size: 0.875em;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 0.05em 0.4em;
+      border-radius: 3px;
+    }
+
+    .layer-persistence {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 1.1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--rule-soft);
+      display: flex;
+      gap: 0.8em;
+      align-items: baseline;
+    }
+    .persistence-key { color: var(--muted); }
+    .persistence-value { color: var(--ink); }
+    .persistence-sep { color: var(--ember); padding: 0 0.15em; }
+
+    @keyframes layer-reveal {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .layer-detail { animation: none; }
+      .layer-toggle { transition: color 0.18s; }
+      .layer[open] .layer-toggle { transform: rotate(45deg); }
+    }
+
+    /* Tablet: tagline drops below name */
+    @media (max-width: 720px) {
+      .layer summary {
+        grid-template-columns: 2.5rem 1fr 1.75rem;
+        grid-template-rows: auto auto;
+        row-gap: 0.35rem;
+      }
+      .layer-num { grid-row: 1; grid-column: 1; padding-left: 0; }
+      .layer-name { grid-row: 1; grid-column: 2; }
+      .layer-toggle { grid-row: 1; grid-column: 3; padding-right: 0; }
+      .layer-tagline {
+        grid-row: 2;
+        grid-column: 2 / -1;
+        padding-right: 0.5rem;
+      }
+      .layer-detail {
+        padding-left: calc(2.5rem + 1.25rem);
+      }
+    }
+  </style>
 </Doc>

@@ -58,23 +58,41 @@ const description =
       ensures the AI agent has the situational awareness it needs to act with
       precision.
     </p>
-    <table>
-      <thead>
-        <tr><th>Layer</th><th>Description</th><th>Persistence</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>System</td><td>Role, persona, hard constraints, safety guardrails, output format</td><td>High · static</td></tr>
-        <tr><td>Project</td><td>Repo-level rules: <code>AGENTS.md</code>, <code>CLAUDE.md</code> (symlinked), <code>.cursor/rules/</code>, tech stack</td><td>Medium · versioned</td></tr>
-        <tr><td>Codebase</td><td>Semantic indices, repo maps, documentation <code>@mentions</code></td><td>Medium · dynamic</td></tr>
-        <tr><td>Session</td><td>Chat history, task progress, recent error logs</td><td>Low · transient</td></tr>
-        <tr><td>Tooling</td><td>MCP servers, CLI access, API definitions</td><td>Medium · infrastructure</td></tr>
-      </tbody>
-    </table>
+    <figure class="persistence-axis">
+      <svg viewBox="0 0 600 140" role="img" aria-labelledby="pa-title" xmlns="http://www.w3.org/2000/svg">
+        <title id="pa-title">Five context layers placed along a persistence axis from transient (left) to static (right).</title>
+        <line class="pa-axis" x1="40" y1="90" x2="555" y2="90" />
+
+        <g class="pa-dots">
+          <circle class="pa-dot" cx="40"  cy="90" r="7" />
+          <circle class="pa-dot" cx="170" cy="90" r="7" />
+          <circle class="pa-dot" cx="300" cy="90" r="7" />
+          <circle class="pa-dot" cx="430" cy="90" r="7" />
+          <circle class="pa-dot" cx="555" cy="90" r="7" />
+        </g>
+
+        <g class="pa-names">
+          <text x="40"  y="55" text-anchor="middle">SESSION</text>
+          <text x="170" y="55" text-anchor="middle">CODEBASE</text>
+          <text x="300" y="55" text-anchor="middle">TOOLING</text>
+          <text x="430" y="55" text-anchor="middle">PROJECT</text>
+          <text x="555" y="55" text-anchor="middle">SYSTEM</text>
+        </g>
+
+        <text class="pa-end-label" x="40"  y="125" text-anchor="start">transient</text>
+        <text class="pa-end-label" x="555" y="125" text-anchor="end">static</text>
+      </svg>
+      <figcaption>
+        Five layers, ordered by how long their contents live. Deep dive on the
+        <a href={url('foundation/five-layer-stack/')}>foundation page</a>.
+      </figcaption>
+    </figure>
+
     <p>
-      The synergy between these layers prevents the common 2025 failure mode
-      where an agent would fix a local bug but inadvertently refactor
-      adjacent code in a way that violated project conventions. Each layer
-      gets its own retention strategy and its own update cadence.
+      Used correctly, the layers prevent the common 2025 failure mode where
+      an agent would fix a local bug but inadvertently refactor adjacent
+      code in a way that violated project conventions. Each layer gets its
+      own retention strategy and its own update cadence.
     </p>
     <p><a href={url('foundation/five-layer-stack/')}>→ Foundation page: The five-layer stack</a></p>
 
@@ -476,5 +494,62 @@ CLAUDE.md -&gt; AGENTS.md          ← symlink
     }
     .blueprint h2:first-of-type { border-top: none; padding-top: 0; }
     .blueprint h3 { scroll-margin-top: 2rem; }
+
+    .persistence-axis {
+      margin: 1.75rem 0 2.25rem;
+    }
+    .persistence-axis svg {
+      width: 100%;
+      height: auto;
+      max-width: 640px;
+      display: block;
+    }
+    .persistence-axis figcaption {
+      margin: 0.75rem 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .pa-axis {
+      stroke: var(--ink);
+      stroke-width: 1.25;
+    }
+
+    .pa-dot {
+      fill: var(--ember);
+      stroke: var(--bg);
+      stroke-width: 2;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pa-pop 0.45s var(--ease-out-quart) both;
+    }
+    .pa-dots .pa-dot:nth-child(1) { animation-delay: 0.10s; }
+    .pa-dots .pa-dot:nth-child(2) { animation-delay: 0.20s; }
+    .pa-dots .pa-dot:nth-child(3) { animation-delay: 0.30s; }
+    .pa-dots .pa-dot:nth-child(4) { animation-delay: 0.40s; }
+    .pa-dots .pa-dot:nth-child(5) { animation-delay: 0.50s; }
+    @keyframes pa-pop {
+      from { opacity: 0; transform: scale(0.35); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .pa-names text {
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      fill: var(--ink);
+    }
+    .pa-end-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      fill: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pa-dot { animation: none; }
+    }
   </style>
 </Base>

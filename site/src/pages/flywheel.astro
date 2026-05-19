@@ -1,0 +1,398 @@
+---
+import Base from '../layouts/Base.astro';
+import Callout from '../components/Callout.astro';
+import { url } from '../lib/url';
+
+const title = 'The Groundwork flywheel';
+const description =
+  'How the skill, CLI, pre-commit hook, and per-command moves orchestrate together. The four roles, the cadence, the automation picture, and where the wins come from.';
+---
+
+<Base title={title} description={description}>
+  <div class="container flywheel">
+    <h1>The Groundwork flywheel</h1>
+    <p class="lede">
+      Groundwork is a skill. Nine commands. A CLI with twelve rules. A
+      pre-commit hook. Templates. The parts list lives at
+      <a href={url('commands/')}>/commands</a> and
+      <a href={url('cli/')}>/cli</a>. This page is the assembly diagram:
+      how the pieces fit, when each runs, what stays human.
+    </p>
+
+    <p class="forward-link">
+      New to the nine? <a href={url('commands/')}>/commands</a> names them
+      in a sentence each. The names below assume you have met them.
+    </p>
+
+    <figure class="flywheel-diagram">
+      <svg viewBox="50 50 500 500" role="img" aria-labelledby="fw-title" xmlns="http://www.w3.org/2000/svg">
+        <title id="fw-title">A weighted flywheel: four roles around a hub, an amber rotation sweep across the rim.</title>
+        <defs>
+          <marker id="fw-arrow" markerWidth="28" markerHeight="24" refX="0" refY="12" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M 0 0 L 28 12 L 0 24 Z" class="fw-arrow-head" />
+          </marker>
+        </defs>
+
+        <path class="fw-rim" fill-rule="evenodd"
+              d="M 300 50 A 250 250 0 1 0 300 550 A 250 250 0 1 0 300 50 Z
+                 M 300 95 A 205 205 0 1 1 300 505 A 205 205 0 1 1 300 95 Z" />
+
+        <g class="fw-spokes">
+          <line x1="322.6" y1="277.4" x2="452.0" y2="148.0" />
+          <line x1="277.4" y1="277.4" x2="148.0" y2="148.0" />
+          <line x1="322.6" y1="322.6" x2="452.0" y2="452.0" />
+          <line x1="277.4" y1="322.6" x2="148.0" y2="452.0" />
+        </g>
+
+        <circle class="fw-hub-disc" cx="300" cy="300" r="32" />
+        <circle class="fw-hub-spark" cx="300" cy="300" r="6" />
+
+        <text class="fw-role" x="300" y="155" text-anchor="middle">AUTHOR</text>
+        <text class="fw-role" x="440" y="292" text-anchor="middle">GUIDE</text>
+        <text class="fw-role" x="300" y="395" text-anchor="middle">ENFORCE</text>
+        <text class="fw-role" x="160" y="292" text-anchor="middle">ORIENT</text>
+
+        <g class="fw-cmd">
+          <text x="300" y="188" text-anchor="middle">init · document</text>
+          <text x="300" y="212" text-anchor="middle">scope · mcp · verify</text>
+
+          <text x="440" y="322" text-anchor="middle">plan</text>
+          <text x="440" y="346" text-anchor="middle">adr</text>
+
+          <text x="300" y="428" text-anchor="middle">CLI detect · pre-commit</text>
+          <text x="300" y="452" text-anchor="middle">drift hook</text>
+
+          <text x="160" y="322" text-anchor="middle">onboard</text>
+          <text x="160" y="346" text-anchor="middle">audit</text>
+        </g>
+
+        <g class="fw-sweep-rot">
+          <path class="fw-sweep" marker-end="url(#fw-arrow)"
+                d="M 300 72.5 A 227.5 227.5 0 0 1 527.5 300" />
+        </g>
+      </svg>
+      <figcaption>
+        Cadence runs clockwise. Lay the rails. Steer the change. Catch the
+        slip on commit. Re-ground before drift compounds.
+      </figcaption>
+    </figure>
+
+    <h2 id="four-roles">The four roles</h2>
+    <p>
+      Every Groundwork piece sits in one of four roles. Knowing which is
+      which lets you reason about cadence: enforce-tier pieces run on every
+      commit; orient-tier pieces run on the calendar; guide-tier pieces run
+      inside a single change.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Role</th><th>Pieces</th><th>Verb</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Author</strong></td>
+          <td><code>init</code>, <code>document</code>, <code>scope</code>, <code>mcp</code>, <code>verify</code></td>
+          <td>Lay the rails.</td>
+        </tr>
+        <tr>
+          <td><strong>Guide</strong></td>
+          <td><code>plan</code>, <code>adr</code></td>
+          <td>Steer the change.</td>
+        </tr>
+        <tr>
+          <td><strong>Enforce</strong></td>
+          <td>CLI <code>detect</code>, pre-commit hook, drift hook, the <code>conventions-drift</code> and <code>stale-claude-md</code> rules</td>
+          <td>Catch the slip.</td>
+        </tr>
+        <tr>
+          <td><strong>Orient</strong></td>
+          <td><code>onboard</code>, <code>audit</code></td>
+          <td>Re-ground.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Each role has its own cadence. Run them on the wrong rhythm and you
+      either burn time on the cheap moves or skip the expensive ones. Both
+      fail.
+    </p>
+
+    <h2 id="cadence">Cadence</h2>
+    <p>
+      Map a trigger to a move. The <em>Who</em> column is the human-vs-automated
+      split; the next section names which of those are wired today and which
+      are one workflow file away.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Trigger</th><th>What to run</th><th>Why</th><th>Who</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Day 0 of a repo</td>
+          <td><a href={url('commands/init/')}><code>init</code></a>, then <a href={url('commands/verify/')}><code>verify</code></a></td>
+          <td>Sets up <code>.context/conventions.md</code>, <code>AGENTS.md</code> with <code>CLAUDE.md</code> symlink, <code>.cursor/rules/</code>, ADR scaffolding, the pre-commit hook.</td>
+          <td>You, once</td>
+        </tr>
+        <tr>
+          <td>Every commit</td>
+          <td><code>groundwork detect --fail-on P0</code></td>
+          <td>Sub-second. P0s never reach <code>main</code>.</td>
+          <td>Automated</td>
+        </tr>
+        <tr>
+          <td>Every PR</td>
+          <td><code>groundwork detect --fail-on P1</code></td>
+          <td>Catches drift rules (<code>conventions-drift</code>, <code>oversized-claude-md</code>, <code>agents-claude-sync</code>, <code>missing-verification</code>).</td>
+          <td>Automated</td>
+        </tr>
+        <tr>
+          <td>Every non-trivial change</td>
+          <td><a href={url('commands/plan/')}><code>plan</code></a></td>
+          <td>Plan Mode contract before code. The cost of skipping is the cost of agents coding the wrong thing.</td>
+          <td>Agent, when prompted</td>
+        </tr>
+        <tr>
+          <td>Every architectural decision</td>
+          <td><a href={url('commands/adr/')}><code>adr</code></a></td>
+          <td>Captures both the choice and the rejected alternatives. The negative-space section is half the value.</td>
+          <td>Agent, at the moment</td>
+        </tr>
+        <tr>
+          <td>Stack or convention change</td>
+          <td><a href={url('commands/document/')}><code>document</code></a></td>
+          <td>Re-emits per-harness files from <code>.context/conventions.md</code>. The CLI's <code>conventions-drift</code> rule pings you if you forget.</td>
+          <td>Semi-automated</td>
+        </tr>
+        <tr>
+          <td>New area of the codebase</td>
+          <td><a href={url('commands/scope/')}><code>scope</code></a></td>
+          <td>File-pattern-scoped rules; <code>.mdc</code> files carry trigger-level word budgets so they do not bloat.</td>
+          <td>You</td>
+        </tr>
+        <tr>
+          <td>New MCP server</td>
+          <td><a href={url('commands/mcp/')}><code>mcp</code></a></td>
+          <td>Least-privilege config, HITL policy, audit trail.</td>
+          <td>You, per server</td>
+        </tr>
+        <tr>
+          <td>New agent or teammate</td>
+          <td><a href={url('commands/onboard/')}><code>onboard</code></a></td>
+          <td>Task-specific orientation brief, not the same as reading <code>CLAUDE.md</code> cold.</td>
+          <td>You, at handoff</td>
+        </tr>
+        <tr>
+          <td>Quarterly health check</td>
+          <td><a href={url('commands/audit/')}><code>audit</code></a></td>
+          <td>Scores AI-readiness; finds gaps the CLI does not have rules for yet (cognitive debt, vague principles, missing negative space).</td>
+          <td>You, on the calendar</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="automation">Automation: what runs without you</h2>
+
+    <h3>Automated today</h3>
+    <ul>
+      <li>
+        The <strong>pre-commit hook</strong> installed by
+        <a href={url('commands/verify/')}><code>verify</code></a>. Runs
+        <code>groundwork detect --fail-on P0</code> against staged context
+        files.
+      </li>
+      <li>
+        The <strong>site deploy workflow</strong>
+        (<code>.github/workflows/deploy-site.yml</code>), on every push to
+        <code>main</code>.
+      </li>
+    </ul>
+
+    <h3>One workflow file away</h3>
+    <ul>
+      <li>
+        A <strong>CI gate</strong> running
+        <code>npx @ignitic/groundwork detect --fail-on P1</code> on every
+        pull request. Catches drift before review.
+      </li>
+      <li>
+        A <strong>tag-driven CLI publish</strong> workflow firing on
+        <code>cli-v*</code> tags, optionally with npm provenance for a
+        signed build attestation.
+      </li>
+    </ul>
+
+    <h3>Stays human-triggered</h3>
+    <p>
+      <code>plan</code>, <code>adr</code>, <code>scope</code>,
+      <code>onboard</code>, and <code>audit</code> all stay manual. Each of
+      them needs a person or an agent to decide the moment. Automating them
+      on a cron produces noise, not signal; they fire when a human says
+      "now." Cron jobs are not human. Do not pretend otherwise.
+    </p>
+    <p>
+      <em>The CLI is the only piece that runs without you asking. Everything
+      else fires when a human decides the moment.</em>
+    </p>
+
+    <h2 id="leverage">Where the wins come from</h2>
+    <ol>
+      <li>
+        <strong>Pre-commit and CI gates on day one.</strong>
+        These are the only pieces that protect you from yourself. Without
+        them, the rest of Groundwork is voluntary and decays.
+      </li>
+      <li>
+        <strong><code>plan</code> before any change touching more than three
+        files.</strong>
+        Cost: thirty seconds. Saves the most expensive error class: agents
+        coding without context lock.
+      </li>
+      <li>
+        <strong>ADRs are the only long memory.</strong>
+        Every "we do not do X anymore" survives staffing changes only if
+        captured. The negative-space section is half the value.
+      </li>
+      <li>
+        <strong>Foundation files do their work silently.</strong>
+        <a href={url('foundation/good-practices/')}>Good practices</a>,
+        <a href={url('foundation/anti-patterns/')}>anti-patterns</a>, and
+        <a href={url('foundation/cognitive-debt/')}>cognitive debt</a> load
+        on every skill invocation. The patterns ride along. Your job is to
+        keep them current.
+      </li>
+      <li>
+        <strong>The split-file architecture from day one.</strong>
+        Lean <code>AGENTS.md</code> root, stable rules in
+        <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>. Retrofitting
+        the split later is harder than adopting it now.
+      </li>
+      <li>
+        <strong><code>document</code> is the spine of the loop.</strong>
+        When <code>.context/conventions.md</code> changes, everything else
+        regenerates from it. Do not hand-edit <code>CLAUDE.md</code>,
+        <code>AGENTS.md</code>, or <code>.cursor/rules/*.mdc</code>; edit
+        the canonical source and re-document.
+      </li>
+    </ol>
+
+    <h2 id="one-sentence">The flywheel, one sentence</h2>
+    <Callout label="If you remember one thing" tone="ember">
+      <p>
+        Author rules once with <code>init</code>, let the CLI guard them on
+        every commit, re-author them with <code>document</code> whenever
+        conventions shift, use <code>plan</code> and <code>adr</code> to
+        keep individual changes honest, and re-orient with
+        <code>onboard</code> and <code>audit</code> whenever a new agent or
+        a new quarter starts.
+      </p>
+    </Callout>
+
+    <Callout label="Where to go from here" tone="mute">
+      <p>
+        For the parts list, see
+        <a href={url('commands/')}>the nine commands</a>. For the rules the
+        detector enforces, see <a href={url('cli/')}>the CLI page</a>. For
+        the model the whole thing rests on, see
+        <a href={url('blueprint/')}>the blueprint</a>.
+      </p>
+    </Callout>
+  </div>
+
+  <style>
+    .flywheel h2 {
+      border-top: 1px solid var(--rule);
+      padding-top: 2rem;
+      scroll-margin-top: 2rem;
+    }
+    .flywheel h2:first-of-type { border-top: none; padding-top: 0; }
+    .flywheel h3 { scroll-margin-top: 2rem; }
+
+    .flywheel .forward-link {
+      margin: -0.25rem 0 1.75rem;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+    }
+
+    .flywheel-diagram {
+      margin: 1rem auto 1.25rem;
+      max-width: 600px;
+    }
+    .flywheel-diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .flywheel-diagram figcaption {
+      margin: 0.5rem auto 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+      line-height: 1.55;
+      max-width: 36rem;
+    }
+
+    /* The wheel itself: dark filled rim, light interior */
+    .flywheel-diagram .fw-rim {
+      fill: var(--ink);
+    }
+    .flywheel-diagram .fw-spokes line {
+      stroke: var(--ink);
+      stroke-width: 1.25;
+      stroke-linecap: round;
+    }
+    .flywheel-diagram .fw-hub-disc {
+      fill: var(--bg);
+      stroke: var(--ink);
+      stroke-width: 1.5;
+    }
+    .flywheel-diagram .fw-hub-spark {
+      fill: var(--ember);
+    }
+
+    /* Role labels and command lists inside the quadrants */
+    .flywheel-diagram .fw-role {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      fill: var(--ink);
+    }
+    .flywheel-diagram .fw-cmd text {
+      font-family: var(--mono);
+      font-size: 14px;
+      fill: var(--ink-soft);
+    }
+
+    /* The amber rotation sweep, sitting on the dark rim */
+    .flywheel-diagram .fw-sweep {
+      fill: none;
+      stroke: var(--ember);
+      stroke-width: 10;
+      stroke-linecap: round;
+    }
+    .flywheel-diagram .fw-arrow-head {
+      fill: var(--ember);
+    }
+
+    /* One-shot entrance: the sweep traces a full revolution and rests */
+    .flywheel-diagram .fw-sweep-rot {
+      transform-origin: 300px 300px;
+      transform-box: view-box;
+      animation: fw-spin 2.4s var(--ease-out-quart) 0.3s both;
+    }
+    @keyframes fw-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flywheel-diagram .fw-sweep-rot { animation: none; }
+    }
+
+    /* Mobile: drop the in-wheel command lists; the cadence table is authoritative */
+    @media (max-width: 520px) {
+      .flywheel-diagram .fw-cmd { display: none; }
+      .flywheel-diagram .fw-role { font-size: 24px; }
+    }
+  </style>
+</Base>
