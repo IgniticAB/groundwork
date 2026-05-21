@@ -47,7 +47,7 @@ alwaysApply: false
 | Project rules | `AGENTS.md` at repo root | The emerging cross-tool standard |
 | Skills | `~/.agents/skills/` (user) or `.agents/skills/` (repo) | Codex-compatible |
 
-`AGENTS.md` should be a near-duplicate of `CLAUDE.md`. Same content, both files emitted by the `init` and `document` commands.
+`AGENTS.md` is the canonical, hand-edited source. `CLAUDE.md` is a symlink to it (default) or a hand-mirrored copy (Windows / `core.symlinks=false` fallback). The non-Codex harnesses (Cursor, Copilot, Windsurf) read short pointer files instead — see "Decision: which harness(es) to target" below.
 
 ## GitHub Copilot
 
@@ -99,13 +99,15 @@ Windsurf rules support global workspace scope, file-pattern glob matching, or mo
 
 ## What goes in which file
 
-When emitting the *same* rules across multiple harnesses, the body is identical. Only the wrapping changes:
+`AGENTS.md` is canonical. `CLAUDE.md` is its symlink (or a hand-mirrored copy on platforms without symlink support). The non-Codex harnesses get five-line pointer files at their hardcoded paths — they say "read `/AGENTS.md`" and inline the three non-negotiables. Format-specific wrapping:
 
-- `CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`: plain Markdown, no frontmatter required (Copilot accepts plain Markdown but supports frontmatter for path-scoping).
-- `.cursor/rules/*.mdc`: YAML frontmatter with `description`, `globs`, `alwaysApply`.
-- `.github/instructions/*.instructions.md`: YAML frontmatter with `applyTo`.
+- `AGENTS.md`, `CLAUDE.md`: plain Markdown, no frontmatter.
+- `.github/copilot-instructions.md`: plain Markdown.
+- `.windsurf/rules/main.md`: plain Markdown.
+- `.cursor/rules/*.mdc`: YAML frontmatter with `description`, `globs`, `alwaysApply`. For the pointer file, use `alwaysApply: true` and `globs: []` so it loads on every Cursor inference.
+- `.github/instructions/*.instructions.md` (optional, path-scoped): YAML frontmatter with `applyTo`.
 
-The `init` command's job is to take a single canonical set of rules and emit them in each of these formats. Never write rules five times by hand.
+The `init` command's job is to emit `AGENTS.md` plus the small set of pointer files. No generator regenerates the pointers — they're short and hand-maintained.
 
 ## File naming conventions
 
@@ -116,13 +118,13 @@ Pick one. Most teams use kebab-case for filenames everywhere except `CLAUDE.md`,
 Ask the user. Default reasoning:
 
 - They mentioned Claude Code or Cowork → `AGENTS.md` with `CLAUDE.md` as a symlink to it (default; see `good-practices.md` for the rationale).
-- They mentioned Cursor → add `.cursor/rules/`.
+- They mentioned Cursor → add `.cursor/rules/main.mdc` as a pointer to `AGENTS.md`.
 - They mentioned Codex → `AGENTS.md` already covers it.
-- They mentioned Copilot → add `.github/copilot-instructions.md`; add `.github/agents/` if they want domain profiles.
-- They mentioned Windsurf → add `.windsurf/rules/` (preferred) or `.windsurfrules`.
+- They mentioned Copilot → add `.github/copilot-instructions.md` as a pointer to `AGENTS.md`; add `.github/agents/` if they want domain profiles.
+- They mentioned Windsurf → add `.windsurf/rules/main.md` as a pointer to `AGENTS.md` (preferred over `.windsurfrules`).
 - They did not mention any harness → ask. Do not assume.
 
-Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero once the canonical rules are written.
+Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero — each non-Codex harness gets the same five-line pointer file at a different path.
 
 ## Numeric-prefix naming for `.claude/rules/`
 

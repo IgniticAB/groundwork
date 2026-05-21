@@ -11,8 +11,9 @@ This command makes verification first-class. After running it, every context fil
 
 ## What this command produces
 
-- Updates to the per-harness context files (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules/main.mdc`, `.github/copilot-instructions.md`) to include a "Verification" section if it is not already there.
-- A pre-commit hook script at `.context/hooks/check-context.sh` (if not already present).
+- Updates to `AGENTS.md` (and to `CLAUDE.md` if it is a hand-mirrored copy rather than a symlink) to include or refresh the "Verification" section.
+- Updates to the per-harness pointer files (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) so the fast verification command in the non-negotiables block stays current. These are short and hand-maintained — no generator.
+- A pre-commit hook script at `.context/hooks/check-context.sh` (if not already present). The hook catches package-manager drift against `AGENTS.md`, missing ADRs on multi-file commits, and ADRs with no Status.
 - A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected.
 - The `groundwork` detector wired in: as a pre-commit step and as a CI job.
 - A short test of each verification command (and the detector) to confirm they work.
@@ -55,20 +56,20 @@ Run each verification command once and capture the result. Three reasons:
 
 If a command fails, ask the user: skip this command, fix it now, or include it with a "known failing" note.
 
-### Step 4. Update the per-harness files
+### Step 4. Update AGENTS.md and the per-harness pointers
 
-For each context file that exists, add or update the Verification section:
+In `AGENTS.md`, add or update the Verification section:
 
 ```markdown
 ## Verification
 
-After any change, run the fast verification:
+After any change:
 
 ```bash
 <fast commands, one per line>
 ```
 
-Before declaring a task done, run the full verification:
+Before declaring a task done:
 
 ```bash
 <full commands>
@@ -78,9 +79,11 @@ Known-failing checks (do not fix unless asked):
 - <list, if any>
 ```
 
-Place this section near the top of each file. The agent should not have to scroll to find it.
+Place this section near the top of `AGENTS.md`. The agent should not have to scroll to find it.
 
-Also update `.context/conventions.md` to have the canonical version. The per-harness files reference it but inline the most critical commands.
+`AGENTS.md` is canonical — `CLAUDE.md` either inherits via symlink (no edit needed) or is a hand-mirrored copy (edit it too, the `agents-claude-sync` rule will flag drift).
+
+For each per-harness pointer file (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`), update the `Verification:` line in the non-negotiables block to the fast command only. The pointer files do not list the full verification — they point at `AGENTS.md` for that.
 
 ### Step 5. Wire in the detector
 
@@ -94,7 +97,7 @@ Run `npx @ignitic/groundwork detect .` once now to confirm it runs and to show t
 
 ### Step 6. Local drift hook
 
-The repo-specific drift hook checks that context files have not drifted from the code. It complements the detector by catching project-specific cross-file invariants. The basic shape:
+The repo-specific drift hook catches three classes of cross-file invariants that the detector does not check by itself: package-manager drift between `package.json` and `AGENTS.md`, multi-file commits shipping without an ADR, and staged ADRs that forgot to declare a Status. The basic shape:
 
 ```bash
 #!/usr/bin/env bash
@@ -102,31 +105,22 @@ The repo-specific drift hook checks that context files have not drifted from the
 
 set -e
 
-# Did package.json change? Check that CLAUDE.md still names the right package manager.
+# Did package.json change? Check that AGENTS.md still names the right package manager.
 if git diff --cached --name-only | grep -q "^package.json$"; then
   pkg_mgr=$(node -e "console.log(require('./package.json').packageManager || 'npm')" | cut -d@ -f1)
-  if [ -f CLAUDE.md ] && ! grep -q "$pkg_mgr" CLAUDE.md; then
-    echo "WARNING: package.json changed but CLAUDE.md does not mention $pkg_mgr"
-    echo "Run: groundwork document"
+  if [ -f AGENTS.md ] && ! grep -q "$pkg_mgr" AGENTS.md; then
+    echo "WARNING: package.json changed but AGENTS.md does not mention $pkg_mgr"
+    echo "Update AGENTS.md (or run: groundwork document)"
     exit 1
   fi
 fi
 
-# Did .context/conventions.md change? Make sure CLAUDE.md and AGENTS.md were regenerated.
-if git diff --cached --name-only | grep -q "^\.context/conventions\.md$"; then
-  if git diff --cached --name-only | grep -qE "^(CLAUDE|AGENTS)\.md$"; then
-    : # both updated together, fine
-  else
-    echo "WARNING: .context/conventions.md changed but per-harness files were not regenerated"
-    echo "Run: groundwork document"
-    exit 1
-  fi
-fi
+# ADR coverage and ADR-status checks live in templates/hook.sh.template — copy them in.
 
 exit 0
 ```
 
-Use `templates/hook.sh.template` as the starter; tailor it to the user's stack.
+Use `templates/hook.sh.template` as the starter; tailor it to the user's stack. The template does not include any parity check between context files — `AGENTS.md` is the canonical source, so there is no other file to be in parity with.
 
 ### Step 7. Register the hook
 

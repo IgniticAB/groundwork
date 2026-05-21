@@ -21,8 +21,8 @@ export const oversizedClaudeMd = {
                     ruleId: 'oversized-claude-md',
                     severity: 'P1',
                     file: path,
-                    message: `${path} is ${lines} lines (hard ceiling ${HARD_LIMIT}). Attention bloat. Move stable rules into .claude/rules/<NN>-<name>.md and long detail into .context/conventions.md.`,
-                    fix: 'Adopt the split-file architecture: lean root + .claude/rules/ directory. Run `groundwork document` after splitting.',
+                    message: `${path} is ${lines} lines (hard ceiling ${HARD_LIMIT}). Attention bloat. Move stable rules into .claude/rules/<NN>-<name>.md.`,
+                    fix: 'Adopt the split-file architecture: lean canonical AGENTS.md + .claude/rules/ overflow. See foundation/good-practices.md § split-file.',
                 });
             }
             else if (lines > SOFT_LIMIT) {
@@ -30,8 +30,8 @@ export const oversizedClaudeMd = {
                     ruleId: 'oversized-claude-md',
                     severity: 'P2',
                     file: path,
-                    message: `${path} is ${lines} lines (soft target ${SOFT_LIMIT}, ~400 tokens). The root file should be a lean entry point; move stable conventions to .claude/rules/<NN>-<name>.md.`,
-                    fix: 'Consider splitting per the lean-root architecture. See foundation/good-practices.md § split-file.',
+                    message: `${path} is ${lines} lines (soft target ${SOFT_LIMIT}, ~400 tokens). The canonical file should be a lean entry point; move stable conventions to .claude/rules/<NN>-<name>.md.`,
+                    fix: 'Consider splitting per the lean-canonical architecture. See foundation/good-practices.md § split-file.',
                 });
             }
         }

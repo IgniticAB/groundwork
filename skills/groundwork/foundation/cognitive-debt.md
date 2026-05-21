@@ -32,7 +32,7 @@ The 2026 playbook taxonomy names four distinct rot patterns. Each has a differen
 | **Poisoning** | The agent uses deprecated APIs, outdated parameters, or stale syntax. The model's training data contradicts the current code. | Version-controlled deprecation logs; explicit "do not use X, use Y" rules; the `audit` command's stale-context check. |
 | **Distraction** | Irrelevant rules fire while the agent is editing in an unrelated area. SQL conventions distract while editing a React component. | Scoped rules (`scope` command); strict token budgets in always-apply rules; split-file architecture. |
 | **Confusion** | The agent conflates two similar-but-distinct objects. `User` and `UserAccount`, `Order` and `Invoice`. | Precise namespace mapping in conventions; before/after code examples; ADRs for the distinction. |
-| **Clash** | Two rules in active memory contradict. Output paralysis or whichever rule the agent saw last "wins" silently. | Cross-file consistency check in `audit`; one canonical source (`.context/conventions.md`); centralized governance. |
+| **Clash** | Two rules in active memory contradict. Output paralysis or whichever rule the agent saw last "wins" silently. | Cross-file consistency check in `audit`; one canonical source (`AGENTS.md`) plus thin pointer files; centralized governance. |
 
 The most common rot at hour two of a session is Distraction; at hour four it's Poisoning (the original rules have been summarized away). The `verify` hook plus the `audit` command catch most cases. Frequent session clears (`/clear` in Claude Code, equivalent elsewhere) force the agent to reload fresh configurations from disk rather than relying on compacted history.
 

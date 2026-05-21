@@ -101,7 +101,7 @@ const description =
         </tr>
         <tr>
           <td><strong>Enforce</strong></td>
-          <td>CLI <code>detect</code>, pre-commit hook, drift hook, the <code>conventions-drift</code> and <code>stale-claude-md</code> rules</td>
+          <td>CLI <code>detect</code>, pre-commit hook, drift hook, the <code>stale-claude-md</code> and <code>agents-claude-sync</code> rules</td>
           <td>Catch the slip.</td>
         </tr>
         <tr>
@@ -131,7 +131,7 @@ const description =
         <tr>
           <td>Day 0 of a repo</td>
           <td><a href={url('commands/init/')}><code>init</code></a>, then <a href={url('commands/verify/')}><code>verify</code></a></td>
-          <td>Sets up <code>.context/conventions.md</code>, <code>AGENTS.md</code> with <code>CLAUDE.md</code> symlink, <code>.cursor/rules/</code>, ADR scaffolding, the pre-commit hook.</td>
+          <td>Sets up the canonical <code>AGENTS.md</code> with <code>CLAUDE.md</code> as a symlink, the five-line pointer files for Cursor / Copilot / Windsurf, ADR scaffolding, and a slim pre-commit hook.</td>
           <td>You, once</td>
         </tr>
         <tr>
@@ -143,7 +143,7 @@ const description =
         <tr>
           <td>Every PR</td>
           <td><code>groundwork detect --fail-on P1</code></td>
-          <td>Catches drift rules (<code>conventions-drift</code>, <code>oversized-claude-md</code>, <code>agents-claude-sync</code>, <code>missing-verification</code>).</td>
+          <td>Catches drift rules (<code>oversized-claude-md</code>, <code>agents-claude-sync</code>, <code>missing-verification</code>, <code>stale-claude-md</code>).</td>
           <td>Automated</td>
         </tr>
         <tr>
@@ -161,7 +161,7 @@ const description =
         <tr>
           <td>Stack or convention change</td>
           <td><a href={url('commands/document/')}><code>document</code></a></td>
-          <td>Re-emits per-harness files from <code>.context/conventions.md</code>. The CLI's <code>conventions-drift</code> rule pings you if you forget.</td>
+          <td>Refreshes <code>AGENTS.md</code> as a delta-merge against the code (preserves history, marks stale sections deprecated). The CLI's <code>stale-claude-md</code> and <code>agents-claude-sync</code> rules ping you if it drifts.</td>
           <td>Semi-automated</td>
         </tr>
         <tr>
@@ -269,10 +269,12 @@ const description =
       </li>
       <li>
         <strong><code>document</code> is the spine of the loop.</strong>
-        When <code>.context/conventions.md</code> changes, everything else
-        regenerates from it. Do not hand-edit <code>CLAUDE.md</code>,
-        <code>AGENTS.md</code>, or <code>.cursor/rules/*.mdc</code>; edit
-        the canonical source and re-document.
+        <code>AGENTS.md</code> is the canonical, hand-edited source.
+        When it changes meaningfully (a new package manager, a new
+        non-negotiable), refresh the per-harness pointer files by hand
+        too — they are five lines each, and the CLI's
+        <code>agents-claude-sync</code> rule flags drift in the
+        <code>CLAUDE.md</code> two-file fallback case.
       </li>
     </ol>
 

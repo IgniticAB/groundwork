@@ -149,7 +149,7 @@ Write the file. Show the path.
 
 ### Step 6. Cross-link
 
-If this ADR creates a rule that belongs in conventions, also add a one-liner to `.context/conventions.md` that points to this ADR. Example:
+If this ADR creates a rule that belongs in agent context, add a one-liner to `AGENTS.md` (or to a `.claude/rules/<NN>-<name>.md` file if the rule is per-area) that points to this ADR. Example:
 
 ```markdown
 - Test framework: Vitest (see ADR-0007 for rationale)
@@ -166,7 +166,7 @@ If the user mentioned options that were rejected without deep consideration (e.g
 - The "Considered alternatives" section names real options the team considered, not strawmen.
 - The "Reconsider if" line is named and is specific.
 - An agent reading this ADR six months later understands the choice without further context.
-- The cross-link from `.context/conventions.md` exists if the decision creates an ongoing rule.
+- The cross-link from `AGENTS.md` (or a `.claude/rules/` file) exists if the decision creates an ongoing rule.
 
 ## Failure modes
 

@@ -2,7 +2,7 @@
 # .husky/pre-commit
 # Runs the groundwork detector + the local context-check hook on every commit.
 
-# Local drift checks (package.json vs CLAUDE.md, conventions vs per-harness, ADR-coverage).
+# Local drift checks (package.json vs AGENTS.md, ADR coverage, ADR status).
 if [ -x .context/hooks/check-context.sh ]; then
   .context/hooks/check-context.sh
 fi

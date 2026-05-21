@@ -5,7 +5,7 @@ import { url } from '../lib/url';
 
 const title = 'CLI';
 const description =
-  'The Groundwork CLI is a deterministic detector for context engineering anti-patterns. No LLM. Runs in milliseconds. Outputs JSON for CI gates. Twelve rules covering the highest-value mechanical checks.';
+  'The Groundwork CLI is a deterministic detector for context engineering anti-patterns. No LLM. Runs in milliseconds. Outputs JSON for CI gates. Eleven rules covering the highest-value mechanical checks.';
 ---
 
 <Base title={title} description={description}>
@@ -13,7 +13,7 @@ const description =
     <h1>The Groundwork CLI</h1>
     <p class="lede">
       A deterministic detector for context engineering anti-patterns. No LLM,
-      no inference, no opinions. Twelve rules, JSON output, runs in milliseconds.
+      no inference, no opinions. Eleven rules, JSON output, runs in milliseconds.
       The thing you wire into CI so context drift never ships.
     </p>
 
@@ -72,9 +72,9 @@ groundwork list-rules</code></pre>
       </tbody>
     </table>
 
-    <h2>The twelve rules</h2>
+    <h2>The eleven rules</h2>
     <p>
-      The CLI ships twelve rules, covering the highest-value mechanical
+      The CLI ships eleven rules, covering the highest-value mechanical
       checks an LLM cannot reliably perform itself.
     </p>
 
@@ -104,14 +104,9 @@ groundwork list-rules</code></pre>
           <td>AWS, GitHub, OpenAI, Anthropic, Slack, PEM, JWT, Google API keys detected in committed files. Rotate immediately.</td>
         </tr>
         <tr>
-          <td><code>conventions-drift</code></td>
-          <td>P1</td>
-          <td><code>.context/conventions.md</code> is newer than the per-harness files. The canonical source moved; the wrappers did not catch up.</td>
-        </tr>
-        <tr>
           <td><code>oversized-claude-md</code></td>
           <td>P1</td>
-          <td><code>CLAUDE.md</code> / <code>AGENTS.md</code> over 200 lines. Prompt bloat. The Project layer is doing the Codebase layer's job.</td>
+          <td><code>CLAUDE.md</code> / <code>AGENTS.md</code> over 200 lines. Prompt bloat. Push overflow into <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>.</td>
         </tr>
         <tr>
           <td><code>missing-verification</code></td>
@@ -171,7 +166,7 @@ groundwork list-rules</code></pre>
     &gt; const token = "ghp_****************dEf"
     fix: Rotate the credential and remove from history (BFG / git-filter-repo).
 
-12 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
+11 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
 
     <p>JSON for build gates and reporting:</p>
     <pre><code>{`{`}

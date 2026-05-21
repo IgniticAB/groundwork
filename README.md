@@ -95,13 +95,13 @@ Ask 4 questions:
   4. Out-of-bounds? → infra/terraform/, .next/, node_modules/
 
 Emit:
-  - .context/conventions.md
-  - CLAUDE.md
-  - .cursor/rules/main.mdc
+  - AGENTS.md (canonical, ~70 lines)
+  - CLAUDE.md → AGENTS.md (symlink)
+  - .cursor/rules/main.mdc (5-line pointer to AGENTS.md)
   - docs/decisions/README.md
   - docs/decisions/0001-record-architecture-decisions.md
   - docs/decisions/negative-space.md
-  - .context/hooks/check-context.sh
+  - .context/hooks/check-context.sh (ADR coverage + pkg-manager drift)
 
 Run pnpm test, pnpm lint, pnpm typecheck. All pass.
 
@@ -138,12 +138,12 @@ groundwork/
         verify.md
         onboard.md
       templates/                         files the commands emit
-        conventions.template.md
         AGENTS.md.template                canonical cross-tool source
-        CLAUDE.md.template                stub; CLAUDE.md is a symlink to AGENTS.md by default
-        claude-rules-readme.md            README for .claude/rules/ split files
-        cursor-rule.mdc.template
-        copilot-instructions.md.template
+        CLAUDE.md.template                two-file fallback; CLAUDE.md is a symlink to AGENTS.md by default
+        claude-rules-readme.md            README for .claude/rules/ overflow files
+        cursor-rule.mdc.template          5-line pointer for Cursor
+        copilot-instructions.md.template  5-line pointer for Copilot
+        windsurf-rule.template.md         5-line pointer for Windsurf
         adr.template.md
         adr-0001-record-architecture-decisions.md
         decisions-readme.template.md

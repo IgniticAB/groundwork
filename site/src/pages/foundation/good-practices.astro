@@ -111,17 +111,22 @@ const description =
   </p>
 
   <p>
-    The fix is structural. Keep the root <code>AGENTS.md</code> (with
-    <code>CLAUDE.md</code> as a symlink to it) <strong>lean</strong>: under
-    roughly 400 tokens, or about 80 lines. Move stable, long-form, or per-area
-    conventions into <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>. A
-    numeric prefix sets load order via filename sort.
+    The fix is structural. <code>AGENTS.md</code> is the <strong>only canonical
+    file</strong>: hand-edited, self-sufficient, capped around 400 tokens
+    (~80 lines). <code>CLAUDE.md</code> is a symlink to it. Per-harness pointer
+    files for Cursor, Copilot, and Windsurf are five lines each:
+    "read <code>/AGENTS.md</code>" plus three non-negotiables. When
+    <code>AGENTS.md</code> overflows, the overflow goes into
+    <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>; a numeric prefix
+    sets load order via filename sort.
   </p>
 
-  <pre><code>AGENTS.md                       ← lean entry point (under ~400 tokens)
-CLAUDE.md -&gt; AGENTS.md          ← symlink; single source of truth
-.claude/rules/
-  00-conventions.md             ← points at .context/conventions.md
+  <pre><code>AGENTS.md                          ← canonical, lean (~80 lines)
+CLAUDE.md -&gt; AGENTS.md             ← symlink; same content
+.cursor/rules/main.mdc             ← 5-line pointer
+.github/copilot-instructions.md    ← 5-line pointer
+.windsurf/rules/main.md            ← 5-line pointer
+.claude/rules/                     ← overflow: stable long-form rules
   10-style-imports.md
   30-verification.md
   50-frontend-tailwind.md
@@ -129,11 +134,14 @@ CLAUDE.md -&gt; AGENTS.md          ← symlink; single source of truth
 
   <p>
     Why the symlink. <code>AGENTS.md</code> is the emerging cross-tool
-    standard (Codex, Copilot, generic). <code>CLAUDE.md</code> is
-    Anthropic-specific. A symlink lets a single edit feed every harness. On
-    environments that cannot create symlinks (some Windows + <code>git config
-    core.symlinks=false</code> setups), <a href={url('commands/init/')}><code>init</code></a>
-    emits two files and the pre-commit hook verifies parity.
+    standard. <code>CLAUDE.md</code> is Anthropic-specific. A symlink lets a
+    single edit feed both harnesses with zero drift risk. On environments
+    that cannot create symlinks (some Windows + <code>git config
+    core.symlinks=false</code> setups),
+    <a href={url('commands/init/')}><code>init</code></a> emits two files; the
+    CLI's <code>agents-claude-sync</code> rule flags drift, and there is no
+    parity hook — drift is rare enough that a single P1 finding is the right
+    response.
   </p>
 
   <p>
@@ -150,15 +158,15 @@ CLAUDE.md -&gt; AGENTS.md          ← symlink; single source of truth
   </p>
 
   <ul>
-    <li><strong>Always.</strong> Things the agent does without asking (run fast verification, regenerate per-harness files when conventions change).</li>
+    <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow the non-negotiables in <code>AGENTS.md</code>).</li>
     <li><strong>Ask first.</strong> Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).</li>
     <li><strong>Never.</strong> Hard forbids (generated paths, vendored upstream, anything inside <code>&lt;!-- CE:PRESERVE --&gt;</code> tags).</li>
   </ul>
 
   <p>
-    State all three explicitly in <code>.context/conventions.md</code> and in
-    the per-harness files. The "ask first" tier is the most often missing
-    one; it's also the one that prevents the most scope creep.
+    State all three explicitly in <code>AGENTS.md</code>. The "ask first" tier
+    is the most often missing one; it's also the one that prevents the most
+    scope creep.
   </p>
 
   <h2>13. HTML preservation tags</h2>

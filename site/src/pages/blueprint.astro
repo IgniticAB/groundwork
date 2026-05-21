@@ -219,14 +219,23 @@ const description =
       <li>
         <strong>Symlink.</strong> <code>CLAUDE.md</code> is a symlink to
         <code>AGENTS.md</code>. One edit feeds both Anthropic and OpenAI
-        orchestrators. On environments without symlink support, a two-file
-        fallback works alongside a parity check in the pre-commit hook.
+        orchestrators with zero drift risk. On environments without symlink
+        support, a hand-mirrored two-file fallback works alongside the CLI's
+        <code>agents-claude-sync</code> rule.
+      </li>
+      <li>
+        <strong>Thin pointer files.</strong> Cursor, Copilot, and Windsurf
+        each get a five-line file at their hardcoded path that says
+        "read <code>/AGENTS.md</code>" plus three non-negotiables. No
+        duplication, no generator.
       </li>
     </ul>
-    <pre><code>AGENTS.md                       ← lean entry point
-CLAUDE.md -&gt; AGENTS.md          ← symlink
-.claude/rules/
-  00-conventions.md
+    <pre><code>AGENTS.md                          ← canonical, ~80 lines
+CLAUDE.md -&gt; AGENTS.md             ← symlink
+.cursor/rules/main.mdc             ← 5-line pointer
+.github/copilot-instructions.md    ← 5-line pointer
+.windsurf/rules/main.md            ← 5-line pointer
+.claude/rules/                     ← overflow: stable long-form rules
   10-style-imports.md
   30-verification.md
   50-frontend-tailwind.md
@@ -244,16 +253,15 @@ CLAUDE.md -&gt; AGENTS.md          ← symlink
       three explicit tiers, which sharply reduce scope creep:
     </p>
     <ul>
-      <li><strong>Always.</strong> Things the agent does without asking (run fast verification, regenerate per-harness files when conventions change).</li>
+      <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow the non-negotiables in <code>AGENTS.md</code>).</li>
       <li><strong>Ask first.</strong> Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).</li>
       <li><strong>Never.</strong> Hard forbids (generated paths, vendored upstream, anything inside <code>&lt;!-- CE:PRESERVE --&gt;</code> tags).</li>
     </ul>
     <p>
-      State all three explicitly in <code>.context/conventions.md</code> and
-      in the per-harness files. The "ask first" tier is the most often
-      missing one; it is also the one that prevents the most scope creep.
-      For code regions that must not be edited at all, wrap them in HTML
-      preservation tags with a one-line rationale.
+      State all three explicitly in <code>AGENTS.md</code>. The "ask first"
+      tier is the most often missing one; it is also the one that prevents
+      the most scope creep. For code regions that must not be edited at all,
+      wrap them in HTML preservation tags with a one-line rationale.
     </p>
 
     <h2 id="harnesses">The 2026 toolchain</h2>

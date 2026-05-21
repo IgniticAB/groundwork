@@ -116,36 +116,40 @@ The single metric worth tracking: percentage of generated code that passes the p
 
 Command: `audit` reports this as part of the maturity score.
 
-## 11. Split-file architecture (lean root, fat directory)
+## 11. Split-file architecture (lean canonical, fat overflow)
 
 A single `CLAUDE.md` that grows over time becomes a dumping ground. The agent treats it as mutable and appends narrow, session-specific rules. Over weeks the file is unreadable and the model's attention is diluted.
 
-The fix is structural. Keep the root `AGENTS.md` (with `CLAUDE.md` as a symlink to it) **lean**: under roughly 400 tokens, or about 80 lines. Move stable, long-form, or per-area conventions into `.claude/rules/<NN>-<name>.md`. A numeric prefix sets load order via filename sort.
+The fix is structural. `AGENTS.md` is the **only canonical file**: hand-edited, self-sufficient, capped around 400 tokens (~80 lines). `CLAUDE.md` is a symlink to it. Per-harness pointer files at the locations Cursor, Copilot, and Windsurf hardcode (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) are five lines: "read `/AGENTS.md`" plus three non-negotiables.
 
 ```
-AGENTS.md                       ← lean entry point (under ~400 tokens)
-CLAUDE.md -> AGENTS.md          ← symlink; single source of truth
-.claude/rules/
-  00-conventions.md             ← points at .context/conventions.md
+AGENTS.md                          ← canonical, lean (~80 lines)
+CLAUDE.md -> AGENTS.md             ← symlink; same content
+.cursor/rules/main.mdc             ← 5-line pointer
+.github/copilot-instructions.md    ← 5-line pointer
+.windsurf/rules/main.md            ← 5-line pointer
+.claude/rules/                     ← overflow: stable long-form rules
   10-style-imports.md
   30-verification.md
   50-frontend-tailwind.md
   70-secrets.md
 ```
 
-Why the symlink. `AGENTS.md` is the emerging cross-tool standard (Codex, Copilot, generic). `CLAUDE.md` is Anthropic-specific. A symlink lets a single edit feed every harness. On environments that cannot create symlinks (some Windows + `git config core.symlinks=false`), the `init` command emits two files and the pre-commit hook verifies parity.
+When `AGENTS.md` overflows, the overflow goes into `.claude/rules/<NN>-<name>.md`. A numeric prefix sets load order via filename sort. The non-Codex pointer files do not duplicate `.claude/rules/`; they only inline the always-applies non-negotiables.
 
-Command: `init` sets up this layout. `audit` flags root files that have crept past the threshold.
+Why the symlink. `AGENTS.md` is the emerging cross-tool standard. `CLAUDE.md` is Anthropic-specific. A symlink lets a single edit feed both harnesses with zero drift risk. On environments that cannot create symlinks (some Windows + `git config core.symlinks=false`), `init` emits two files; the `agents-claude-sync` CLI rule flags drift, and there is no parity hook — drift is rare enough that a single P1 finding is the right response.
+
+Command: `init` sets up this layout. `audit` flags `AGENTS.md` if it has crept past the threshold.
 
 ## 12. Three-tier boundary layout
 
 The older "out-of-bounds" framing is a single bucket. Real projects have three:
 
-- **Always.** Things the agent does without asking (run fast verification, regenerate per-harness files when conventions change).
+- **Always.** Things the agent does without asking (run fast verification, follow the non-negotiables in `AGENTS.md`).
 - **Ask first.** Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).
 - **Never.** Hard forbids (generated paths, vendored upstream, anything inside `<!-- CE:PRESERVE -->` tags).
 
-State all three explicitly in `.context/conventions.md` and in the per-harness files. The "ask first" tier is the most often missing one; it's also the one that prevents the most scope creep.
+State all three explicitly in `AGENTS.md`. The "ask first" tier is the most often missing one; it's also the one that prevents the most scope creep.
 
 ## 13. HTML preservation tags
 

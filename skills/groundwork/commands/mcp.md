@@ -113,7 +113,7 @@ The policy file is human-readable. It includes:
 
 ### Step 8. Cross-link
 
-Reference `docs/mcp-policy.md` from `.context/conventions.md` so the agent knows where to find the policy when it asks "can I do X?"
+Reference `docs/mcp-policy.md` from `AGENTS.md` (in the "See also" section) so the agent knows where to find the policy when it asks "can I do X?"
 
 ### Step 9. Report
 

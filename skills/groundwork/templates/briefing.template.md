@@ -52,7 +52,8 @@
 
 ## Where to look for more
 
-- `.context/conventions.md` — full conventions
+- `AGENTS.md` — canonical agent rules for this repo
+- `.claude/rules/` — split rule files (per-area conventions, long examples)
 - `docs/decisions/` — full ADR list
 - `.context/plans/` — recent plan contracts
 - `docs/mcp-policy.md` — agent access policy (if applicable)

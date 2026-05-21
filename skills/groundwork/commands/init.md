@@ -1,6 +1,6 @@
 ---
 name: groundwork-init
-description: Bootstrap a repo with the full context engineering scaffolding. Run this on a new repo or an existing repo that has no CLAUDE.md/AGENTS.md/.cursor/rules/ yet. Triggers on phrases like "initialize this repo for AI", "set up context engineering", "bootstrap CLAUDE.md", "make this AI-first", "/gw init".
+description: Bootstrap a repo with the full context engineering scaffolding. Run this on a new repo or an existing repo that has no AGENTS.md/CLAUDE.md/.cursor/rules/ yet. Triggers on phrases like "initialize this repo for AI", "set up context engineering", "bootstrap AGENTS.md", "make this AI-first", "/gw init".
 ---
 
 # `init` — Bootstrap a repo
@@ -11,14 +11,13 @@ The single most leveraged move in this skill. Run once per repo. Sets up every a
 
 Depending on the harnesses the user targets, some subset of:
 
-- `CLAUDE.md` (Claude Code)
-- `AGENTS.md` (Codex and generic)
-- `.cursor/rules/main.mdc` (Cursor)
-- `.github/copilot-instructions.md` (Copilot)
-- `docs/decisions/` directory with a README and an ADR template
-- `docs/decisions/negative-space.md` starter
-- `.context/conventions.md` — single source of truth that the per-harness files reference
-- A pre-commit hook stub at `.context/hooks/check-context.sh`
+- `AGENTS.md` — the canonical, hand-edited source of agent rules. Self-sufficient; aim under ~80 lines.
+- `CLAUDE.md` — symlink to `AGENTS.md` (default). Two-file fallback for Windows or `core.symlinks=false` repos.
+- `.cursor/rules/main.mdc` (Cursor) — 5-line pointer to AGENTS.md.
+- `.github/copilot-instructions.md` (Copilot) — 5-line pointer to AGENTS.md.
+- `.windsurf/rules/main.md` (Windsurf) — 5-line pointer to AGENTS.md.
+- `docs/decisions/` directory with a README, ADR-0001, and the negative-space starter.
+- `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR coverage + ADR status + package-manager drift).
 
 It does **not** create skills, MCP configs, or scoped rules. Those have their own commands.
 
@@ -30,7 +29,7 @@ Before asking anything, read the repo:
 
 - Look for `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Gemfile`, etc. Identify the primary language(s) and package manager(s).
 - Read scripts (`package.json#scripts`, `Makefile`, `pyproject.toml#tool.poetry.scripts`) to find test, lint, build, run commands.
-- Glob for existing context files. If `CLAUDE.md` or `.cursor/rules/` already exist, switch to `document` instead and tell the user.
+- Glob for existing context files. If `AGENTS.md`, `CLAUDE.md`, or `.cursor/rules/` already exist, switch to `document` instead and tell the user.
 - Check for `README.md` and skim it for stack and conventions clues.
 
 Build a short summary of what you found and show it to the user before asking questions. Two or three lines. This proves you read the repo and frames the questions.
@@ -40,82 +39,62 @@ Build a short summary of what you found and show it to the user before asking qu
 Use AskUserQuestion (or numbered options in prose if unavailable). Five questions, in order:
 
 1. **Which harnesses should I emit files for?** Multi-select. Options: Claude Code, Cursor, Codex / generic, GitHub Copilot, Windsurf. Recommend the ones the user most likely uses given their tooling; do not assume.
-2. **Which verification commands should the agent run?** Show the ones you detected as preselected. Common shapes: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pytest`, `cargo test`, `go test ./...`. Let the user adjust.
+2. **Which verification commands should the agent run?** Show the ones you detected as preselected. Common shapes: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pytest`, `cargo test`, `go test ./...`. Let the user adjust. Separate **fast** (after each change) from **full** (before declaring done).
 3. **What naming / style conventions should I bake in?** Multi-select with sensible defaults: no placeholder comments, plan-mode for >3 file changes, defensive commits before refactors, interface-first for typed languages. Let the user untick what does not apply.
 4. **Three-tier boundaries.** Free text, three slots, default empty: **Always** (things the agent does without asking), **Ask first** (things the agent proposes before doing), **Never** (paths the agent must not touch, e.g. `infra/terraform/`, `vendor/`, anything generated).
 5. **Symlink CLAUDE.md to AGENTS.md, or keep two files?** Default symlink (single canonical source; lower drift). Offer the two-file fallback for Windows users or any repo with `git config core.symlinks=false` set. If the user does not know which they want, default to symlink and mention they can switch later.
 
 Do not ask more than five. Do not ask things you could have detected from the repo.
 
-### Step 3. Write the canonical conventions
+### Step 3. Emit `AGENTS.md`
 
-Create `.context/conventions.md`. This is the single source of truth that every per-harness file references. Use `templates/conventions.template.md` as the starting point and substitute in the user's answers.
+Write `AGENTS.md` from `templates/AGENTS.md.template`, filling in the user's answers directly. There is no intermediate canonical file — `AGENTS.md` *is* the canonical file.
 
-The structure (do not deviate):
+Sections to populate (do not deviate from this order):
 
-```markdown
-# Project conventions
+- **What this project is** — one paragraph, from the detected stack and README hints.
+- **Stack** — language(s), package manager, runtime/framework, one line each.
+- **Verification** — fast (after every change) and full (before declaring done) commands the user picked.
+- **Non-negotiables** — plan mode required for >3 file changes / public APIs / migrations; no placeholder comments; use the picked package manager; run fast verification after every meaningful change. Adjust based on the user's Q3 picks.
+- **Style** — three to six most critical rules, each with a Preferred / Avoid pair. Pull from Q3 picks; do not invent rules the user did not pick.
+- **Boundaries** — the three-tier slots from Q4.
+- **Plan mode** — when required, when to skip.
+- **Preserved regions** — one paragraph explaining the `preserve:start` / `preserve:end` markers.
+- **See also** — pointers to `.claude/rules/` (if scaffolded), `docs/decisions/`, `docs/mcp-policy.md` (only if it exists).
 
-## Stack
-[detected stack, one line each]
+Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, it belongs in `.claude/rules/<NN>-<name>.md` — emit the rule file and reference it from `AGENTS.md`'s "See also" instead of inlining.
 
-## Verification commands
-[the commands the user picked, one per line, with what they verify]
+### Step 4. Wire up CLAUDE.md and the per-harness pointers
 
-## Style and naming
-[the conventions the user picked, with one Preferred/Avoid pair each]
+**CLAUDE.md.** Per the user's answer to Q5:
 
-## Boundaries
-### Always
-[user's free-text "Always" slot, or sensible defaults]
-### Ask first
-[user's free-text "Ask first" slot]
-### Never
-[user's free-text "Never" slot, or "None declared" if empty]
+- **Symlink** (default): from the repo root, run `ln -sf AGENTS.md CLAUDE.md`. Verify with `readlink CLAUDE.md`.
+- **Two files**: write `CLAUDE.md` from `templates/CLAUDE.md.template`, mirroring the content of `AGENTS.md`. Tell the user explicitly: there is no generator and no parity hook; if `AGENTS.md` changes, `CLAUDE.md` must be hand-mirrored (or regenerated via `groundwork document`). The `agents-claude-sync` CLI rule will flag drift.
 
-## Preserved regions
-[short paragraph explaining HTML preservation tags; one example block]
+**Per-harness pointer files.** For every non-Codex harness the user picked, emit the corresponding pointer file. Pointer shape is identical across harnesses (five lines + a header), only the path and Cursor's `.mdc` frontmatter differ:
 
-## Plan mode
-[when plan mode is required; default is >3 files or public API change]
+```
+# <Project> agent rules
 
-## References
-[pointers to docs/decisions/, MCP policy if exists, .claude/rules/, etc.]
+Read /AGENTS.md and follow it for all project conventions.
+
+Non-negotiables (always apply):
+- Verification: <fast verification command>
+- Plan mode required for changes touching more than 3 files, public APIs, or migrations.
+- No placeholder comments.
 ```
 
-Keep it under 200 lines. If it is heading over, it means a section has turned into a doc; move it out and link.
+Paths:
 
-### Step 4. Emit per-harness files
+- **Cursor** → `.cursor/rules/main.mdc`. Use `templates/cursor-rule.mdc.template` — the `.mdc` frontmatter (`alwaysApply: true`, `globs: []`) is the only format-specific bit, preserve it.
+- **Copilot** → `.github/copilot-instructions.md`. Use `templates/copilot-instructions.md.template`. Plain markdown, no frontmatter.
+- **Windsurf** → `.windsurf/rules/main.md`. Use `templates/windsurf-rule.template.md`. Plain markdown.
 
-For each harness the user picked, emit the corresponding file by transforming `.context/conventions.md` into the right format. Use `templates/AGENTS.md.template`, `templates/CLAUDE.md.template`, `templates/cursor-rule.mdc.template`, `templates/copilot-instructions.md.template` as bases.
+Tell the user these pointer files are hand-maintained. They are short and stable enough that hand maintenance is fine; if the three non-negotiables drift it's worth a human noticing.
 
-The per-harness file is short. Its job is to:
+**Optional: scaffold `.claude/rules/`.** After writing the pointer files, ask: *"Scaffold `.claude/rules/` for the split-file architecture? (Y/n)"*
 
-1. Tell the agent what kind of project this is in one sentence.
-2. Point to `.context/conventions.md` as the canonical source.
-3. Inline the three or four most critical rules so the agent gets them even without following the link.
-4. Name the verification commands inline.
-
-Do not duplicate everything. The whole point of `.context/conventions.md` is that it is the source; the per-harness files are thin pointers.
-
-#### AGENTS.md as canonical; CLAUDE.md handling
-
-Treat `AGENTS.md` as the canonical cross-tool source. Then, per the user's answer in step 2 question 5:
-
-- **Symlink** (default): write `AGENTS.md` from the template. From the repo root, run `ln -sf AGENTS.md CLAUDE.md`. One file feeds both harnesses; edits in `AGENTS.md` apply automatically to `CLAUDE.md`.
-- **Two files**: write `AGENTS.md` and `CLAUDE.md` from their templates. The pre-commit hook (`.context/hooks/check-context.sh`) will verify parity between the two on every commit. If they drift, the hook fails the commit and tells the user to run `groundwork document`.
-
-In either mode, the per-harness files emitted for Cursor (`.cursor/rules/main.mdc`), Copilot (`.github/copilot-instructions.md`), and Windsurf (`.windsurf/rules/main.md` or `.windsurfrules`) are written independently from the AGENTS.md content.
-
-#### Optional: scaffold `.claude/rules/`
-
-After writing the per-harness files, ask the user: *"Scaffold `.claude/rules/` for the split-file architecture? (Y/n)"*
-
-If yes, emit:
-- `.claude/rules/README.md` from `templates/claude-rules-readme.md`.
-- `.claude/rules/00-conventions.md` — a one-line file pointing at `.context/conventions.md` (so Claude Code loads the canonical source on every session).
-
-Tell the user they can add more rule files later (numeric prefix sets load order: `10-style.md`, `30-verification.md`, etc.). The split-file pattern keeps `AGENTS.md` lean (under ~400 tokens) over time.
+If yes, emit `.claude/rules/README.md` from `templates/claude-rules-readme.md`. Do not emit any starter rule files — they only exist when `AGENTS.md` overflows. Tell the user the numeric-prefix convention (`10-style.md`, `30-verification.md`, etc.).
 
 If the user declines, skip. The split-file pattern is opt-in; for small projects a lean `AGENTS.md` alone is fine.
 
@@ -131,13 +110,13 @@ Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` c
 
 ### Step 6. Set up the pre-commit hook
 
-Create `.context/hooks/check-context.sh` from the template. Make it executable. Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If none is present, leave the hook script in place and tell the user the one-line install command for the most common one (`pre-commit install` or `pnpm dlx husky init`).
+Create `.context/hooks/check-context.sh` from `templates/hook.sh.template`. Make it executable. The hook does three things: warn on `package.json#packageManager` drift vs `AGENTS.md`, require an ADR (or a reference to one) on multi-file commits, and require a valid Status on staged ADRs. It does **not** enforce parity between any context files.
 
-Do not silently add a new tool to the repo. Suggest, do not install.
+Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If none is present, leave the hook script in place and tell the user the one-line install command for the most common one (`pre-commit install` or `pnpm dlx husky init`). Do not silently add a new tool to the repo. Suggest, do not install.
 
 ### Step 7. Verify
 
-Run the verification commands the user picked. If any fail, show the failure clearly and stop. The agent should see the same failures the user does. (If the user said "I know lint is broken, just continue", proceed and add a note to `.context/conventions.md` flagging the known-failing check.)
+Run the fast verification command the user picked. If it fails, show the failure clearly and stop. The agent should see the same failures the user does. (If the user said "I know lint is broken, just continue", proceed and add a note to `AGENTS.md`'s Non-negotiables section flagging the known-failing check.)
 
 ### Step 8. Report
 
@@ -150,10 +129,11 @@ No long postamble.
 
 ## Quality bar
 
-- Every emitted file is under 200 lines unless explicitly templated longer.
+- `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `.claude/rules/`, `docs/decisions/`, and `docs/mcp-policy.md`.
+- Pointer files are exactly the five-line shape, no extra prose, no duplicated rules.
+- `CLAUDE.md` is either a symlink (default) or a hand-mirrored copy with the user warned about drift.
 - No placeholder text in any emitted file. Either it has real content or it is not in the file.
 - Verification commands are real and run in this repo.
-- The per-harness files point to `.context/conventions.md` rather than duplicating it.
 - If the repo already had partial context files, they are not overwritten; the user gets a diff and decides.
 
 ## Failure modes to watch for
@@ -162,3 +142,4 @@ No long postamble.
 - **You write rules that contradict what the user is already doing.** Read the recent commits and a sample of files first.
 - **You include rules with no examples.** Every style rule has a Preferred/Avoid pair.
 - **You forget to make the hook script executable.** `chmod +x` it.
+- **You bloat `AGENTS.md` past the ~80-line target.** Push overflow into `.claude/rules/<NN>-<name>.md` files instead of inlining everything.

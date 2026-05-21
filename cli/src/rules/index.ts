@@ -1,7 +1,6 @@
 // Rule registry. Add new rules here.
 import type { Rule } from '../types.js';
 import { staleClaudeMd } from './stale-claude-md.js';
-import { conventionsDrift } from './conventions-drift.js';
 import { missingAdrXref } from './missing-adr-xref.js';
 import { mcpLiteralCredentials } from './mcp-literal-credentials.js';
 import { oversizedClaudeMd } from './oversized-claude-md.js';
@@ -15,7 +14,6 @@ import { oversizedCursorRule } from './oversized-cursor-rule.js';
 
 export const rules: Rule[] = [
   staleClaudeMd,
-  conventionsDrift,
   missingAdrXref,
   mcpLiteralCredentials,
   oversizedClaudeMd,

@@ -1,19 +1,20 @@
 # <Project name> — agent context
 
-<!-- AGENTS.md is the canonical cross-tool source for every harness that reads it
-     (Codex, Copilot, generic agents). CLAUDE.md in this repo is a symlink to
-     this file, so editing here updates both. If your environment cannot create
-     symlinks (rare; some Windows + git core.symlinks=false setups), CLAUDE.md
-     is kept as a copy and `.context/hooks/check-context.sh` verifies parity
-     on commit.
-
-     Aim under ~400 tokens (roughly 80 lines) in this file. Move stable rules,
-     long examples, and per-area conventions to `.claude/rules/<NN>-<name>.md`
-     and reference them via the See also section. -->
+<!-- AGENTS.md is the canonical, hand-edited source of agent rules for this
+     repo. Every harness either reads this file directly or reads a 5-line
+     pointer file at its hardcoded path. CLAUDE.md is a symlink to this file
+     by default. Aim under ~80 lines / ~400 tokens; push overflow into
+     .claude/rules/<NN>-<name>.md. -->
 
 ## What this project is
 
 <!-- One paragraph. Audience, problem, stack at a glance. -->
+
+## Stack
+
+- Language(s): <e.g. TypeScript 5.x>
+- Package manager: <pkg-mgr>
+- Runtime / framework: <e.g. Node 20, Astro 5>
 
 ## Verification
 
@@ -27,40 +28,29 @@ Before declaring a task done:
 <full verification command(s)>
 ```
 
-## The non-negotiables
+## Non-negotiables
 
-- Plan mode is required for changes touching more than 3 files, public APIs, refactors, or migrations.
-- No placeholder comments. Ask if you do not have enough context.
-- Use the project's package manager (`<pkg-mgr>`).
+- Plan mode required for changes touching more than 3 files, public APIs, refactors, or migrations.
+- No placeholder comments (`// TODO`, `// implement later`). Ask if you do not have enough context.
+- Use `<pkg-mgr>` only; do not introduce alternatives.
 - Run the fast verification after every meaningful change.
 
 ## Style
 
-<!-- 3 to 6 most critical rules. Every rule is behaviorally anchored: it names
-     the exact technology, command, or pattern. Each has a Preferred / Avoid
-     pair. Full set lives in .context/conventions.md and .claude/rules/. -->
+<!-- 3 to 6 critical rules. Each names the exact technology, command, or
+     pattern, with a Preferred / Avoid pair. Add more sections as needed. -->
 
 ### <Rule 1>
 ```<lang>
 // Preferred
 <code>
-
 // Avoid
 <code>
 ```
 
-### <Rule 2>
-```<lang>
-// Preferred
-
-// Avoid
-```
-
 ## Boundaries
 
-<!-- Three explicit tiers replace the older flat "out-of-bounds" framing. -->
-
-**Always**: <things the agent must do without asking>
+**Always**: <things the agent does without asking>
 - <path or behavior>
 
 **Ask first**: <things the agent must propose before doing>
@@ -69,10 +59,17 @@ Before declaring a task done:
 **Never**: <things the agent is forbidden from touching>
 - <path>: <reason>
 
-## Where to look for more
+## Plan mode
 
-- `.context/conventions.md` — full conventions, with the three-tier boundary breakdown
-- `.claude/rules/` — split rule files loaded on demand (numeric prefix sets load order)
-- `docs/decisions/` — ADRs
-- `docs/decisions/negative-space.md` — rejected paths
+Required for: >3 files, public API changes, refactors, migrations, build/CI changes.
+Skip for: typo fixes, single-file localized changes, comment-only edits.
+
+## Preserved regions
+
+Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` (or `// preserve:start` / `// preserve:end`) must not be edited without explicit instruction.
+
+## See also
+
+- `.claude/rules/` — overflow rules (numeric prefix sets load order)
+- `docs/decisions/` — ADRs; the *why* behind decisions
 - `docs/mcp-policy.md` — agent access policy, if applicable

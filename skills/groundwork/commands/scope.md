@@ -40,7 +40,7 @@ Use AskUserQuestion. Multi-select, with detected candidates as the options. Comm
 
 Add any others you detected. Include "All of these as one set" as an option (some users want every area scoped at once).
 
-Also ask: **which harness(es)?** If `.context/conventions.md` already names the target harnesses, default to those.
+Also ask: **which harness(es)?** If `AGENTS.md` already names the target harnesses (or you can infer them from which pointer files exist — `.cursor/rules/`, `.github/copilot-instructions.md`, `.windsurf/rules/`), default to those.
 
 ### Step 3. For each area, gather the rules
 

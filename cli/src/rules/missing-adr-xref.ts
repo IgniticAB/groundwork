@@ -1,4 +1,4 @@
-// Detects when .context/conventions.md or CLAUDE.md mentions a decision but does not link an ADR.
+// Detects when AGENTS.md or CLAUDE.md mentions a decision but does not link an ADR.
 // Heuristic: phrases like "we chose", "we use X (not Y)", "decided to" should be cross-linked to docs/decisions/.
 import type { Rule, Finding } from '../types.js';
 
@@ -11,11 +11,11 @@ const DECISION_PHRASES = [
 
 export const missingAdrXref: Rule = {
   id: 'missing-adr-xref',
-  description: 'Convention or context file mentions a decision but does not link to an ADR.',
+  description: 'Context file mentions a decision but does not link to an ADR.',
   defaultSeverity: 'P2',
   async run(ctx) {
     const findings: Finding[] = [];
-    const targets = ['.context/conventions.md', 'CLAUDE.md', 'AGENTS.md'];
+    const targets = ['AGENTS.md', 'CLAUDE.md'];
 
     for (const target of targets) {
       const body = await ctx.readFile(target);

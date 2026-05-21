@@ -11,7 +11,7 @@ The purpose is not bureaucracy. It is cognitive debt prevention: the human stays
 
 ## When this command is required
 
-The `.context/conventions.md` (set by `init`) usually says: plan mode is required for changes touching more than 3 files, or touching public APIs, or refactors, or migrations. The exact threshold is per-project.
+`AGENTS.md` (set by `init`) usually says: plan mode is required for changes touching more than 3 files, or touching public APIs, or refactors, or migrations. The exact threshold is per-project.
 
 If the user invokes this for something smaller, do not refuse. A two-file change can still benefit from a 5-line plan.
 
@@ -85,7 +85,7 @@ Fill in each section. The structure is the template; the content is yours.
 Hard rules:
 - Approach is two or three sentences. Not a design doc.
 - Out-of-scope is at least two bullets. Always. The agent's instinct is to expand scope; this section is the constraint.
-- Verification names commands that actually run in this repo. If you do not know them, read `.context/conventions.md`.
+- Verification names commands that actually run in this repo. If you do not know them, read `AGENTS.md`.
 - Rollback is one sentence describing what to do if the change is bad.
 
 ### Step 4. Show the plan to the user and ask for approval
@@ -124,7 +124,7 @@ Before considering this command done, scan the shipped plan for decisions that s
 - The Approach section names a technology, library, or pattern choice that other parts of the system will need to follow.
 - The Out-of-scope section explicitly rejected an alternative approach.
 - The Risks section names a tradeoff the team accepted.
-- A new convention was introduced that the existing `.context/conventions.md` does not yet cover.
+- A new convention was introduced that `AGENTS.md` (or `.claude/rules/`) does not yet cover.
 
 For each decision detected, surface it to the user:
 

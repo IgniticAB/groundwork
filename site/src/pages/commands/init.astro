@@ -27,9 +27,10 @@ const description =
   <p>
     <code>init</code> replaces guessing with detection. It reads your repo
     (package manifests, scripts, recent commits) and emits a complete starter
-    set of context files. One file per harness, all pointing at a single
-    canonical <code>.context/conventions.md</code>. No duplication. No
-    placeholders. No "TODO: implement this".
+    set of context files: one canonical <code>AGENTS.md</code>, with
+    <code>CLAUDE.md</code> as a symlink to it and a five-line pointer file
+    for each non-Codex harness you target. No duplication. No placeholders.
+    No "TODO: implement this".
   </p>
   <p>
     The point is not the files. The point is that every other command in this
@@ -70,17 +71,19 @@ const description =
   <h2>What it produces</h2>
   <p>Depending on which harnesses you target, some subset of:</p>
   <ul>
-    <li><code>CLAUDE.md</code> for Claude Code</li>
-    <li><code>AGENTS.md</code> for Codex and generic agents</li>
-    <li><code>.cursor/rules/main.mdc</code> for Cursor, with file-scoping frontmatter</li>
-    <li><code>.github/copilot-instructions.md</code> for GitHub Copilot</li>
-    <li><code>.context/conventions.md</code>, the single canonical source of truth</li>
+    <li><code>AGENTS.md</code>, the canonical hand-edited source (aim under ~80 lines)</li>
+    <li><code>CLAUDE.md</code> → <code>AGENTS.md</code> (symlink by default; two-file fallback for Windows / <code>core.symlinks=false</code>)</li>
+    <li><code>.cursor/rules/main.mdc</code> for Cursor (5-line pointer with <code>alwaysApply: true</code>)</li>
+    <li><code>.github/copilot-instructions.md</code> for GitHub Copilot (5-line pointer)</li>
+    <li><code>.windsurf/rules/main.md</code> for Windsurf (5-line pointer)</li>
     <li><code>docs/decisions/</code>: README, a starter ADR, and a negative-space stub</li>
-    <li><code>.context/hooks/check-context.sh</code>, the pre-commit drift hook</li>
+    <li><code>.context/hooks/check-context.sh</code> — slim pre-commit hook (ADR coverage + ADR status + package-manager drift; no parity check)</li>
   </ul>
   <p>
-    Every per-harness file is short and points at <code>.context/conventions.md</code>.
-    The rules live in one place. The wrappers are thin.
+    <code>AGENTS.md</code> is self-sufficient. The per-harness pointer files
+    are five lines each: they say "read <code>/AGENTS.md</code>" and inline
+    three non-negotiables. They are hand-maintained — short and stable enough
+    that hand maintenance is fine.
   </p>
 
   <h2>How it works</h2>
@@ -92,19 +95,23 @@ const description =
       anything.
     </li>
     <li>
-      <strong>Ask four questions, never more.</strong>
+      <strong>Ask five questions, never more.</strong>
       <em>Which harnesses?</em> <em>Which verification commands?</em>
-      <em>Which conventions?</em> <em>Anything out-of-bounds?</em>
+      <em>Which conventions?</em> <em>Three-tier boundaries (Always / Ask first / Never)?</em>
+      <em>Symlink CLAUDE.md or keep two files?</em>
       Pre-selects detected answers; you adjust.
     </li>
     <li>
-      <strong>Write the canonical conventions</strong> at
-      <code>.context/conventions.md</code>: under 200 lines, with a fixed
-      structure.
+      <strong>Write <code>AGENTS.md</code></strong> directly from your
+      answers. Self-sufficient; aim under ~80 lines. Overflow goes to
+      <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>, not back into the
+      root file.
     </li>
     <li>
-      <strong>Emit per-harness files</strong> by transforming the canonical
-      file into each format. Same rules, different wrappers.
+      <strong>Wire up <code>CLAUDE.md</code> and the per-harness pointers.</strong>
+      Symlink by default; two-file fallback when symlinks are unavailable.
+      For each non-Codex harness, drop the same 5-line pointer file at its
+      hardcoded path.
     </li>
     <li>
       <strong>Set up ADRs and the pre-commit hook.</strong> Suggests the
@@ -119,10 +126,10 @@ const description =
 
   <Callout label="The quality bar" tone="mute">
     <p>
-      No placeholder text. Every file under 200 lines. Per-harness files point
-      at the canonical source rather than duplicating it. If the repo already
-      had partial context files, they are not overwritten; you get a diff and
-      decide.
+      No placeholder text. <code>AGENTS.md</code> under ~80 lines. Per-harness
+      pointer files exactly the five-line shape, no duplicated rules. If the
+      repo already had partial context files, they are not overwritten; you
+      get a diff and decide.
     </p>
   </Callout>
 

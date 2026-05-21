@@ -1,61 +1,14 @@
 ---
-description: <One-sentence description of when this rule applies>
-globs:
-  - <glob 1, e.g. src/**/*.ts>
-  - <glob 2>
-alwaysApply: false
+description: Always-on pointer to the canonical AGENTS.md for this repo
+globs: []
+alwaysApply: true
 ---
 
-<!-- Cursor trigger-level word budgets. Pick the level that matches how often
-     this rule needs to be in the agent's active window. Smaller is better.
+# <Project> agent rules
 
-       Always Apply        alwaysApply: true,  globs: []      <  200 words
-       Auto-Attached       alwaysApply: false, globs: set     200–500 words
-       Agent-Requested     alwaysApply: false, description    500–800 words
-       Manual              alwaysApply: false (referenced     no strict cap
-                            via @rule-name from chat)
+Read `/AGENTS.md` and follow it for all project conventions.
 
-     The budget refers to the body of this file (not the frontmatter). Longer
-     bodies cost tokens on every Cursor inference, on every file that matches.
-     If your rule has grown past the budget, split it across multiple .mdc
-     files scoped to narrower globs, or move long examples into
-     .claude/rules/ and reference them. -->
-
-# <Area> conventions
-
-<!-- 3 to 6 rules. One Preferred/Avoid pair each, or a verification command. -->
-
-## Verification
-
-```bash
-<verification command(s) specific to this area>
-```
-
-## Rules
-
-### <Rule 1>
-```<lang>
-// Preferred
-
-// Avoid
-```
-
-### <Rule 2>
-```<lang>
-// Preferred
-
-// Avoid
-```
-
-### <Rule 3>
-```<lang>
-// Preferred
-
-// Avoid
-```
-
-## See also
-
-- `.context/conventions.md` — repo-wide conventions
-- `.claude/rules/` — split rule files for Claude Code
-- `docs/decisions/` — ADRs
+Non-negotiables (always apply):
+- Verification: `<fast verification command>`
+- Plan mode required for changes touching more than 3 files, public APIs, or migrations.
+- No placeholder comments.

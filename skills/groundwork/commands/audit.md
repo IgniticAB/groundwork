@@ -58,7 +58,7 @@ Read what exists. Do not skip this step; without it the audit is fiction.
 For each of the five layers:
 
 - **System.** Is there a global persona or guardrails file? (For Cowork: user preferences in memory.) Usually nothing in the repo for this; that is fine.
-- **Project.** `CLAUDE.md`? `AGENTS.md`? `.cursor/rules/`? `.github/copilot-instructions.md`? `.context/conventions.md`? Read them; note their length and last-modified date.
+- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `.claude/rules/`? Read them; note their length and last-modified date. Key quality signals for `AGENTS.md`: exists, under 80 lines (soft) / 200 (hard), has Verification + Non-negotiables sections, has three-tier Boundaries, references `.claude/rules/` if it's overflowing.
 - **Codebase.** Is there a top-level README that orients an agent? A `docs/architecture.md`? An ADR directory? A glossary? File maps? Are the conventions in the Project layer actually followed in the code?
 - **Session.** Not applicable to a static audit (Session is transient). Note this and move on.
 - **Tooling.** MCP server configuration? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context?

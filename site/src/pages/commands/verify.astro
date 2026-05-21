@@ -68,10 +68,12 @@ const description =
   <h2>What it produces</h2>
   <ul>
     <li>
-      Updates to every harness file (<code>CLAUDE.md</code>,
-      <code>AGENTS.md</code>, <code>.cursor/rules/main.mdc</code>,
-      <code>.github/copilot-instructions.md</code>) with a Verification
-      section near the top.
+      Updates to <code>AGENTS.md</code> (and any two-file <code>CLAUDE.md</code>)
+      with a Verification section near the top. The per-harness pointer files
+      (<code>.cursor/rules/main.mdc</code>,
+      <code>.github/copilot-instructions.md</code>,
+      <code>.windsurf/rules/main.md</code>) keep the fast command up to date
+      in their non-negotiables block.
     </li>
     <li>
       <code>.context/hooks/check-context.sh</code>, a pre-commit hook script
@@ -122,9 +124,9 @@ const description =
     <li>
       <strong>Install the local drift hook.</strong> Checks repo-specific
       cross-file invariants: did <code>package.json</code> change but
-      <code>CLAUDE.md</code> still name the old package manager? Did
-      <code>.context/conventions.md</code> change without regenerating the
-      per-harness files?
+      <code>AGENTS.md</code> still name the old package manager? Did a
+      multi-file commit ship without an ADR? Did a staged ADR forget to
+      declare its Status?
     </li>
     <li>
       <strong>Register the hook</strong> with your hook runner if one exists.

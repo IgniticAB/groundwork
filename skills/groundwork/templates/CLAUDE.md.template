@@ -1,27 +1,21 @@
 # <Project name> — Claude Code context
 
-<!-- This file is intentionally short.
-
-     In the recommended layout, CLAUDE.md is a symlink to AGENTS.md so a single
-     file feeds every harness (Claude Code, Codex, Copilot, generic). If you
-     are reading this template literally, your environment opted out of the
-     symlink (Windows, `git config core.symlinks=false`, or `groundwork init`
-     was answered "two files"), and `.context/hooks/check-context.sh` enforces
-     parity with AGENTS.md on commit.
-
-     If your environment supports symlinks, run from the repo root:
-       ln -sf AGENTS.md CLAUDE.md
-     and then delete this template body. The canonical content lives in
-     AGENTS.md and .context/conventions.md.
-
-     If you keep two files, mirror the AGENTS.md structure below. Keep this
-     file under 200 lines (the CLI's oversized-claude-md rule's hard ceiling)
-     and ideally under ~80 lines / ~400 tokens to stay in the lean-root spirit.
-     Stable, long-form content belongs in .claude/rules/. -->
+<!-- This file only exists when symlinks aren't available (Windows +
+     core.symlinks=false, or `groundwork init` was answered "two files").
+     AGENTS.md is the canonical source — keep this in parity by hand or via
+     `groundwork document`. If your environment supports symlinks, prefer:
+       rm CLAUDE.md && ln -sf AGENTS.md CLAUDE.md
+     Aim under ~80 lines / ~400 tokens; push overflow into .claude/rules/. -->
 
 ## What this project is
 
 <!-- One paragraph. Audience, problem, stack at a glance. -->
+
+## Stack
+
+- Language(s): <e.g. TypeScript 5.x>
+- Package manager: <pkg-mgr>
+- Runtime / framework: <e.g. Node 20, Astro 5>
 
 ## Verification
 
@@ -35,38 +29,29 @@ Before declaring a task done:
 <full verification command(s)>
 ```
 
-## The non-negotiables
+## Non-negotiables
 
-- Plan mode is required for changes touching more than 3 files, public APIs, refactors, or migrations. Draft via `groundwork plan`.
-- No placeholder comments. If you do not have enough context to implement something, ask.
-- Use the project's package manager (`<pkg-mgr>`), not its alternatives. Lockfiles are committed.
-- Run the fast verification after every meaningful change. Do not declare done until the full verification passes.
+- Plan mode required for changes touching more than 3 files, public APIs, refactors, or migrations.
+- No placeholder comments. If you do not have enough context, ask.
+- Use `<pkg-mgr>` only. Lockfiles are committed.
+- Run the fast verification after every meaningful change.
 
 ## Style
 
-<!-- The 3 to 6 most critical rules. Each behaviorally anchored, with a
-     Preferred/Avoid pair. Full set lives in .context/conventions.md
-     and .claude/rules/. -->
+<!-- 3 to 6 critical rules. Each with a Preferred / Avoid pair. Add more
+     sections as needed. -->
 
 ### <Rule 1>
 ```<lang>
 // Preferred
 <code>
-
 // Avoid
 <code>
 ```
 
-### <Rule 2>
-```<lang>
-// Preferred
-
-// Avoid
-```
-
 ## Boundaries
 
-**Always**: <things the agent must do without asking>
+**Always**: <things the agent does without asking>
 - <path or behavior>
 
 **Ask first**: <things the agent must propose before doing>
@@ -75,10 +60,17 @@ Before declaring a task done:
 **Never**: <paths or behaviors forbidden>
 - <path>: <reason>
 
-## Where to look for more
+## Plan mode
 
-- `.context/conventions.md` — full conventions
-- `.claude/rules/` — split rule files
-- `docs/decisions/` — ADRs explaining why choices were made
-- `docs/decisions/negative-space.md` — paths we considered and rejected
+Required for: >3 files, public API changes, refactors, migrations, build/CI changes.
+Skip for: typo fixes, single-file localized changes, comment-only edits.
+
+## Preserved regions
+
+Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` must not be edited without explicit instruction.
+
+## See also
+
+- `.claude/rules/` — overflow rules
+- `docs/decisions/` — ADRs
 - `docs/mcp-policy.md` — agent access policy, if applicable

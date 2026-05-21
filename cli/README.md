@@ -36,12 +36,11 @@ This is a thin wrapper around `npx skills update groundwork` from the [vercel-la
 
 ## What it detects
 
-Twelve rules, covering the highest-value mechanical checks:
+Eleven rules, covering the highest-value mechanical checks:
 
 | Rule | Severity | What it catches |
 | --- | --- | --- |
 | `stale-claude-md` | P0 | CLAUDE.md / AGENTS.md names a package manager or framework not in package.json |
-| `conventions-drift` | P1 | `.context/conventions.md` is newer than per-harness files |
 | `missing-adr-xref` | P2 | Decision-like statements with no ADR cross-link |
 | `mcp-literal-credentials` | P0 | MCP config contains literal credentials instead of env var references |
 | `oversized-claude-md` | P1 | CLAUDE.md / AGENTS.md over 200 lines (prompt bloat) |

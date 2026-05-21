@@ -56,7 +56,7 @@ The structure:
 <Relevant MCP servers if any. Note any HITL requirements.>
 
 ## Where to look for more
-<Pointers to docs/decisions/, .context/conventions.md, full plan archive.>
+<Pointers to AGENTS.md, .claude/rules/, docs/decisions/, full plan archive.>
 ```
 
 ## Procedure
@@ -98,7 +98,7 @@ Glob `.context/plans/*.md`. Sort by date desc, take the most recent 2 to 3 that 
 
 ### Step 5. Subset the conventions
 
-Read `.context/conventions.md`. Pick out the rules that apply to the files/directories from step 2. If `.cursor/rules/*.mdc` or nested `CLAUDE.md` files exist in the area, prefer those (they are already scoped).
+Read `AGENTS.md` and any files in `.claude/rules/` that match the area. Pick out the rules that apply to the files/directories from step 2. If nested `CLAUDE.md` files exist in the area, prefer those (they are already scoped).
 
 Do not include rules that do not apply. The briefing's value is in what it leaves out.
 
@@ -108,7 +108,7 @@ If git is available, run `git log --oneline --since="14 days ago" -- <files-from
 
 ### Step 7. Identify verification commands
 
-Pull the fast and full verification commands from `.context/conventions.md` or `CLAUDE.md`. If any are scoped to the area (e.g. `pnpm test src/auth/`), prefer the scoped form.
+Pull the fast and full verification commands from `AGENTS.md`. If any are scoped to the area (e.g. `pnpm test src/auth/`), prefer the scoped form.
 
 ### Step 8. Identify relevant tools
 

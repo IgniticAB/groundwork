@@ -11,7 +11,7 @@ The difference matters: `document` does delta updates that preserve history, ins
 
 ## What this command produces
 
-The same set of files as `init` (`.context/conventions.md`, per-harness files, ADR scaffolding) — but:
+The same set of files as `init` (`AGENTS.md`, the `CLAUDE.md` symlink or two-file mirror, the per-harness pointer files, ADR scaffolding, `.claude/rules/` if it was scaffolded) — but:
 
 - Existing files are not overwritten. They are extended with new sections, and stale sections are marked deprecated with a date and reason.
 - The agent reads recent git history to understand which conventions have shifted recently.
@@ -30,7 +30,7 @@ The same set of files as `init` (`.context/conventions.md`, per-harness files, A
 Beyond what `init` does:
 
 - Read the last 50 commits. Look for stack changes, convention shifts, file moves.
-- Scan a random sample of recent files in each major directory. Check if the conventions in the existing context files are reflected in the actual code. (If `CLAUDE.md` says "use Yarn" and `package.json#packageManager` says `pnpm@9`, that is a finding.)
+- Scan a random sample of recent files in each major directory. Check if the conventions in the existing context files are reflected in the actual code. (If `AGENTS.md` says "use Yarn" and `package.json#packageManager` says `pnpm@9`, that is a finding.)
 - Note any patterns the agent should know about that are not in the existing context (e.g. "everything in `src/api/` uses Zod schemas").
 
 ### Step 3. Ask focused questions
@@ -69,7 +69,9 @@ Why this matters: a future agent reading the file knows both the current rule *a
 
 ### Step 5. Reconcile across harnesses
 
-If both `CLAUDE.md` and `AGENTS.md` exist and they disagree, flag it. Do not silently pick a winner. Show the user the diff between the two and ask which is correct.
+`AGENTS.md` is canonical. `CLAUDE.md` is either a symlink to it (no drift possible) or a hand-mirrored copy. If `CLAUDE.md` is a regular file and diverges from `AGENTS.md`, flag it; do not silently pick a winner. Show the user the diff and ask which side is correct, then mirror that decision back into `AGENTS.md`. Suggest converting `CLAUDE.md` to a symlink if the environment supports it.
+
+The per-harness pointer files (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) are short and hand-maintained. If a non-negotiable in `AGENTS.md` changed (a new fast-verification command, a new package manager), update each pointer file by hand. There is no generator.
 
 ### Step 6. Emit and verify
 
