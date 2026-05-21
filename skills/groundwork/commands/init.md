@@ -26,18 +26,51 @@ It does **not** create skills, MCP configs, or scoped rules. Those have their ow
 
 ## Procedure
 
-### Step 1. Detect
+### Step 1. Check whether this repo is already set up (BEFORE anything else)
 
-Before asking anything, read the repo:
+`init` is for repos with no context engineering yet. If any of these exist, the user almost certainly meant to run `document` instead:
+
+- `AGENTS.md`
+- `CLAUDE.md` (regular file or symlink)
+- `.cursor/rules/` directory
+- `.github/copilot-instructions.md`
+- `.windsurf/rules/` directory
+- `.claude/rules/` directory
+- `docs/agents/` directory
+- `docs/decisions/` directory
+- `.context/hooks/check-context.sh`
+
+Glob for all of the above. **Run this check before any other detection.** If any match, stop and ask the user explicitly:
+
+```
+This repo already has context engineering set up:
+- <list each found path with a one-line note: line count, last-modified date, or file count>
+
+`init` is for fresh repos. For existing setups, `document` is the right
+command — it refreshes the per-harness files with delta updates that
+preserve history (deprecated sections kept with a date and reason rather
+than overwritten).
+
+Did you mean to run `document` instead?
+```
+
+Use `AskUserQuestion`:
+- **"Yes, switch to `document`"** (recommended; the default).
+- **"No, continue with `init` anyway"** — only if the user is rebuilding intentionally (e.g. the existing files are garbage and they want a clean slate). On this path, `init` will refuse to overwrite the existing files: it skips any that already exist and tells the user which were skipped at the end.
+
+If the user picked `document`, open `commands/document.md` and proceed there. Stop running this command.
+
+### Step 2. Detect stack
+
+Only after Step 1 confirmed this is a fresh init, read the repo for context that frames the upcoming questions:
 
 - Look for `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Gemfile`, etc. Identify the primary language(s) and package manager(s).
 - Read scripts (`package.json#scripts`, `Makefile`, `pyproject.toml#tool.poetry.scripts`) to find test, lint, build, run commands.
-- Glob for existing context files. If `AGENTS.md`, `CLAUDE.md`, or `.cursor/rules/` already exist, switch to `document` instead and tell the user.
 - Check for `README.md` and skim it for stack and conventions clues.
 
 Build a short summary of what you found and show it to the user before asking questions. Two or three lines. This proves you read the repo and frames the questions.
 
-### Step 2. Ask
+### Step 3. Ask
 
 Use AskUserQuestion (or numbered options in prose if unavailable). Five questions, in order:
 
@@ -49,7 +82,7 @@ Use AskUserQuestion (or numbered options in prose if unavailable). Five question
 
 Do not ask more than five. Do not ask things you could have detected from the repo.
 
-### Step 3. Emit `AGENTS.md`
+### Step 4. Emit `AGENTS.md`
 
 Write `AGENTS.md` from `templates/AGENTS.md.template`, filling in the user's answers directly. There is no intermediate canonical file — `AGENTS.md` *is* the canonical file.
 
@@ -80,7 +113,7 @@ The CLI rule `agents-md-duplication` will flag the common patterns post-hoc. The
 
 Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, push it into `docs/agents/<area>.md` and reference the new file from `AGENTS.md`'s "See also" instead of inlining. `docs/agents/` is harness-agnostic — any agent can be told to read those files.
 
-### Step 4. Wire up CLAUDE.md and the per-harness pointers
+### Step 5. Wire up CLAUDE.md and the per-harness pointers
 
 **CLAUDE.md.** Per the user's answer to Q5:
 
@@ -116,7 +149,7 @@ If yes, emit `.claude/rules/README.md` from `templates/claude-rules-readme.md`. 
 
 If the user declines or did not pick Claude Code, skip. The auto-loading layer is opt-in; for most projects, `AGENTS.md` + `docs/agents/` covers everything.
 
-### Step 5. Set up ADRs
+### Step 6. Set up ADRs
 
 Three files, all from templates in `templates/`:
 
@@ -126,17 +159,17 @@ Three files, all from templates in `templates/`:
 
 Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` command.
 
-### Step 6. Set up the pre-commit hook
+### Step 7. Set up the pre-commit hook
 
 Create `.context/hooks/check-context.sh` from `templates/hook.sh.template`. Make it executable. The hook does three things: warn on `package.json#packageManager` drift vs `AGENTS.md`, require an ADR (or a reference to one) on multi-file commits, and require a valid Status on staged ADRs. It does **not** enforce parity between any context files.
 
 Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If none is present, leave the hook script in place and tell the user the one-line install command for the most common one (`pre-commit install` or `pnpm dlx husky init`). Do not silently add a new tool to the repo. Suggest, do not install.
 
-### Step 7. Verify
+### Step 8. Verify
 
 Run the fast verification command the user picked. If it fails, show the failure clearly and stop. The agent should see the same failures the user does. (If the user said "I know lint is broken, just continue", proceed and add a note to `AGENTS.md`'s Non-negotiables section flagging the known-failing check.)
 
-### Step 8. Report
+### Step 9. Report
 
 A short summary:
 - Files created (with paths the user can click).

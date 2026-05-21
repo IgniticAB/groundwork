@@ -11,17 +11,28 @@ const description =
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    <a href={url('commands/init/')}><code>init</code></a> is for repos with
-    nothing. <code>document</code> is for repos with something, either stale
-    context files or a mature codebase that has never had context files
-    before. The difference matters: <code>document</code> does delta updates
-    that preserve history.
+    <a href={url('commands/init/')}><code>init</code></a> is for repos with nothing.
+    <code>document</code> is for repos with something, either stale context files
+    or a mature codebase that has never had context files before. The difference matters:
+    <code>document</code> does delta updates that preserve history.
   </p>
+
+  <Callout label="Starting from nothing? Use init instead." tone="ember">
+    <p>
+      If your repo has none of <code>AGENTS.md</code>, <code>CLAUDE.md</code>,
+      <code>.cursor/rules/</code>, <code>.github/copilot-instructions.md</code>,
+      <code>.windsurf/rules/</code>, or <code>docs/decisions/</code>, run
+      <a href={url('commands/init/')}><code>init</code></a> first.
+      <code>document</code> is a delta tool: it needs existing content to delta against.
+      <code>init</code> creates the scaffolding;
+      <code>document</code> keeps it honest.
+    </p>
+  </Callout>
 
   <h2>Why this command exists</h2>
   <p>
-    Most teams write a <code>CLAUDE.md</code> once. Then the stack changes.
-    Yarn becomes pnpm. Jest becomes Vitest. The convention "components live in
+    Most teams write a <code>CLAUDE.md</code> once. Then the stack changes. Yarn becomes
+    pnpm. Jest becomes Vitest. The convention "components live in
     <code>src/components/</code>" silently becomes "components live in
     <code>app/(routes)/</code>" because Next.js shipped a new pattern. The
     context file does not change. The agent confidently follows the old rules
@@ -29,17 +40,17 @@ const description =
     ContextOps.
   </p>
   <p>
-    <code>document</code> closes that gap. But the natural instinct, "just
-    rewrite the file from scratch", is wrong. Rewrites lose the
+    <code>document</code> closes that gap. But the natural instinct, "just rewrite
+    the file from scratch", is wrong. Rewrites lose the
     <em>why</em>, which is the most valuable thing in the file. The old rule
     existed for a reason. That reason is often still relevant context for the
     next decision.
   </p>
   <p>
-    So <code>document</code> does delta merges. The new rule is added with a
-    date. The old rule is moved to a <code>## Deprecated</code> block with the
-    date deprecated and the reason. A future agent reading the file knows both
-    the current rule and the history. Intent debt, paid.
+    So <code>document</code> does delta merges. The new rule is added with a date.
+    The old rule is moved to a <code>## Deprecated</code> block with the date deprecated
+    and the reason. A future agent reading the file knows both the current rule and
+    the history. Intent debt, paid.
   </p>
 
   <Callout label="Read first" tone="ember">
@@ -47,8 +58,8 @@ const description =
       The model is from the
       <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>
       (Update stage, delta over rewrites) and the
-      <a href={url('foundation/good-practices/')}>good practices</a> doc
-      ("Delta updates over rewrites").
+      <a href={url('foundation/good-practices/')}>good practices</a> doc ("Delta updates
+      over rewrites").
     </p>
   </Callout>
 
@@ -58,16 +69,16 @@ const description =
       Stack changed. New test framework, new package manager, new build tool.
     </li>
     <li>
-      <code>CLAUDE.md</code> exists but the agent keeps producing code that
-      does not match the current code.
+      <code>CLAUDE.md</code> exists but the agent keeps producing code that does not
+      match the current code.
     </li>
     <li>
-      Mature repo adopting Groundwork for the first time. The repo has years
-      of accumulated convention in the code but nothing written down.
+      Mature repo adopting Groundwork for the first time. The repo has years of
+      accumulated convention in the code but nothing written down.
     </li>
     <li>
-      After running <a href={url('commands/audit/')}><code>audit</code></a> and
-      seeing "stale context" findings.
+      After running <a href={url('commands/audit/')}><code>audit</code></a> and seeing
+      "stale context" findings.
     </li>
   </ul>
 
@@ -76,40 +87,43 @@ const description =
   <ul>
     <li>Existing files are not overwritten. They are extended.</li>
     <li>Stale sections are marked deprecated with a date and reason.</li>
-    <li>The chat summary names <em>what changed</em>: added, deprecated, kept.</li>
-    <li>The agent reads the last 50 commits to spot recent convention shifts.</li>
+    <li>
+      The chat summary names <em>what changed</em>: added, deprecated, kept.
+    </li>
+    <li>
+      The agent reads the last 50 commits to spot recent convention shifts.
+    </li>
   </ul>
 
   <h2>How it works</h2>
   <ol>
     <li>
-      <strong>Detect what exists.</strong> Globs every known context-file
-      location. Reads each. Notes last-modified date and approximate accuracy.
+      <strong>Detect what exists.</strong> Globs every known context-file location.
+      Reads each. Notes last-modified date and approximate accuracy.
     </li>
     <li>
-      <strong>Read the repo deeply.</strong> Last 50 commits. Random sample of
-      recent files in each major directory. Checks whether the conventions in
-      the existing files match the actual code.
+      <strong>Read the repo deeply.</strong> Last 50 commits. Random sample of recent
+      files in each major directory. Checks whether the conventions in the existing
+      files match the actual code.
     </li>
     <li>
-      <strong>Ask three focused questions.</strong> Which detected rules are
-      still correct? Which new patterns should be written in? Anything you
-      want explicitly marked deprecated?
+      <strong>Ask three focused questions.</strong> Which detected rules are still
+      correct? Which new patterns should be written in? Anything you want explicitly
+      marked deprecated?
     </li>
     <li>
-      <strong>Delta-merge.</strong> Sections still correct: keep verbatim.
-      Sections that drifted: append the corrected content, dated, with the old
-      one moved to a deprecated block. New sections: append at the bottom of
-      the relevant area.
+      <strong>Delta-merge.</strong> Sections still correct: keep verbatim. Sections
+      that drifted: append the corrected content, dated, with the old one moved to
+      a deprecated block. New sections: append at the bottom of the relevant area.
     </li>
     <li>
       <strong>Reconcile across harnesses.</strong> If <code>CLAUDE.md</code>
-      and <code>AGENTS.md</code> disagree, the disagreement is surfaced. The
-      command does not silently pick a winner.
+      and <code>AGENTS.md</code> disagree, the disagreement is surfaced. The command
+      does not silently pick a winner.
     </li>
     <li>
-      <strong>Verify.</strong> Same verification commands, same fail-loudly
-      behaviour as <code>init</code>.
+      <strong>Verify.</strong> Same verification commands, same fail-loudly behaviour
+      as <code>init</code>.
     </li>
   </ol>
 
@@ -125,33 +139,33 @@ Run: pnpm test.
 ### Test framework: Jest (until 2026-04)
 Migrated away due to ESM friction with our Vite setup.</code></pre>
     <p>
-      The next agent reading the file knows the current rule and why the old
-      one existed. The team's collective theory survives the change.
+      The next agent reading the file knows the current rule and why the old one
+      existed. The team's collective theory survives the change.
     </p>
   </Callout>
 
   <h2>Failure modes the command guards against</h2>
   <ul>
     <li>
-      <strong>Rewriting from scratch.</strong> If you find yourself blanking
-      the file, you are running the wrong command. Switch to <code>init</code>.
+      <strong>Rewriting from scratch.</strong> If you find yourself blanking the file,
+      you are running the wrong command. Switch to <code>init</code>.
     </li>
     <li>
-      <strong>Trusting the old file.</strong> The old file is the source of
-      historical truth. The code is the source of current truth. When they
-      disagree, the code wins; the old file gets deprecated.
+      <strong>Trusting the old file.</strong> The old file is the source of historical
+      truth. The code is the source of current truth. When they disagree, the code
+      wins; the old file gets deprecated.
     </li>
     <li>
-      <strong>Skipping the git history scan.</strong> Recent commits are the
-      cheapest possible signal for "what changed lately".
+      <strong>Skipping the git history scan.</strong> Recent commits are the cheapest
+      possible signal for "what changed lately".
     </li>
   </ul>
 
   <h2>Related ideas</h2>
   <ul>
     <li>
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
-      Update stage, delta over rewrites.
+      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a
+      >. Update stage, delta over rewrites.
     </li>
     <li>
       <a href={url('foundation/good-practices/')}>Good practices</a>. Delta

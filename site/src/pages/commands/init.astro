@@ -16,6 +16,27 @@ const description =
     command has the artifacts it expects.
   </p>
 
+  <Callout label="Already have context files? Use document instead." tone="ember">
+    <p>
+      <code>init</code> is for repos with <strong>no context engineering yet</strong>.
+      If your repo already has <code>AGENTS.md</code>, <code>CLAUDE.md</code>,
+      <code>.cursor/rules/</code>, <code>.github/copilot-instructions.md</code>,
+      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
+      <code>docs/agents/</code>, or <code>docs/decisions/</code>, run
+      <a href={url('commands/document/')}><code>document</code></a> instead.
+      It does a delta-merge that preserves history (deprecated sections kept
+      with a date and reason rather than overwritten).
+    </p>
+    <p>
+      The skill detects this on its own as Step 1: if it finds any of the files
+      above when you invoke <code>init</code>, it will stop and ask whether you
+      meant <code>document</code>. The default is to switch. You can override
+      and force <code>init</code> if you are intentionally rebuilding from a
+      clean slate, but it will refuse to overwrite anything that already
+      exists.
+    </p>
+  </Callout>
+
   <h2>Why this command exists</h2>
   <p>
     Most repos either have no context files at all or one bloated
@@ -57,14 +78,30 @@ const description =
   <ul>
     <li>A brand new repo with no context files yet.</li>
     <li>
-      A small or medium repo where nobody has written a <code>CLAUDE.md</code>
-      yet. If one already exists and is just stale, use
-      <a href={url('commands/document/')}><code>document</code></a> instead.
-      It preserves history.
+      A mature repo that has <strong>never</strong> had context engineering.
+      Nothing in the list above (<code>AGENTS.md</code>, <code>CLAUDE.md</code>,
+      <code>.cursor/rules/</code>, <code>.github/copilot-instructions.md</code>,
+      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
+      <code>docs/agents/</code>, <code>docs/decisions/</code>) exists yet.
     </li>
     <li>
       Standardising an org's context engineering across multiple repos.
       <code>init</code> is the baseline; per-repo tweaks happen after.
+    </li>
+  </ul>
+
+  <h3>When <em>not</em> to reach for it</h3>
+  <ul>
+    <li>
+      <strong>Any of those files already exist.</strong> Even one. Use
+      <a href={url('commands/document/')}><code>document</code></a>: it
+      refreshes per-harness files with delta updates, preserves history, and
+      marks stale sections deprecated with a date and reason.
+    </li>
+    <li>
+      <strong>You want to add a new harness to an existing setup.</strong>
+      That is <code>document</code> with a different target set, not
+      <code>init</code>.
     </li>
   </ul>
 
@@ -77,19 +114,32 @@ const description =
     <li><code>.github/copilot-instructions.md</code> for GitHub Copilot (5-line pointer)</li>
     <li><code>.windsurf/rules/main.md</code> for Windsurf (5-line pointer)</li>
     <li><code>docs/decisions/</code>: README, a starter ADR, and a negative-space stub</li>
-    <li><code>.context/hooks/check-context.sh</code> — slim pre-commit hook (ADR coverage + ADR status + package-manager drift; no parity check)</li>
+    <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook (ADR coverage, ADR status, package-manager drift; no parity check)</li>
   </ul>
   <p>
     <code>AGENTS.md</code> is self-sufficient. The per-harness pointer files
     are five lines each: they say "read <code>/AGENTS.md</code>" and inline
-    three non-negotiables. They are hand-maintained — short and stable enough
+    three non-negotiables. They are hand-maintained: short and stable enough
     that hand maintenance is fine.
   </p>
 
   <h2>How it works</h2>
   <ol>
     <li>
-      <strong>Detect.</strong> Reads package manifests, scripts,
+      <strong>Safety check.</strong> Globs for <code>AGENTS.md</code>,
+      <code>CLAUDE.md</code>, <code>.cursor/rules/</code>,
+      <code>.github/copilot-instructions.md</code>,
+      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
+      <code>docs/agents/</code>, <code>docs/decisions/</code>,
+      <code>.context/hooks/check-context.sh</code>. If any match, stops and
+      asks whether you meant
+      <a href={url('commands/document/')}><code>document</code></a>. The
+      default is yes. You can override and continue with <code>init</code>,
+      in which case it skips anything that already exists rather than
+      overwriting.
+    </li>
+    <li>
+      <strong>Detect stack.</strong> Reads package manifests, scripts,
       <code>README.md</code>, recent commits. Identifies stack, package
       manager, test commands. Surfaces a one-paragraph summary before asking
       anything.
