@@ -63,7 +63,7 @@ For each (area × harness), emit one file.
 | Agent-Requested | `alwaysApply: false`, `description: <when>` | 500–800 words | Stripe/SendGrid integration rules, auth flows |
 | Manual | `alwaysApply: false`, referenced via `@rule-name` | no strict cap | Rare migration targets, complex onboarding |
 
-Pick the level based on how often the rule needs to be in the agent's active window. If a rule's body exceeds its budget, split it across narrower-globbed `.mdc` files or move long examples into `.claude/rules/` and reference them.
+Pick the level based on how often the rule needs to be in the agent's active window. If a rule's body exceeds its budget, split it across narrower-globbed `.mdc` files or move long examples into `docs/agents/<area>.md` and reference them.
 
 Templates:
 

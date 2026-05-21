@@ -12,7 +12,7 @@ This directory holds the decisions that shape this codebase. ADRs capture the *w
 ## When not to write one
 
 - Pure implementation details. The code expresses those.
-- Preferences with no real tradeoff. Those go in `AGENTS.md` (or a `.claude/rules/` file).
+- Preferences with no real tradeoff. Those go in `AGENTS.md` (or a `docs/agents/` file).
 - Decisions still being debated. Wait until decided.
 
 ## Format

@@ -140,7 +140,8 @@ groundwork/
       templates/                         files the commands emit
         AGENTS.md.template                canonical cross-tool source
         CLAUDE.md.template                two-file fallback; CLAUDE.md is a symlink to AGENTS.md by default
-        claude-rules-readme.md            README for .claude/rules/ overflow files
+        docs-agents-readme.template.md    README for docs/agents/ (harness-agnostic overflow)
+        claude-rules-readme.md            README for .claude/rules/ (optional Claude Code auto-load layer)
         cursor-rule.mdc.template          5-line pointer for Cursor
         copilot-instructions.md.template  5-line pointer for Copilot
         windsurf-rule.template.md         5-line pointer for Windsurf

@@ -143,7 +143,7 @@ const description =
         <tr>
           <td>Every PR</td>
           <td><code>groundwork detect --fail-on P1</code></td>
-          <td>Catches drift rules (<code>oversized-claude-md</code>, <code>agents-claude-sync</code>, <code>missing-verification</code>, <code>stale-claude-md</code>).</td>
+          <td>Catches drift rules (<code>oversized-claude-md</code>, <code>agents-claude-sync</code>, <code>agents-md-duplication</code>, <code>missing-verification</code>, <code>stale-claude-md</code>).</td>
           <td>Automated</td>
         </tr>
         <tr>
@@ -263,9 +263,10 @@ const description =
       </li>
       <li>
         <strong>The split-file architecture from day one.</strong>
-        Lean <code>AGENTS.md</code> root, stable rules in
-        <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>. Retrofitting
-        the split later is harder than adopting it now.
+        Lean <code>AGENTS.md</code> root; when it overflows, per-area
+        conventions split into <code>docs/agents/&lt;area&gt;.md</code>
+        (harness-agnostic). Retrofitting the split later is harder than
+        adopting it now.
       </li>
       <li>
         <strong><code>document</code> is the spine of the loop.</strong>

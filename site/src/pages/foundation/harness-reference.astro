@@ -160,8 +160,37 @@ tools: [read, grep]
   </ul>
   <p>Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero once the canonical rules are written.</p>
 
-  <h2>Numeric-prefix naming for <code>.claude/rules/</code></h2>
+  <h2><code>docs/agents/</code> — the harness-agnostic overflow location</h2>
 
+  <p>
+    When <code>AGENTS.md</code> grows past its ~80-line budget, per-area
+    conventions split out into <code>docs/agents/&lt;area&gt;.md</code>. This
+    directory is harness-agnostic — no harness auto-loads it, but any agent
+    (Claude Code, Codex, Cursor, Copilot, Windsurf) can be told to read these
+    files. Reference them from <code>AGENTS.md</code>'s "See also" section so
+    the existence of the overflow is discoverable from the canonical file.
+  </p>
+  <p>
+    Plain markdown. No frontmatter. One file per area
+    (<code>frontend.md</code>, <code>backend.md</code>, <code>db.md</code>,
+    <code>infra.md</code>).
+  </p>
+
+  <h2><code>.claude/rules/</code> — optional Claude Code auto-loading layer</h2>
+
+  <p>
+    <code>.claude/rules/</code> is a Claude Code-specific feature: Claude Code
+    reads every file in that directory on session start, in filename-sort
+    order. Codex, Cursor, Copilot, and Windsurf do <strong>not</strong>
+    auto-load this directory.
+  </p>
+  <p>
+    Use <code>.claude/rules/</code> only when you specifically want Claude
+    Code's auto-loading behavior. For harness-agnostic overflow, use
+    <code>docs/agents/</code> instead. If you use both, the canonical knowledge
+    lives in <code>docs/agents/</code>; <code>.claude/rules/</code> either
+    mirrors or references it.
+  </p>
   <p>
     When emitting <code>.claude/rules/&lt;name&gt;.md</code> files, prefix
     with two digits to set the load order via filename sort. Suggested ranges:
@@ -178,9 +207,6 @@ tools: [read, grep]
 
   <p>
     Leave gaps between numbers so future rules slot in without renumbering.
-    The same pattern is recommended for any harness with directory-loaded
-    rule files (Cursor's <code>.cursor/rules/</code>, Windsurf's
-    <code>.windsurf/rules/</code>).
   </p>
 
   <Callout label="Source" tone="mute">

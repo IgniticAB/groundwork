@@ -5,7 +5,13 @@
      AGENTS.md is the canonical source — keep this in parity by hand or via
      `groundwork document`. If your environment supports symlinks, prefer:
        rm CLAUDE.md && ln -sf AGENTS.md CLAUDE.md
-     Aim under ~80 lines / ~400 tokens; push overflow into .claude/rules/. -->
+     Aim under ~80 lines / ~400 tokens; when this file outgrows the budget,
+     split per-area conventions into docs/agents/<area>.md and reference them
+     from the "See also" section.
+
+     Each section below has a distinct scope. Do NOT restate the same rule
+     in two sections — the agent is reading the union, and duplication
+     wastes attention. -->
 
 ## What this project is
 
@@ -31,7 +37,10 @@ Before declaring a task done:
 
 ## Non-negotiables
 
-- Plan mode required for changes touching more than 3 files, public APIs, refactors, or migrations.
+<!-- Universal procedural rules that apply to every change. State each rule
+     once, abstractly. Triggers and path-scoped actions belong in Boundaries. -->
+
+- Use plan mode when any Ask-first condition triggers (see Boundaries).
 - No placeholder comments. If you do not have enough context, ask.
 - Use `<pkg-mgr>` only. Lockfiles are committed.
 - Run the fast verification after every meaningful change.
@@ -51,19 +60,17 @@ Before declaring a task done:
 
 ## Boundaries
 
-**Always**: <things the agent does without asking>
-- <path or behavior>
+<!-- Three tiers, each with strict scope. A rule belongs in exactly one. -->
 
-**Ask first**: <things the agent must propose before doing>
-- <path or behavior>
+**Always** — path- or area-scoped automatic actions (NOT universal rules; those are Non-negotiables).
+- <path-scoped behavior>
 
-**Never**: <paths or behaviors forbidden>
+**Ask first** — owns the trigger list for plan mode and other "stop and propose" gates.
+- Changes touching >3 files, public APIs, refactors, or migrations.
+- <project-specific trigger>
+
+**Never** — forbidden paths or destructive actions.
 - <path>: <reason>
-
-## Plan mode
-
-Required for: >3 files, public API changes, refactors, migrations, build/CI changes.
-Skip for: typo fixes, single-file localized changes, comment-only edits.
 
 ## Preserved regions
 
@@ -71,6 +78,6 @@ Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` must not be 
 
 ## See also
 
-- `.claude/rules/` — overflow rules
+- `docs/agents/` — per-area conventions when this file outgrows its budget
 - `docs/decisions/` — ADRs
 - `docs/mcp-policy.md` — agent access policy, if applicable

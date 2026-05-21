@@ -126,7 +126,17 @@ Ask the user. Default reasoning:
 
 Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero — each non-Codex harness gets the same five-line pointer file at a different path.
 
-## Numeric-prefix naming for `.claude/rules/`
+## `docs/agents/` — the harness-agnostic overflow location
+
+When `AGENTS.md` grows past its ~80-line budget, per-area conventions split out into `docs/agents/<area>.md`. This directory is **harness-agnostic** — no harness auto-loads it, but any agent (Claude Code, Codex, Cursor, Copilot, Windsurf) can be told to read these files. Reference them from `AGENTS.md`'s "See also" section so the existence of the overflow is discoverable from the canonical file.
+
+Plain markdown. No frontmatter. One file per area (frontend, backend, db, infra). See `templates/docs-agents-readme.template.md` for the convention.
+
+## `.claude/rules/` — optional Claude Code auto-loading layer
+
+`.claude/rules/` is a Claude Code-specific feature: Claude Code reads every file in that directory on session start, in filename-sort order. Codex, Cursor, Copilot, and Windsurf do **not** auto-load this directory.
+
+Use `.claude/rules/` only when you specifically want Claude Code's auto-loading behavior. For harness-agnostic overflow, use `docs/agents/` instead. If you use both, the canonical knowledge lives in `docs/agents/`; `.claude/rules/` either mirrors or references it.
 
 When emitting `.claude/rules/<name>.md` files, prefix with two digits to set the load order via filename sort. Suggested ranges:
 

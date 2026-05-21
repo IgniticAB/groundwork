@@ -124,7 +124,7 @@ Before considering this command done, scan the shipped plan for decisions that s
 - The Approach section names a technology, library, or pattern choice that other parts of the system will need to follow.
 - The Out-of-scope section explicitly rejected an alternative approach.
 - The Risks section names a tradeoff the team accepted.
-- A new convention was introduced that `AGENTS.md` (or `.claude/rules/`) does not yet cover.
+- A new convention was introduced that `AGENTS.md` (or `docs/agents/`) does not yet cover.
 
 For each decision detected, surface it to the user:
 

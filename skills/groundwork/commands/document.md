@@ -11,7 +11,7 @@ The difference matters: `document` does delta updates that preserve history, ins
 
 ## What this command produces
 
-The same set of files as `init` (`AGENTS.md`, the `CLAUDE.md` symlink or two-file mirror, the per-harness pointer files, ADR scaffolding, `.claude/rules/` if it was scaffolded) — but:
+The same set of files as `init` (`AGENTS.md`, the `CLAUDE.md` symlink or two-file mirror, the per-harness pointer files, ADR scaffolding, `docs/agents/` if it exists, `.claude/rules/` if the team opted into it) — but:
 
 - Existing files are not overwritten. They are extended with new sections, and stale sections are marked deprecated with a date and reason.
 - The agent reads recent git history to understand which conventions have shifted recently.
@@ -51,6 +51,15 @@ For each existing file, the merge rules are:
 - **Sections that drifted**: append a new section with the corrected content, dated, with the old section moved to a `## Deprecated` block at the bottom (with the date deprecated and the reason).
 - **New sections**: append at the bottom of the relevant area.
 
+**Anti-duplication sweep.** Before writing the merged file, scan it for cross-section duplication. A rule belongs in exactly one section:
+
+- Plan-mode triggers (">N files", "public APIs", "migrations", "refactors") → Boundaries → Ask first only.
+- Universal procedural rules ("run verification", "use pkg-mgr", "no placeholders") → Non-negotiables only.
+- Path/area-scoped automatic actions → Boundaries → Always only.
+- Forbidden paths → Boundaries → Never only.
+
+If the existing file had a rule restated in two sections, delete the lower-priority instance and note the cleanup in the chat summary. The CLI's `agents-md-duplication` rule will catch any that slip through.
+
 Example:
 
 ```markdown
@@ -83,6 +92,7 @@ Same as `init` step 7 and 8: write files, run verification, show a short summary
 - Every deprecation has a date and a one-line reason.
 - The chat summary names exactly what changed (added, deprecated, kept).
 - Cross-harness consistency was checked, not assumed.
+- No rule appears in two sections. The anti-duplication sweep ran before the file was written.
 
 ## Failure modes
 

@@ -11,6 +11,7 @@ import { missingLicenseHeader } from './missing-license-header.js';
 import { todoComments } from './todo-comments.js';
 import { agentsClaudeSync } from './agents-claude-sync.js';
 import { oversizedCursorRule } from './oversized-cursor-rule.js';
+import { agentsMdDuplication } from './agents-md-duplication.js';
 
 export const rules: Rule[] = [
   staleClaudeMd,
@@ -24,4 +25,5 @@ export const rules: Rule[] = [
   todoComments,
   agentsClaudeSync,
   oversizedCursorRule,
+  agentsMdDuplication,
 ];

@@ -36,7 +36,7 @@ This is a thin wrapper around `npx skills update groundwork` from the [vercel-la
 
 ## What it detects
 
-Eleven rules, covering the highest-value mechanical checks:
+Twelve rules, covering the highest-value mechanical checks:
 
 | Rule | Severity | What it catches |
 | --- | --- | --- |
@@ -51,6 +51,7 @@ Eleven rules, covering the highest-value mechanical checks:
 | `todo-comments` | P2 | TODO / FIXME / HACK markers (noise threshold: 25) |
 | `agents-claude-sync` | P1 | AGENTS.md and CLAUDE.md exist as separate files with diverging content |
 | `oversized-cursor-rule` | P2 | `.cursor/rules/*.mdc` exceeds word budget for its trigger level (P1 for `alwaysApply: true`) |
+| `agents-md-duplication` | P1 | Same rule restated under two H2 sections in AGENTS.md / CLAUDE.md (e.g. plan-mode triggers in both Non-negotiables and Boundaries → Ask first) |
 
 Severity:
 - **P0** — fix before next agent session. The agent will actively do the wrong thing.

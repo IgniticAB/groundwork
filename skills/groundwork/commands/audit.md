@@ -58,7 +58,7 @@ Read what exists. Do not skip this step; without it the audit is fiction.
 For each of the five layers:
 
 - **System.** Is there a global persona or guardrails file? (For Cowork: user preferences in memory.) Usually nothing in the repo for this; that is fine.
-- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `.claude/rules/`? Read them; note their length and last-modified date. Key quality signals for `AGENTS.md`: exists, under 80 lines (soft) / 200 (hard), has Verification + Non-negotiables sections, has three-tier Boundaries, references `.claude/rules/` if it's overflowing.
+- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date. Key quality signals for `AGENTS.md`: exists, under 80 lines (soft) / 200 (hard), has Verification + Non-negotiables sections, has three-tier Boundaries, references `docs/agents/` if it's overflowing, **no rule restated across two sections** (plan-mode triggers should only appear under Boundaries → Ask first, not also under Non-negotiables).
 - **Codebase.** Is there a top-level README that orients an agent? A `docs/architecture.md`? An ADR directory? A glossary? File maps? Are the conventions in the Project layer actually followed in the code?
 - **Session.** Not applicable to a static audit (Session is transient). Note this and move on.
 - **Tooling.** MCP server configuration? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context?
@@ -121,6 +121,17 @@ Beyond the per-file anti-patterns, the audit also looks for the four Context Rot
 - **Clash**: contradictions between context files. Example: `AGENTS.md` requires Vitest, but `.cursor/rules/test.mdc` mentions Jest. The pre-commit hook should catch most of these; if it didn't, surface as P0.
 
 Each Context Rot finding gets a one-line description plus the specific files in conflict. The recommended next command for clashes is usually `document` (delta-merge to resolve) or `scope` (if a rule should have been scoped from the start).
+
+#### Cross-section duplication in `AGENTS.md`
+
+A subtler Confusion pattern: the same rule restated under two H2 sections inside `AGENTS.md` (e.g. plan-mode triggers in both Non-negotiables and Boundaries → Ask first; "run fast verification" in both Non-negotiables and Boundaries → Always). The agent reads the union, so duplication burns attention and creates near-miss paraphrases that drift apart over edits.
+
+The CLI's `agents-md-duplication` rule catches the common patterns (plan-mode triggers, verification mentions, package-manager mentions) appearing under multiple sections. Surface its findings as P1. The fix is to move each rule into exactly one section per the strict scope:
+
+- Universal procedural rules → Non-negotiables only.
+- Plan-mode triggers and other "stop and propose" gates → Boundaries → Ask first only.
+- Path-scoped automatic actions → Boundaries → Always only.
+- Forbidden paths → Boundaries → Never only.
 
 ### Step 6. Recommended next commands
 

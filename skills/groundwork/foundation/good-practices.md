@@ -116,7 +116,7 @@ The single metric worth tracking: percentage of generated code that passes the p
 
 Command: `audit` reports this as part of the maturity score.
 
-## 11. Split-file architecture (lean canonical, fat overflow)
+## 11. Split-file architecture (lean canonical, neutral overflow)
 
 A single `CLAUDE.md` that grows over time becomes a dumping ground. The agent treats it as mutable and appends narrow, session-specific rules. Over weeks the file is unreadable and the model's attention is diluted.
 
@@ -128,14 +128,20 @@ CLAUDE.md -> AGENTS.md             ← symlink; same content
 .cursor/rules/main.mdc             ← 5-line pointer
 .github/copilot-instructions.md    ← 5-line pointer
 .windsurf/rules/main.md            ← 5-line pointer
-.claude/rules/                     ← overflow: stable long-form rules
-  10-style-imports.md
+
+docs/agents/                       ← neutral overflow (harness-agnostic)
+  frontend.md
+  backend.md
+  infra.md
+
+.claude/rules/                     ← optional Claude-Code-only auto-load layer
+  10-style.md
   30-verification.md
-  50-frontend-tailwind.md
-  70-secrets.md
 ```
 
-When `AGENTS.md` overflows, the overflow goes into `.claude/rules/<NN>-<name>.md`. A numeric prefix sets load order via filename sort. The non-Codex pointer files do not duplicate `.claude/rules/`; they only inline the always-applies non-negotiables.
+When `AGENTS.md` overflows, the overflow goes into `docs/agents/<area>.md`. These files are referenced from `AGENTS.md`'s "See also" so any harness — Codex, Cursor, Copilot, Windsurf, Claude Code — can be told to read them. They are plain markdown, no frontmatter, one area per file.
+
+`.claude/rules/` is a **separate, optional layer**, specific to Claude Code. Claude Code auto-loads every file in that directory on session start, in filename-sort order. No other harness reads `.claude/`. Use it only if you specifically want Claude Code's auto-loading behavior — typically for hooks, slash commands, or per-area conventions you want preloaded without the agent having to find them. For everything else, use `docs/agents/`.
 
 Why the symlink. `AGENTS.md` is the emerging cross-tool standard. `CLAUDE.md` is Anthropic-specific. A symlink lets a single edit feed both harnesses with zero drift risk. On environments that cannot create symlinks (some Windows + `git config core.symlinks=false`), `init` emits two files; the `agents-claude-sync` CLI rule flags drift, and there is no parity hook — drift is rare enough that a single P1 finding is the right response.
 

@@ -116,9 +116,10 @@ const description =
     (~80 lines). <code>CLAUDE.md</code> is a symlink to it. Per-harness pointer
     files for Cursor, Copilot, and Windsurf are five lines each:
     "read <code>/AGENTS.md</code>" plus three non-negotiables. When
-    <code>AGENTS.md</code> overflows, the overflow goes into
-    <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>; a numeric prefix
-    sets load order via filename sort.
+    <code>AGENTS.md</code> overflows, per-area conventions split into
+    <code>docs/agents/&lt;area&gt;.md</code> — plain markdown, harness-agnostic,
+    referenced from <code>AGENTS.md</code>'s "See also". Any agent in any
+    harness can be told to read these files.
   </p>
 
   <pre><code>AGENTS.md                          ← canonical, lean (~80 lines)
@@ -126,11 +127,25 @@ CLAUDE.md -&gt; AGENTS.md             ← symlink; same content
 .cursor/rules/main.mdc             ← 5-line pointer
 .github/copilot-instructions.md    ← 5-line pointer
 .windsurf/rules/main.md            ← 5-line pointer
-.claude/rules/                     ← overflow: stable long-form rules
-  10-style-imports.md
-  30-verification.md
-  50-frontend-tailwind.md
-  70-secrets.md</code></pre>
+
+docs/agents/                       ← neutral overflow (harness-agnostic)
+  frontend.md
+  backend.md
+  infra.md
+
+.claude/rules/                     ← optional Claude-Code-only auto-load layer
+  10-style.md
+  30-verification.md</code></pre>
+
+  <p>
+    <code>.claude/rules/</code> is a <strong>separate, optional layer</strong>
+    specific to Claude Code. Claude Code auto-loads every file in that
+    directory on session start, in filename-sort order. No other harness
+    reads <code>.claude/</code>. Use it only when you specifically want
+    Claude Code's auto-loading behavior — typically hooks, slash-command
+    guidance, or per-area conventions you want preloaded without the agent
+    having to find them. For everything else, use <code>docs/agents/</code>.
+  </p>
 
   <p>
     Why the symlink. <code>AGENTS.md</code> is the emerging cross-tool

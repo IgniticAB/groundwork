@@ -18,6 +18,9 @@ Depending on the harnesses the user targets, some subset of:
 - `.windsurf/rules/main.md` (Windsurf) — 5-line pointer to AGENTS.md.
 - `docs/decisions/` directory with a README, ADR-0001, and the negative-space starter.
 - `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR coverage + ADR status + package-manager drift).
+- `.claude/rules/README.md` — **only** when the user opts in to Claude Code's auto-loading layer (off by default).
+
+`docs/agents/` (the harness-agnostic overflow directory) is **not** created. `AGENTS.md` references it in "See also" so future readers know where overflow goes; the directory and its README are created on the first split.
 
 It does **not** create skills, MCP configs, or scoped rules. Those have their own commands.
 
@@ -55,14 +58,27 @@ Sections to populate (do not deviate from this order):
 - **What this project is** — one paragraph, from the detected stack and README hints.
 - **Stack** — language(s), package manager, runtime/framework, one line each.
 - **Verification** — fast (after every change) and full (before declaring done) commands the user picked.
-- **Non-negotiables** — plan mode required for >3 file changes / public APIs / migrations; no placeholder comments; use the picked package manager; run fast verification after every meaningful change. Adjust based on the user's Q3 picks.
+- **Non-negotiables** — universal procedural rules, stated **abstractly**, no triggers or path scopes. Default set: "Use plan mode when any Ask-first condition triggers", "No placeholder comments", "Use `<pkg-mgr>` only", "Run the fast verification after every meaningful change". Adjust based on the user's Q3 picks. **Do not list plan-mode triggers here** — those belong in Boundaries → Ask first.
 - **Style** — three to six most critical rules, each with a Preferred / Avoid pair. Pull from Q3 picks; do not invent rules the user did not pick.
-- **Boundaries** — the three-tier slots from Q4.
-- **Plan mode** — when required, when to skip.
+- **Boundaries** — the three-tier slots from Q4, with strict scope per tier:
+  - **Always**: path- or area-scoped automatic actions only. **Not** universal rules — those are Non-negotiables.
+  - **Ask first**: owns the trigger list. Default first bullet: ">3 files, public APIs, refactors, migrations". Append project-specific triggers from Q4.
+  - **Never**: forbidden paths or destructive actions. Default empty if Q4's Never slot was empty.
 - **Preserved regions** — one paragraph explaining the `preserve:start` / `preserve:end` markers.
-- **See also** — pointers to `.claude/rules/` (if scaffolded), `docs/decisions/`, `docs/mcp-policy.md` (only if it exists).
+- **See also** — pointers to `docs/agents/` (the overflow location; mention it even if the directory does not yet exist, so future readers know where to add per-area conventions), `docs/decisions/`, `docs/mcp-policy.md` (only if it exists).
 
-Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, it belongs in `.claude/rules/<NN>-<name>.md` — emit the rule file and reference it from `AGENTS.md`'s "See also" instead of inlining.
+**The non-duplication contract.** Each rule belongs in exactly one section. Before emitting, scan the draft: if the same rule (or near-paraphrase) appears in two sections, delete the one in the lower-priority section. Common offenders:
+
+| Smells like... | Belongs in | Not in |
+| --- | --- | --- |
+| ">3 files / public API / migration triggers" | Boundaries → Ask first | Non-negotiables |
+| "Run fast verification" (universal) | Non-negotiables | Boundaries → Always |
+| "Path-scoped auto-actions" (e.g. preserve BOM) | Boundaries → Always | Non-negotiables |
+| "Forbidden paths" | Boundaries → Never | Non-negotiables |
+
+The CLI rule `agents-md-duplication` will flag the common patterns post-hoc. The init contract is what prevents them at write time.
+
+Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, push it into `docs/agents/<area>.md` and reference the new file from `AGENTS.md`'s "See also" instead of inlining. `docs/agents/` is harness-agnostic — any agent can be told to read those files.
 
 ### Step 4. Wire up CLAUDE.md and the per-harness pointers
 
@@ -92,11 +108,13 @@ Paths:
 
 Tell the user these pointer files are hand-maintained. They are short and stable enough that hand maintenance is fine; if the three non-negotiables drift it's worth a human noticing.
 
-**Optional: scaffold `.claude/rules/`.** After writing the pointer files, ask: *"Scaffold `.claude/rules/` for the split-file architecture? (Y/n)"*
+**Overflow location.** Do not create a `docs/agents/` directory by default; `AGENTS.md` already names it in "See also" so future readers know where overflow goes. When the user (or a future `document` run) actually splits a section out, copy `templates/docs-agents-readme.template.md` to `docs/agents/README.md` at that point.
 
-If yes, emit `.claude/rules/README.md` from `templates/claude-rules-readme.md`. Do not emit any starter rule files — they only exist when `AGENTS.md` overflows. Tell the user the numeric-prefix convention (`10-style.md`, `30-verification.md`, etc.).
+**Optional: Claude Code auto-loading layer.** If the user picked Claude Code as a harness, ask only if they specifically want it: *"Scaffold `.claude/rules/` so Claude Code auto-loads rule files from there? (default: no)"*
 
-If the user declines, skip. The split-file pattern is opt-in; for small projects a lean `AGENTS.md` alone is fine.
+If yes, emit `.claude/rules/README.md` from `templates/claude-rules-readme.md`. Do not emit any starter rule files. Tell the user: this is Claude Code-specific; other harnesses do not auto-load from `.claude/`. For harness-agnostic overflow, use `docs/agents/`.
+
+If the user declines or did not pick Claude Code, skip. The auto-loading layer is opt-in; for most projects, `AGENTS.md` + `docs/agents/` covers everything.
 
 ### Step 5. Set up ADRs
 
@@ -129,7 +147,8 @@ No long postamble.
 
 ## Quality bar
 
-- `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `.claude/rules/`, `docs/decisions/`, and `docs/mcp-policy.md`.
+- `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `docs/agents/` (overflow), `docs/decisions/`, and `docs/mcp-policy.md`.
+- No rule appears in two sections. Plan-mode triggers live only in Boundaries → Ask first; universal procedural rules live only in Non-negotiables; path-scoped actions live only in Boundaries → Always.
 - Pointer files are exactly the five-line shape, no extra prose, no duplicated rules.
 - `CLAUDE.md` is either a symlink (default) or a hand-mirrored copy with the user warned about drift.
 - No placeholder text in any emitted file. Either it has real content or it is not in the file.
@@ -142,4 +161,4 @@ No long postamble.
 - **You write rules that contradict what the user is already doing.** Read the recent commits and a sample of files first.
 - **You include rules with no examples.** Every style rule has a Preferred/Avoid pair.
 - **You forget to make the hook script executable.** `chmod +x` it.
-- **You bloat `AGENTS.md` past the ~80-line target.** Push overflow into `.claude/rules/<NN>-<name>.md` files instead of inlining everything.
+- **You bloat `AGENTS.md` past the ~80-line target.** Push overflow into `docs/agents/<area>.md` files instead of inlining everything.

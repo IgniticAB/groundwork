@@ -3,8 +3,13 @@
 <!-- AGENTS.md is the canonical, hand-edited source of agent rules for this
      repo. Every harness either reads this file directly or reads a 5-line
      pointer file at its hardcoded path. CLAUDE.md is a symlink to this file
-     by default. Aim under ~80 lines / ~400 tokens; push overflow into
-     .claude/rules/<NN>-<name>.md. -->
+     by default. Aim under ~80 lines / ~400 tokens; when this file outgrows
+     the budget, split per-area conventions into docs/agents/<area>.md and
+     reference them from the "See also" section.
+
+     Each section below has a distinct scope. Do NOT restate the same rule
+     in two sections — the agent is reading the union, and duplication
+     wastes attention. See the section headers for the strict scope. -->
 
 ## What this project is
 
@@ -30,15 +35,18 @@ Before declaring a task done:
 
 ## Non-negotiables
 
-- Plan mode required for changes touching more than 3 files, public APIs, refactors, or migrations.
-- No placeholder comments (`// TODO`, `// implement later`). Ask if you do not have enough context.
+<!-- Universal procedural rules that apply to every change. State each rule
+     once, abstractly. Triggers and path-scoped actions belong in Boundaries. -->
+
+- Use plan mode when any Ask-first condition triggers (see Boundaries).
+- No placeholder comments. Ask if you lack context.
 - Use `<pkg-mgr>` only; do not introduce alternatives.
 - Run the fast verification after every meaningful change.
 
 ## Style
 
 <!-- 3 to 6 critical rules. Each names the exact technology, command, or
-     pattern, with a Preferred / Avoid pair. Add more sections as needed. -->
+     pattern, with a Preferred / Avoid pair. -->
 
 ### <Rule 1>
 ```<lang>
@@ -50,19 +58,17 @@ Before declaring a task done:
 
 ## Boundaries
 
-**Always**: <things the agent does without asking>
-- <path or behavior>
+<!-- Three tiers, each with strict scope. A rule belongs in exactly one. -->
 
-**Ask first**: <things the agent must propose before doing>
-- <path or behavior>
+**Always** — path- or area-scoped automatic actions (NOT universal rules; those are Non-negotiables).
+- <path-scoped behavior>
 
-**Never**: <things the agent is forbidden from touching>
+**Ask first** — owns the trigger list for plan mode and other "stop and propose" gates.
+- Changes touching >3 files, public APIs, refactors, or migrations.
+- <project-specific trigger>
+
+**Never** — forbidden paths or destructive actions.
 - <path>: <reason>
-
-## Plan mode
-
-Required for: >3 files, public API changes, refactors, migrations, build/CI changes.
-Skip for: typo fixes, single-file localized changes, comment-only edits.
 
 ## Preserved regions
 
@@ -70,6 +76,6 @@ Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` (or `// pres
 
 ## See also
 
-- `.claude/rules/` — overflow rules (numeric prefix sets load order)
+- `docs/agents/` — per-area conventions when this file outgrows its budget (any harness can be told to read these)
 - `docs/decisions/` — ADRs; the *why* behind decisions
 - `docs/mcp-policy.md` — agent access policy, if applicable

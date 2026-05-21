@@ -212,9 +212,11 @@ const description =
         source.
       </li>
       <li>
-        <strong>Split rule directory.</strong> Stable, long-form, or per-area
-        conventions live in <code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code>.
-        A numeric prefix sets load order.
+        <strong>Neutral overflow.</strong> Stable, long-form, or per-area
+        conventions live in <code>docs/agents/&lt;area&gt;.md</code>. Plain
+        markdown, harness-agnostic — any agent can be told to read them.
+        <code>.claude/rules/</code> remains an optional Claude Code-specific
+        auto-loading layer on top.
       </li>
       <li>
         <strong>Symlink.</strong> <code>CLAUDE.md</code> is a symlink to
@@ -235,11 +237,15 @@ CLAUDE.md -&gt; AGENTS.md             ← symlink
 .cursor/rules/main.mdc             ← 5-line pointer
 .github/copilot-instructions.md    ← 5-line pointer
 .windsurf/rules/main.md            ← 5-line pointer
-.claude/rules/                     ← overflow: stable long-form rules
-  10-style-imports.md
-  30-verification.md
-  50-frontend-tailwind.md
-  70-secrets.md</code></pre>
+
+docs/agents/                       ← neutral overflow (harness-agnostic)
+  frontend.md
+  backend.md
+  infra.md
+
+.claude/rules/                     ← optional Claude-Code-only auto-load layer
+  10-style.md
+  30-verification.md</code></pre>
     <p>
       <a href={url('foundation/good-practices/')}>→ Foundation page: Good
       practices § split-file architecture</a>.
@@ -275,9 +281,10 @@ CLAUDE.md -&gt; AGENTS.md             ← symlink
         high-autonomy tasks like complex refactoring and git-intensive
         workflows. Best practices: <code>/init</code> as foundation,
         verification loops in every prompt, <code>/compact</code> for long
-        sessions, CLI access only with strict security boundaries. Treat
-        <code>CLAUDE.md</code> as a lean root that loads
-        <code>.claude/rules/</code> via <code>@imports</code>.
+        sessions, CLI access only with strict security boundaries.
+        <code>CLAUDE.md</code> is a symlink to the canonical
+        <code>AGENTS.md</code>; Claude Code additionally auto-loads any files
+        in <code>.claude/rules/</code> if your team opts in.
       </li>
       <li>
         <strong>Cursor.</strong> The context-aware IDE. Daily driver for
