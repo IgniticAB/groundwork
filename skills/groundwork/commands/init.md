@@ -163,7 +163,17 @@ Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` c
 
 Create `.context/hooks/check-context.sh` from `templates/hook.sh.template`. Make it executable. The hook does three things: warn on `package.json#packageManager` drift vs `AGENTS.md`, require an ADR (or a reference to one) on multi-file commits, and require a valid Status on staged ADRs. It does **not** enforce parity between any context files.
 
-Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If none is present, leave the hook script in place and tell the user the one-line install command for the most common one (`pre-commit install` or `pnpm dlx husky init`). Do not silently add a new tool to the repo. Suggest, do not install.
+Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If a runner is present, add the hook entry directly and tell the user it is wired in.
+
+If none is present, leave the hook script in place and report to the user, using this exact framing:
+
+> No hook runner detected (`husky`, `pre-commit`, `lefthook`). The hook script is in place at `.context/hooks/check-context.sh` but is not wired into anything yet. To wire it up, run one of:
+>
+> - **Node repo, macOS/Linux:** `npx husky init && echo 'sh .context/hooks/check-context.sh' >> .husky/pre-commit`
+> - **Node repo, Windows PowerShell:** `npx husky init; Add-Content .husky/pre-commit 'sh .context/hooks/check-context.sh'`
+> - **Python repo:** `pip install pre-commit && pre-commit install` (then add the hook entry to `.pre-commit-config.yaml`)
+
+Pick the closest match to the user's repo. Do not silently add a new tool to the repo. Suggest, do not install. The platform only changes the install-command syntax; the decision (suggest vs install) depends on whether a hook runner was already present, not on the operating system.
 
 ### Step 8. Verify
 
