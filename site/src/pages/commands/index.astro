@@ -16,11 +16,6 @@ const description =
       the when and the what it produces.
     </p>
 
-    <p class="fw-intro">
-      The nine commands and the CLI fall into four roles around one hub.
-      Knowing which role a piece sits in tells you when it should run.
-    </p>
-
     <figure class="flywheel-diagram">
       <svg viewBox="50 50 500 500" role="img" aria-labelledby="fw-title" xmlns="http://www.w3.org/2000/svg">
         <title id="fw-title">A weighted flywheel: four roles around a hub, an amber rotation sweep across the rim.</title>
@@ -68,11 +63,12 @@ const description =
                 d="M 300 72.5 A 227.5 227.5 0 0 1 527.5 300" />
         </g>
       </svg>
-      <figcaption>
-        Cadence runs clockwise. Lay the rails. Steer the change. Catch the
-        slip on commit. Re-ground before drift compounds.
-      </figcaption>
     </figure>
+
+    <p class="fw-intro">
+      The nine commands and the CLI fall into four roles around one hub.
+      Knowing which role a piece sits in tells you when it should run.
+    </p>
 
     <p class="fw-outro">
       Each role runs on its own rhythm. Enforcers fire on every commit.
@@ -126,30 +122,20 @@ const description =
   <style>
     .fw-intro,
     .fw-outro {
-      max-width: 60ch;
       color: var(--ink-soft);
       line-height: 1.6;
     }
-    .fw-intro { margin: 2rem 0 0.5rem; }
-    .fw-outro { margin: 0.5rem 0 2rem; }
+    .fw-intro { margin: 1.5rem 0 1rem; }
+    .fw-outro { margin: 0 0 2rem; }
 
     .flywheel-diagram {
-      margin: 1.5rem auto 1.5rem;
+      margin: 2rem auto 0;
       max-width: 600px;
     }
     .flywheel-diagram svg {
       width: 100%;
       height: auto;
       display: block;
-    }
-    .flywheel-diagram figcaption {
-      margin: 0.5rem auto 0;
-      font-size: 0.95rem;
-      color: var(--muted);
-      text-align: center;
-      font-style: italic;
-      line-height: 1.55;
-      max-width: 36rem;
     }
     .flywheel-diagram .fw-rim { fill: var(--ink); }
     .flywheel-diagram .fw-spokes line {
