@@ -8,7 +8,6 @@ const title = 'Groundwork';
 const description =
   'Context engineering for any LLM. One skill, nine commands, for setting up and maintaining the boring layer that makes the rest actually useful.';
 
-// Featured 3 + tight 6 ordering. The featured commands are the lifecycle anchors.
 const featuredSlugs = ['init', 'verify', 'audit'];
 const featured = featuredSlugs
   .map((s) => commands.find((c) => c.slug === s))
@@ -16,21 +15,20 @@ const featured = featuredSlugs
 const rest = commands.filter((c) => !featuredSlugs.includes(c.slug));
 
 const heroFeature = foundation[0];
-const heroFoundationRest = foundation.slice(1);
 
 // Tree specimen rows. First entry is the root.
 const tree = [
   { line: 'your-repo/', note: '' },
   { line: '├── AGENTS.md', note: 'canonical, ~70 lines' },
   { line: '├── CLAUDE.md → AGENTS.md', note: 'symlink' },
-  { line: '├── .cursor/rules/main.mdc', note: '5-line pointer to AGENTS.md' },
-  { line: '├── .github/copilot-instructions.md', note: '5-line pointer to AGENTS.md' },
-  { line: '├── .windsurf/rules/main.md', note: '5-line pointer to AGENTS.md' },
-  { line: '├── .context/hooks/check-context.sh', note: 'ADR coverage + pkg-manager drift' },
+  { line: '├── .cursor/rules/main.mdc', note: '5-line pointer' },
+  { line: '├── .github/copilot-instructions.md', note: '5-line pointer' },
+  { line: '├── .windsurf/rules/main.md', note: '5-line pointer' },
+  { line: '├── .context/hooks/check-context.sh', note: 'pre-commit drift' },
   { line: '└── docs/decisions/', note: '' },
   { line: '    ├── README.md', note: '' },
   { line: '    ├── 0001-record-architecture-decisions.md', note: 'the meta-ADR' },
-  { line: '    └── negative-space.md', note: 'rejected paths, kept visible' },
+  { line: '    └── negative-space.md', note: 'rejected paths' },
 ];
 ---
 
@@ -38,19 +36,18 @@ const tree = [
   <section class="hero-band hero-band--home">
     <div class="hero-stage">
       <div class="hero-meta">
-        <span class="hero-chip">v1.1 · Skill plus nine commands</span>
+        <span class="hero-chip">v1.1 · Groundwork</span>
         <span class="hero-divider" aria-hidden="true"></span>
         <span class="hero-status">MIT · works in 50+ harnesses</span>
       </div>
 
       <h1 class="hero-display display">
-        Groundwork<span class="hero-display-stop" aria-hidden="true"></span>
+        Context is the new code<span class="hero-display-stop" aria-hidden="true"></span>
       </h1>
 
       <p class="hero-tag">
-        Context is the new code. Most teams write it once and never touch it.
-        Groundwork makes it an engineered artifact: versioned, reviewed,
-        wired to the verification commands that prove it works.
+        Most teams write it once and never touch it. We make it shippable:
+        versioned, reviewed, wired to the checks that prove it works.
       </p>
 
       <div class="hero-cta">
@@ -64,8 +61,8 @@ const tree = [
           <span class="cmd-state" aria-hidden="true">copy</span>
         </button>
         <div class="hero-cta-links">
-          <a class="hero-arrow" href={url('install/')}>Install guide<span aria-hidden="true">→</span></a>
           <a class="hero-arrow" href={url('commands/')}>The nine commands<span aria-hidden="true">→</span></a>
+          <a class="hero-arrow" href={url('install/')}>Install guide<span aria-hidden="true">→</span></a>
         </div>
       </div>
     </div>
@@ -81,18 +78,16 @@ const tree = [
     <div class="stage">
       <div class="proof-grid">
         <div class="proof-copy">
-          <span class="kicker">What it produces</span>
-          <h2>One command. Real files. No placeholders.</h2>
+          <span class="kicker">What you get</span>
+          <h2>One command. Real files.</h2>
           <p class="lede">
-            <code>groundwork init</code> reads your repo, asks four questions,
-            and emits the scaffolding every other command assumes. Per-harness
-            files point at one canonical source. ADRs ready to be authored.
-            A pre-commit hook that fails when context drifts from the code.
+            <code>groundwork init</code> reads your repo, asks five questions,
+            and writes the files every other command assumes exist.
           </p>
           <p>
-            No <em>TODO: implement</em>. No 800-line CLAUDE.md. No assumptions
-            about your timezone or your package manager. Run it once. Every
-            other command in this skill picks up from there.
+            One canonical <code>AGENTS.md</code>. A 5-line pointer per harness.
+            ADR scaffolding. A pre-commit hook that fails when context drifts
+            from the code. No <em>TODO: implement</em>. No 800-line CLAUDE.md.
           </p>
           <a class="link-arrow" href={url('commands/init/')}>
             How <code>init</code> works<span aria-hidden="true">→</span>
@@ -126,7 +121,7 @@ const tree = [
       <header class="band-head">
         <div>
           <span class="kicker">The skill</span>
-          <h2>Nine commands. Three you reach for first.</h2>
+          <h2>Nine commands. Start with three.</h2>
         </div>
         <a class="link-arrow band-head-cta" href={url('commands/')}>
           All commands<span aria-hidden="true">→</span>
@@ -166,86 +161,19 @@ const tree = [
       <header class="band-head">
         <div>
           <span class="kicker">The foundation</span>
-          <h2>The shared vocabulary every command assumes.</h2>
+          <h2>The model underneath.</h2>
         </div>
         <a class="link-arrow band-head-cta" href={url('foundation/')}>
           All seven pages<span aria-hidden="true">→</span>
         </a>
       </header>
 
-      <div class="found-feature">
-        <a class="found-lead" href={url(`foundation/${heroFeature.slug}/`)}>
-          <span class="found-num">01</span>
-          <h3 class="found-lead-title">{heroFeature.title}</h3>
-          <p class="found-lead-line">{heroFeature.oneLiner}</p>
-          <span class="found-lead-cta" aria-hidden="true">Read it<span class="rest-arrow">→</span></span>
-        </a>
-
-        <ul class="found-rest">
-          {heroFoundationRest.map((f, i) => (
-            <li>
-              <a class="found-rest-row" href={url(`foundation/${f.slug}/`)}>
-                <span class="found-rest-num">{String(i + 2).padStart(2, '0')}</span>
-                <span class="found-rest-title">{f.title}</span>
-                <span class="rest-arrow" aria-hidden="true">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="band band--paper">
-    <div class="stage">
-      <div class="pair">
-        <div class="pair-col">
-          <span class="kicker">The skill</span>
-          <h2 class="pair-title">Authors your context.</h2>
-          <p class="pair-line">
-            One umbrella entry, nine commands. Bootstraps a repo, refreshes
-            stale conventions, plans before coding, captures decisions,
-            scopes rules per area, designs MCP setups, and bakes verification
-            into every harness file.
-          </p>
-          <a class="link-arrow" href={url('commands/')}>
-            See the nine commands<span aria-hidden="true">→</span>
-          </a>
-        </div>
-        <div class="pair-col">
-          <span class="kicker">The CLI</span>
-          <h2 class="pair-title">Guards it in CI.</h2>
-          <p class="pair-line">
-            Ten deterministic rules. No LLM. JSON output for build gates.
-            Catches stale <code>CLAUDE.md</code>, MCP credential leaks,
-            missing verification sections, and secrets in committed files,
-            in milliseconds.
-          </p>
-          <a class="link-arrow" href={url('cli/')}>
-            See the CLI<span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band closing">
-    <div class="stage closing-stage">
-      <p class="closing-kicker">Stop writing context like prose.</p>
-      <h2 class="closing-head">Start engineering&nbsp;it.</h2>
-      <p class="closing-lede">
-        Bootstrap a repo in one command. Audit one that already exists. Or
-        start with the philosophy and pick your battles.
-      </p>
-      <div class="closing-cta">
-        <a class="btn btn--primary" href={url('install/')}>Install Groundwork</a>
-        <a class="btn btn--ghost" href={url('commands/init/')}>
-          See <code>init</code> in detail
-        </a>
-        <a class="btn btn--ghost" href={url('foundation/cognitive-debt/')}>
-          Why cognitive debt is the real risk
-        </a>
-      </div>
+      <a class="found-lead" href={url(`foundation/${heroFeature.slug}/`)}>
+        <span class="found-num">01</span>
+        <h3 class="found-lead-title">{heroFeature.title}</h3>
+        <p class="found-lead-line">{heroFeature.oneLiner}</p>
+        <span class="found-lead-cta" aria-hidden="true">Read it<span class="rest-arrow">→</span></span>
+      </a>
     </div>
   </section>
 
@@ -286,13 +214,14 @@ const tree = [
     .hero-status { font-variant-numeric: tabular-nums; }
 
     .hero-display {
-      font-size: clamp(4.8rem, 14vw, 16rem);
-      line-height: 0.84;
+      font-size: clamp(2.6rem, 7vw, 6rem);
+      line-height: 0.98;
       margin: 0;
       color: var(--cream);
-      letter-spacing: -0.055em;
+      letter-spacing: -0.045em;
       font-variation-settings: "opsz" 96, "wdth" 100;
-      white-space: nowrap;
+      max-width: 16ch;
+      text-wrap: balance;
     }
     .hero-display-stop {
       display: inline-block;
@@ -323,11 +252,11 @@ const tree = [
     }
 
     .hero-tag {
-      max-width: 38ch;
-      font-size: clamp(1.15rem, 1.6vw, 1.4rem);
-      line-height: 1.45;
+      max-width: 46ch;
+      font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+      line-height: 1.5;
       color: rgba(255, 249, 236, 0.92);
-      margin: clamp(1.4rem, 2.6vw, 2.2rem) 0 0;
+      margin: clamp(1.4rem, 2.6vw, 2rem) 0 0;
       font-weight: 400;
     }
     .hero-tag em {
@@ -420,10 +349,10 @@ const tree = [
       padding-inline: var(--gutter);
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      color: rgba(255, 249, 236, 0.5);
-      font-size: 0.78rem;
-      letter-spacing: 0.18em;
+      gap: 0.6rem;
+      color: rgba(255, 249, 236, 0.62);
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       font-weight: 500;
     }
@@ -434,9 +363,10 @@ const tree = [
       background: var(--ember-glow);
     }
 
-    /* shared band layout =============================================== */
+    /* bands ============================================================ */
     .band {
-      padding-block: clamp(4rem, 7vw, 6.5rem);
+      padding-block: clamp(3.5rem, 6vw, 5.5rem);
+      border-top: 1px solid var(--rule-soft);
     }
     .band--paper { background: var(--bg-soft); }
     .stage {
@@ -444,13 +374,14 @@ const tree = [
       margin: 0 auto;
       padding-inline: var(--gutter);
     }
+
     .band-head {
       display: flex;
-      align-items: flex-end;
       justify-content: space-between;
-      gap: 2rem;
+      align-items: flex-end;
+      gap: 1.5rem;
+      margin-bottom: clamp(2rem, 3.4vw, 2.8rem);
       flex-wrap: wrap;
-      margin-bottom: 2.4rem;
     }
     .band-head h2 { margin-top: 0.4rem; max-width: 22ch; }
     .band-head-cta { white-space: nowrap; }
@@ -458,126 +389,116 @@ const tree = [
     .kicker {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.84rem;
-      font-weight: 600;
+      gap: 0.6rem;
       color: var(--ember-ink);
-      letter-spacing: 0.01em;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
     }
     .kicker::before {
-      content: '';
+      content: "";
       width: 1.4rem;
       height: 1px;
       background: var(--ember);
     }
 
-    /* proof grid (tree specimen + copy) =============================== */
+    /* tree specimen =================================================== */
     .proof-grid {
       display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-columns: 1fr 1fr;
       gap: clamp(2rem, 4vw, 4rem);
       align-items: start;
     }
     .proof-copy h2 { margin-top: 0.4rem; max-width: 18ch; }
     .proof-copy .lede {
-      font-size: 1.1rem;
-      line-height: 1.55;
-      color: var(--ink-soft);
-      margin-top: 1rem;
       max-width: 38ch;
+      margin-top: 1rem;
     }
     .proof-copy p {
+      max-width: 42ch;
+      margin-top: 1rem;
       color: var(--ink-soft);
-      max-width: 38ch;
     }
-
     .tree {
       margin: 0;
-      background: var(--surface-dark);
+      padding: 0;
+      background: var(--surface-feature);
       color: var(--cream);
-      border-radius: 14px;
-      padding: 1.2rem 1.4rem 1.6rem;
+      border-radius: 1rem;
+      padding: clamp(1.4rem, 2vw, 2rem);
       font-family: var(--mono);
       font-size: 0.84rem;
-      line-height: 1.85;
-      box-shadow:
-        0 1px 0 rgba(22, 22, 20, 0.08),
-        0 24px 40px -24px rgba(184, 67, 31, 0.45);
+      line-height: 1.55;
       position: relative;
       overflow: hidden;
     }
     .tree::before {
-      content: '';
+      content: "";
       position: absolute;
-      inset: 0 0 auto 0;
-      height: 36px;
-      background: linear-gradient(180deg, rgba(255, 249, 236, 0.03), transparent);
+      inset: 0;
+      background: linear-gradient(160deg, rgba(255, 161, 75, 0.06), transparent 55%);
       pointer-events: none;
     }
     .tree-caption {
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      color: var(--ember-glow);
-      font-size: 0.84rem;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: rgba(255, 249, 236, 0.78);
       margin-bottom: 0.9rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid rgba(255, 249, 236, 0.1);
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(255, 249, 236, 0.12);
     }
     .tree-prompt { color: var(--ember-glow); font-weight: 700; }
     .tree-lines {
       list-style: none;
-      margin: 0;
       padding: 0;
+      margin: 0;
     }
     .tree-line {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.6rem 1.6rem;
+      grid-template-columns: minmax(0, auto) 1fr;
+      gap: 0.7rem 1rem;
       align-items: baseline;
-      white-space: nowrap;
+      padding-block: 0.1rem;
     }
     .tree-line code {
-      background: none;
-      border: none;
+      background: transparent;
       color: var(--cream);
       padding: 0;
       font-size: inherit;
+      border: none;
     }
     .tree-line--dir code,
     .tree-line--root code {
       color: var(--ember-glow);
-      font-weight: 600;
     }
     .tree-note {
       color: rgba(255, 249, 236, 0.5);
-      font-size: 0.78rem;
       font-family: var(--sans);
-      font-style: italic;
-      text-align: right;
-      white-space: normal;
-      max-width: 24ch;
-      line-height: 1.4;
+      font-size: 0.78rem;
+      letter-spacing: 0.01em;
     }
 
+    /* shared link arrow */
     .link-arrow {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      color: var(--ember-ink);
-      font-weight: 600;
+      color: var(--ink);
       text-decoration: none;
-      font-size: 0.97rem;
-      margin-top: 1.2rem;
-      border-bottom: 1.5px solid transparent;
-      padding-bottom: 2px;
-      transition: border-bottom-color 160ms var(--ease-out-quart);
+      font-weight: 600;
+      font-size: 0.96rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.18rem;
+      margin-top: 1.6rem;
+      transition: border-color 200ms var(--ease-out-quart);
     }
     .link-arrow code {
-      background: none;
-      border: none;
+      background: transparent;
       padding: 0;
-      font-size: 0.95em;
+      border: none;
       color: inherit;
     }
     .link-arrow span {
@@ -588,128 +509,124 @@ const tree = [
     }
     .link-arrow:hover span { transform: translateX(3px); }
 
-    /* featured 3 + tight 6 ============================================ */
+    /* featured grid ==================================================== */
     .featured {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.4rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      margin-bottom: 2.6rem;
     }
     .featured-card {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      grid-template-rows: auto auto;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
       gap: 0.4rem 1rem;
-      align-items: start;
-      padding: 1.6rem 1.4rem 1.4rem;
+      padding: 1.4rem 1.5rem 1.5rem;
       background: var(--bg);
       border: 1px solid var(--rule);
-      border-radius: 14px;
+      border-radius: 0.9rem;
       text-decoration: none;
-      color: var(--ink);
-      transition:
-        transform 240ms var(--ease-out-quart),
-        border-color 240ms var(--ease-out-quart),
-        box-shadow 240ms var(--ease-out-quart);
+      color: inherit;
+      transition: border-color 200ms var(--ease-out-quart),
+                  transform 200ms var(--ease-out-quart);
       position: relative;
     }
     .featured-card:hover {
-      transform: translateY(-2px);
       border-color: var(--ember);
-      box-shadow: 0 20px 40px -28px rgba(184, 67, 31, 0.38);
+      transform: translateY(-2px);
     }
     .featured-num {
-      grid-row: 1 / span 2;
+      grid-row: 1;
+      grid-column: 1;
       font-family: var(--mono);
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: var(--muted);
-      padding-top: 0.4rem;
+      letter-spacing: 0.05em;
+      padding-top: 0.2rem;
     }
     .featured-body { display: contents; }
     .featured-name {
-      grid-column: 2;
       grid-row: 1;
+      grid-column: 2;
     }
     .featured-name code {
-      background: none;
+      background: transparent;
       border: none;
       padding: 0;
-      font-family: var(--display);
-      font-size: clamp(1.45rem, 2vw, 1.7rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 1.1rem;
+      font-weight: 650;
       color: var(--ink);
     }
     .featured-arrow {
-      grid-column: 3;
       grid-row: 1;
+      grid-column: 3;
+      align-self: start;
+      padding-top: 0.3rem;
       color: var(--muted);
-      font-size: 1.2rem;
-      transition: transform 240ms var(--ease-out-quart),
-                  color 240ms var(--ease-out-quart);
+      transition: transform 200ms var(--ease-out-quart),
+                  color 200ms var(--ease-out-quart);
     }
     .featured-card:hover .featured-arrow {
-      color: var(--ember);
       transform: translateX(3px);
+      color: var(--ember);
     }
     .featured-line {
-      grid-column: 2 / -1;
       grid-row: 2;
-      margin: 0;
-      font-size: 1rem;
+      grid-column: 2 / -1;
+      margin: 0.4rem 0 0;
+      color: var(--ink);
+      font-size: 0.98rem;
       line-height: 1.45;
-      color: var(--ink-soft);
     }
     .featured-when {
+      grid-row: 3;
       grid-column: 2 / -1;
-      margin: 0.5rem 0 0;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      margin: 0.6rem 0 0;
       color: var(--muted);
-      border-top: 1px solid var(--rule);
-      padding-top: 0.7rem;
+      font-size: 0.84rem;
+      line-height: 1.45;
     }
 
+    /* rest of commands list =========================================== */
     .rest-list {
       list-style: none;
       padding: 0;
       margin: 0;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 1.4rem;
+      row-gap: 0;
       border-top: 1px solid var(--rule);
     }
     .rest-list li {
       border-bottom: 1px solid var(--rule);
-      margin: 0;
     }
     .rest-list li:nth-child(odd) {
       border-right: 1px solid var(--rule);
     }
     .rest-row {
       display: grid;
-      grid-template-columns: 7rem minmax(0, 1fr) auto;
-      gap: 1rem;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.2rem;
       align-items: center;
-      padding: 0.9rem 1rem;
+      padding: 1rem 1.2rem;
       text-decoration: none;
-      color: var(--ink);
-      transition: background 180ms var(--ease-out-quart);
+      color: inherit;
+      transition: background 160ms var(--ease-out-quart);
     }
     .rest-row:hover { background: var(--bg-soft); }
     .rest-name {
-      background: none;
+      background: transparent;
       border: none;
       padding: 0;
-      font-family: var(--display);
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 650;
       color: var(--ink);
-      letter-spacing: -0.01em;
+      letter-spacing: -0.005em;
     }
     .rest-line {
-      font-size: 0.92rem;
       color: var(--ink-soft);
+      font-size: 0.92rem;
       line-height: 1.4;
     }
     .rest-arrow {
@@ -718,61 +635,57 @@ const tree = [
                   color 200ms var(--ease-out-quart);
     }
     .rest-row:hover .rest-arrow {
-      color: var(--ember);
       transform: translateX(3px);
+      color: var(--ember);
     }
 
-    /* foundation featured ============================================== */
-    .found-feature {
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      gap: clamp(1.5rem, 3vw, 3rem);
-      align-items: stretch;
-    }
+    /* foundation lead card ============================================ */
     .found-lead {
-      display: flex;
-      flex-direction: column;
-      padding: 2rem 1.8rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.2rem 2rem;
+      padding: clamp(1.6rem, 2.4vw, 2.2rem);
       background: var(--surface-feature);
       color: var(--cream);
-      border-radius: 14px;
+      border-radius: 1rem;
       text-decoration: none;
-      box-shadow: 0 24px 40px -28px rgba(22, 22, 20, 0.35);
-      transition: transform 240ms var(--ease-out-quart);
+      align-items: center;
+      transition: transform 200ms var(--ease-out-quart);
     }
     .found-lead:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
     .found-num {
       font-family: var(--mono);
       font-size: 0.78rem;
       color: var(--ember-glow);
       letter-spacing: 0.05em;
-      margin-bottom: 1.4rem;
+      align-self: start;
+      padding-top: 0.4rem;
     }
     .found-lead-title {
-      font-family: var(--display);
-      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      margin: 0;
+      font-size: clamp(1.4rem, 2.2vw, 1.8rem);
       font-weight: 700;
-      line-height: 1.05;
-      letter-spacing: -0.025em;
       color: var(--cream);
-      margin: 0 0 0.8rem;
+      letter-spacing: -0.02em;
     }
     .found-lead-line {
+      margin: 0.6rem 0 0;
       color: rgba(255, 249, 236, 0.78);
+      font-size: 1.02rem;
       line-height: 1.5;
-      margin: 0;
-      flex: 1;
+      grid-column: 2;
     }
     .found-lead-cta {
-      margin-top: 1.6rem;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
       color: var(--ember-glow);
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
     }
     .found-lead-cta .rest-arrow {
       color: var(--ember-glow);
@@ -781,181 +694,23 @@ const tree = [
       transform: translateX(3px);
     }
 
-    .found-rest {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .found-rest li {
-      margin: 0;
-      border-top: 1px solid var(--rule);
-    }
-    .found-rest li:last-child { border-bottom: 1px solid var(--rule); }
-    .found-rest-row {
-      display: grid;
-      grid-template-columns: 3rem minmax(0, 1fr) auto;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.95rem 0.5rem;
-      text-decoration: none;
-      color: var(--ink);
-      transition: padding-inline 220ms var(--ease-out-quart),
-                  color 220ms var(--ease-out-quart);
-    }
-    .found-rest-row:hover {
-      color: var(--ember-ink);
-      padding-inline: 1rem 0;
-    }
-    .found-rest-num {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .found-rest-title {
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-    .found-rest-row .rest-arrow {
-      color: var(--muted);
-    }
-    .found-rest-row:hover .rest-arrow {
-      color: var(--ember);
-      transform: translateX(3px);
-    }
-
-    /* skill + CLI pair ================================================= */
-    .pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(2rem, 4vw, 4.5rem);
-    }
-    .pair h2.pair-title {
-      margin-top: 0.5rem;
-      margin-bottom: 0.6rem;
-      max-width: 14ch;
-    }
-    .pair .pair-line {
-      font-size: 1.05rem;
-      line-height: 1.55;
-      color: var(--ink-soft);
-      max-width: 42ch;
-      margin: 0;
-    }
-    .pair .link-arrow {
-      margin-top: 1.3rem;
-    }
-    @media (max-width: 800px) {
-      .pair {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-    }
-
-    /* closing ========================================================== */
-    .closing {
-      background: var(--surface-feature);
-      color: var(--cream);
-      padding-block: clamp(4rem, 7vw, 6rem);
-    }
-    .closing-stage {
-      max-width: 56ch;
-    }
-    .closing-kicker {
-      color: var(--ember-glow);
-      font-weight: 600;
-      margin: 0 0 0.4rem;
-      letter-spacing: -0.01em;
-    }
-    .closing-head {
-      font-family: var(--display);
-      font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 750;
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-      color: var(--cream);
-      margin: 0;
-      font-variation-settings: "opsz" 64;
-    }
-    .closing-lede {
-      color: rgba(255, 249, 236, 0.78);
-      font-size: 1.15rem;
-      line-height: 1.5;
-      margin: 1.2rem 0 1.8rem;
-      max-width: 44ch;
-    }
-    .closing-cta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.85rem 1.2rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.97rem;
-      text-decoration: none;
-      transition: background 200ms var(--ease-out-quart),
-                  color 200ms var(--ease-out-quart),
-                  border-color 200ms var(--ease-out-quart),
-                  transform 200ms var(--ease-out-quart);
-      min-height: 44px;
-    }
-    .btn--primary {
-      background: var(--ember-glow);
-      color: var(--ink);
-      border: 1px solid var(--ember-glow);
-      font-weight: 700;
-    }
-    .btn--primary:hover {
-      background: var(--cream);
-      border-color: var(--cream);
-      color: var(--ink);
-      transform: translateY(-1px);
-    }
-    .btn--ghost {
-      background: transparent;
-      color: var(--cream);
-      border: 1px solid rgba(255, 249, 236, 0.32);
-    }
-    .btn--ghost:hover {
-      border-color: var(--cream);
-      color: var(--cream);
-    }
-    .btn code {
-      background: none;
-      padding: 0;
-      border: 0;
-      font-size: 0.94em;
-      color: inherit;
-    }
-
-    /* responsive ======================================================= */
+    /* responsive ====================================================== */
     @media (max-width: 1000px) {
+      .featured { grid-template-columns: 1fr; }
       .proof-grid { grid-template-columns: 1fr; }
-      .tree-note { display: none; }
-      .tree-line { white-space: normal; }
     }
     @media (max-width: 900px) {
-      .featured { grid-template-columns: 1fr; }
       .rest-list { grid-template-columns: 1fr; }
       .rest-list li:nth-child(odd) { border-right: none; }
-      .found-feature { grid-template-columns: 1fr; }
+      .found-lead {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+      .found-lead-line { grid-column: 1; }
     }
     @media (max-width: 560px) {
-      .hero-display { font-size: clamp(2.6rem, 13vw, 5.5rem); }
-      .hero-divider { display: none; }
-      .hero-meta { gap: 0.6rem 0.9rem; font-size: 0.86rem; }
-      .hero-cta { gap: 0.9rem; }
-      .hero-cta-links { gap: 0.9rem 1.2rem; }
-      .hero-ledge { font-size: 0.7rem; letter-spacing: 0.15em; gap: 0.6rem; }
-      .featured-card { padding: 1.3rem 1.1rem; }
-      .rest-row { grid-template-columns: 5.4rem minmax(0, 1fr) auto; gap: 0.7rem; }
-      .closing-head { font-size: clamp(2rem, 11vw, 3rem); }
+      .featured-card { padding: 1.2rem; }
+      .rest-row { padding: 1rem; }
     }
   </style>
 
@@ -968,7 +723,6 @@ const tree = [
         try {
           await navigator.clipboard.writeText(text);
         } catch {
-          // fall back: select the inner text node so the user can Cmd+C
           const range = document.createRange();
           range.selectNodeContents(el);
           const sel = window.getSelection();
@@ -986,29 +740,5 @@ const tree = [
         }, 1800);
       });
     });
-
-    // a note for the curious
-    const title = [
-      'color:#ffa14b',
-      'font-family:Bricolage Grotesque,system-ui,sans-serif',
-      'font-size:1.1rem',
-      'font-weight:700',
-      'letter-spacing:-0.02em',
-    ].join(';');
-    const body = [
-      'color:#6a635e',
-      'font-family:system-ui,sans-serif',
-      'font-size:0.85rem',
-      'line-height:1.55',
-    ].join(';');
-    const link = [
-      'color:#8a4d04',
-      'font-family:ui-monospace,monospace',
-      'font-size:0.85rem',
-      'font-weight:600',
-    ].join(';');
-    console.log('%cGroundwork.', title);
-    console.log('%cContext engineering for any LLM. This site was built with the same skill we ship.', body);
-    console.log('%cgithub.com/IgniticAB/groundwork', link);
   </script>
 </Base>

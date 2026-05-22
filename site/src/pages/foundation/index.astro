@@ -12,8 +12,8 @@ const description =
   <div class="container container--wide foundation-index">
     <h1>The foundation</h1>
     <p class="lede">
-      Seven short files. The shared vocabulary every command in this skill
-      assumes you already speak. Read them once. They are intentionally short.
+      Seven short pages. The shared vocabulary every command assumes you
+      speak. Read once.
     </p>
 
     <div class="found-list">
@@ -28,20 +28,6 @@ const description =
         </a>
       ))}
     </div>
-
-    <section class="src">
-      <h2>Where this comes from</h2>
-      <p>
-        Every page on this site distils the same source document:
-        <em>The 2026 Context Engineering Blueprint</em>. Its argument: context,
-        not model capability, is the bottleneck on AI-assisted engineering,
-        and the discipline of <em>engineering</em> it is the defining R&D
-        skill of the year.
-      </p>
-      <p>
-        <a class="src-link" href={url('blueprint/')}>Read the full Blueprint →</a>
-      </p>
-    </section>
   </div>
 
   <style>
@@ -99,28 +85,6 @@ const description =
     .found-row:hover .found-row-arrow {
       color: var(--ember);
       transform: translateX(2px);
-    }
-
-    .src {
-      margin-top: 4rem;
-      padding: 2rem;
-      background: var(--bg-soft);
-      border: 1px solid var(--rule);
-      border-radius: 12px;
-    }
-    .src h2 { margin-top: 0; }
-    .src-link {
-      display: inline-block;
-      margin-top: 0.5rem;
-      color: var(--ember-ink);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .src-link:hover {
-      text-decoration: underline;
-      text-decoration-color: var(--ember);
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 4px;
     }
 
     @media (max-width: 560px) {

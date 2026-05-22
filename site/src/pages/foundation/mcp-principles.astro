@@ -1,164 +1,80 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'MCP principles';
 const description =
-  'The Model Context Protocol is the USB-C port for AI. It is also the largest attack surface in an AI-first stack. Three non-negotiables: least-privilege binding, human-in-the-loop, centralised auditing.';
+  'Least-privilege binding, human-in-the-loop, centralised auditing. Three non-negotiables for the AI perimeter.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
-    The Model Context Protocol (MCP) is how agents reach real systems:
-    databases, deploys, APIs, file stores, ticketing. It is also the largest
-    attack surface and the largest source of operational risk in an AI-first
-    stack. Get it right.
+    The Model Context Protocol is how agents reach real systems. It is also
+    the largest attack surface in an AI-first stack. Three non-negotiables.
   </p>
 
   <h2>The three primitives</h2>
-
   <table>
-    <thead>
-      <tr><th>Primitive</th><th>What it is</th><th>Risk profile</th></tr>
-    </thead>
+    <thead><tr><th>Primitive</th><th>What it is</th><th>Risk</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>Resources</strong></td>
-        <td>Read-only data the agent can pull (a Postgres URI it can <code>SELECT</code> from)</td>
-        <td>Low; data exposure only</td>
-      </tr>
-      <tr>
-        <td><strong>Tools</strong></td>
-        <td>Executable actions with side effects (<code>deploy_to_prod</code>, <code>delete_user</code>)</td>
-        <td>High; can mutate state</td>
-      </tr>
-      <tr>
-        <td><strong>Prompts</strong></td>
-        <td>Reusable templates the host renders</td>
-        <td>None directly; can leak via injection</td>
-      </tr>
+      <tr><td><strong>Resources</strong></td><td>Read-only data the agent pulls.</td><td>Low; data exposure.</td></tr>
+      <tr><td><strong>Tools</strong></td><td>Executable actions with side effects.</td><td>High; can mutate state.</td></tr>
+      <tr><td><strong>Prompts</strong></td><td>Reusable templates the host renders.</td><td>None directly; can leak via injection.</td></tr>
     </tbody>
   </table>
+  <p>Resources are what the agent sees. Tools are what the agent does.</p>
 
-  <p>
-    The mental model: Resources are what the agent <em>sees</em>. Tools are
-    what the agent <em>does</em>. Always know which kind you are exposing and
-    why.
-  </p>
-
-  <h2>The three non-negotiables</h2>
-
-  <h3>1. Least-privilege binding</h3>
-  <p>An agent should have exactly the permissions its current task requires, no more.</p>
+  <h2>1. Least-privilege binding</h2>
+  <p>The agent has exactly the permissions its current task needs.</p>
   <ul>
-    <li>
-      <strong>Physically separate read-only and mutation servers.</strong> The
-      MCP server that lets the agent query the database is a different server
-      from the one that lets it run migrations.
-    </li>
-    <li>
-      <strong>Scope credentials to the smallest role.</strong> The read-only
-      Postgres role has SELECT on the schemas the agent needs and nothing
-      else. No DROP, no DELETE, no access to PII columns unless the task
-      requires it.
-    </li>
-    <li>
-      <strong>No "god" servers.</strong> A single MCP server that wraps the
-      entire AWS account is not a tool, it is a vulnerability.
-    </li>
+    <li>Read-only and mutation servers are physically separate.</li>
+    <li>Credentials scoped to the smallest possible role.</li>
+    <li>No "god" servers. A single MCP server wrapping a full AWS account is not a tool, it is a vulnerability.</li>
   </ul>
 
-  <h3>2. Human-in-the-loop (HITL) for high-stakes actions</h3>
-  <p>
-    Destructive or production-affecting actions require explicit human
-    approval surfaced through a consent UI before execution.
-  </p>
-  <p>Categories that <strong>always</strong> need HITL:</p>
+  <h2>2. Human-in-the-loop for high-stakes actions</h2>
+  <p>Destructive or production-affecting actions require explicit human approval through a consent UI. Categories that always need HITL:</p>
   <ul>
-    <li>Production deploys</li>
-    <li>Database migrations and DELETE-class queries</li>
-    <li>Anything that touches money (charges, refunds, transfers)</li>
-    <li>Anything that sends external communication (email, SMS, Slack to non-internal channels)</li>
-    <li>Anything that touches customer data in PII columns</li>
+    <li>Production deploys.</li>
+    <li>Database migrations and DELETE-class queries.</li>
+    <li>Anything touching money.</li>
+    <li>External communication (email, SMS, non-internal Slack).</li>
+    <li>PII column access.</li>
   </ul>
-  <p>
-    The MCP server itself should encode this: high-stakes tools have a
-    <code>requiresConfirmation: true</code> flag the host honors. Do not rely
-    on the prompt to remember to ask.
-  </p>
+  <p>The MCP server encodes this with <code>requiresConfirmation: true</code>. Never rely on the prompt to remember to ask.</p>
 
-  <h3>3. Centralised auditing</h3>
-  <p>Every tool invocation is logged. Identity, parameters, response, timestamp, duration. Logs go to a system the security team can query in real time.</p>
-  <p>Alert on:</p>
+  <h2>3. Centralised auditing</h2>
+  <p>Every invocation logged: identity, parameters, response, timestamp, duration. Real-time queryable by security. Alert on:</p>
   <ul>
-    <li>Tools invoked outside their normal hours</li>
-    <li>Parameters matching known sensitive patterns</li>
-    <li>Failure spikes that suggest probing</li>
-    <li>New tool combinations the agent has not used before</li>
+    <li>Tools invoked outside normal hours.</li>
+    <li>Parameters matching sensitive patterns.</li>
+    <li>Failure spikes suggesting probing.</li>
+    <li>New tool combinations the agent has not used before.</li>
   </ul>
-  <p>
-    The audit trail is not optional. It is the only way to detect an MCP
-    compromise after the fact, and the only way to recover trust if something
-    goes wrong.
-  </p>
 
-  <h2>The four-tier server layout</h2>
-
+  <h2>Four-tier layout</h2>
   <ol>
-    <li>
-      <strong>Tier 1 · Context</strong> (read-only, low-risk): repo search,
-      docs, observability dashboards, ticket reads. Attached by default.
-    </li>
-    <li>
-      <strong>Tier 2 · Internal write</strong> (medium-risk): create tickets,
-      update wiki, post to internal channels. Attached on request; HITL
-      recommended.
-    </li>
-    <li>
-      <strong>Tier 3 · Production read</strong> (medium-risk): read prod
-      data, query prod metrics. Attached on request; auditing strict.
-    </li>
-    <li>
-      <strong>Tier 4 · Production write</strong> (high-risk): deploy,
-      migrate, charge. Attached only for the specific task; HITL required for
-      every invocation.
-    </li>
+    <li><strong>Tier 1 · Context.</strong> Read-only, low-risk. Repo search, docs, dashboards. Attached by default.</li>
+    <li><strong>Tier 2 · Internal write.</strong> Create tickets, update wiki, internal Slack. HITL recommended.</li>
+    <li><strong>Tier 3 · Production read.</strong> Strict auditing.</li>
+    <li><strong>Tier 4 · Production write.</strong> Attached only for the specific task. HITL required every invocation.</li>
   </ol>
 
   <h2>Tool naming</h2>
-
-  <p>Tool names should make the blast radius obvious. Prefer:</p>
+  <p>Verb plus qualifier. The blast radius is visible before reading the description.</p>
   <ul>
-    <li><code>read_customer_by_id</code> over <code>get_customer</code></li>
-    <li><code>delete_draft_invoice</code> over <code>delete_invoice</code></li>
-    <li><code>deploy_to_staging</code> over <code>deploy</code></li>
-    <li><code>send_test_email</code> over <code>send_email</code></li>
-  </ul>
-  <p>The verb plus the qualifier tells the agent and the human what category of action this is before they read the description.</p>
-
-  <h2>Common mistakes</h2>
-  <ul>
-    <li><strong>Expose every tool "just in case".</strong> Token waste, attention dilution, security risk. Route tools by intent.</li>
-    <li><strong>One credential per server.</strong> A single leaked credential should give an attacker access to one tier, not the whole stack.</li>
-    <li><strong>HITL implemented in the prompt only.</strong> "Ask before deleting" is not a security control. The MCP server must enforce it.</li>
-    <li><strong>Skip auditing because "it's dev".</strong> Dev becomes prod-adjacent the first time someone uses prod data to test.</li>
-    <li><strong>Trust tool descriptions.</strong> A malicious MCP server can put anything in a tool description. Treat them as untrusted input.</li>
+    <li><code>read_customer_by_id</code>, not <code>get_customer</code>.</li>
+    <li><code>delete_draft_invoice</code>, not <code>delete_invoice</code>.</li>
+    <li><code>deploy_to_staging</code>, not <code>deploy</code>.</li>
+    <li><code>send_test_email</code>, not <code>send_email</code>.</li>
   </ul>
 
-  <Callout label="In practice" tone="ember">
-    <p>
-      <a href={url('commands/mcp/')}><code>mcp</code></a> operationalises all
-      of this. It does not stand up servers for you. It produces the config
-      and the policy that tells the team how to implement them.
-    </p>
-  </Callout>
-
+  <h2>What to do with this</h2>
   <p>
-    Source:
-    <a href={url('blueprint/#mcp')}>2026 Context Engineering Blueprint: The
-    Model Context Protocol in Production</a>.
+    <a href={url('commands/mcp/')}><code>mcp</code></a> operationalises all of
+    this. It produces the config and the policy. It does not stand up servers
+    for you.
   </p>
 
   <FoundationPager slug="mcp-principles" />

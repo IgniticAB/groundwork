@@ -1,173 +1,53 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import CommandPager from '../../components/CommandPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'onboard';
 const description =
-  'A task-specific orientation brief for a fresh agent or engineer. Under 600 words. The 3 to 5 ADRs that actually apply, the conventions for this area, verification, out-of-scope. Nothing else.';
+  'A task-specific orientation brief for a fresh agent or engineer. Under 600 words. Only what applies to the task in front of them.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    The surge-staffing command. Every other command in this skill
-    <em>produces</em> context; this one <em>consumes</em> it and produces a
-    task-specific subset. A fresh agent or a teammate gets exactly the slice
-    that applies to the task in front of them, and nothing more.
+    Every other command produces context; this one consumes it and emits a
+    task-specific subset. A fresh agent or teammate gets exactly the slice
+    that applies to the task, and nothing more.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    A fresh agent has zero session history. A new teammate has even less. The
-    natural impulse is to dump everything: <em>here is our CLAUDE.md, here
-    are all the ADRs, here are the conventions, good luck</em>. That is not
-    onboarding. That is a context wall.
-  </p>
-  <p>
-    A good briefing is in what it leaves out. The ADRs that apply to the area
-    being touched, and only those. The conventions for those files, and only
-    those. The verification commands for that path, and only those. The
-    out-of-scope, explicitly.
-  </p>
-  <p>
-    The premise mirrors a finding in the 2026 Anthropic Agentic Coding Trends
-    Report: with context formalised in <code>CLAUDE.md</code> /
-    <code>AGENTS.md</code>, onboarding times collapse, but only if someone
-    curates the slice. That curation is this command.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      This is the operational form of the "surge staffing" idea from the
-      <a href={url('blueprint/#management')}>2026 Blueprint</a>: with
-      formalised context, organisations can drop new agents or engineers onto
-      a project and be productive within hours instead of weeks.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
+  <h2>When to use it</h2>
   <ul>
-    <li>Starting a new chat with a fresh agent on a familiar repo.</li>
+    <li>Starting a new chat on a familiar repo.</li>
     <li>Handing a task to a teammate.</li>
-    <li>Opening Claude Code on a project after weeks away.</li>
-    <li>
-      Compacting a long, noisy session. Pause, brief a fresh session, carry
-      on with a clean slate.
-    </li>
-    <li>The repo's context is good but voluminous and the agent does not need all of it.</li>
+    <li>Opening a project after weeks away.</li>
+    <li>Compacting a long, noisy session into a clean restart.</li>
   </ul>
 
   <h2>What it produces</h2>
-  <p>One markdown file:</p>
-  <pre><code>.context/briefings/&lt;YYYY-MM-DD&gt;-&lt;slug&gt;.md</code></pre>
-  <p>Optionally, the briefing is also pasted inline in chat for immediate use.</p>
-  <p>The sections:</p>
+  <p>One markdown file at <code>.context/briefings/&lt;YYYY-MM-DD&gt;-&lt;slug&gt;.md</code>, optionally pasted inline in chat. Sections:</p>
   <ul>
-    <li><strong>What you are working on.</strong> The task, the why, the user-facing outcome.</li>
-    <li><strong>What you need to know about this repo.</strong> Three to five sentences. Not the tour.</li>
-    <li><strong>Conventions that apply to this area.</strong> Only the rules that touch the files you will edit.</li>
-    <li><strong>Decisions worth knowing.</strong> 3 to 5 ADRs with one-line summaries. Plus any negative-space callouts likely to be re-suggested.</li>
-    <li><strong>Recent activity in this area.</strong> The last 5 to 10 commits, with dates and one-line subjects.</li>
-    <li><strong>How to verify.</strong> Fast and full commands, scoped to the area where possible.</li>
-    <li><strong>What's out of scope.</strong> Explicitly. The leash on scope creep.</li>
-    <li><strong>Tools available.</strong> Relevant MCP servers, HITL requirements named.</li>
-    <li><strong>Where to look for more.</strong> Pointers, not bodies of text.</li>
+    <li><strong>What you are working on.</strong> Task, why, outcome.</li>
+    <li><strong>What you need to know about this repo.</strong> Three to five sentences.</li>
+    <li><strong>Conventions that apply to this area.</strong> Only rules that touch the files you will edit.</li>
+    <li><strong>Decisions worth knowing.</strong> 3 to 5 ADRs with one-line summaries.</li>
+    <li><strong>Recent activity.</strong> Last 5 to 10 commits in the area.</li>
+    <li><strong>How to verify.</strong> Scoped fast and full commands.</li>
+    <li><strong>Out of scope.</strong> Explicit. The leash on scope creep.</li>
+    <li><strong>Tools available.</strong> Relevant MCP servers with HITL flags.</li>
   </ul>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Understand the task.</strong> One sentence summary. If you
-      cannot summarize, the command pushes back. A briefing for an undefined
-      task is a generic dump, which is what this command exists to avoid.
-    </li>
-    <li>
-      <strong>Identify the relevant area.</strong> Map the task to files and
-      directories. Should be 3 to 10 paths before continuing.
-    </li>
-    <li>
-      <strong>Pull relevant ADRs.</strong> Scores each ADR for relevance to
-      the area. Picks the top 3 to 5. Never pads the list.
-    </li>
-    <li>
-      <strong>Pull recent plans.</strong> Last 2–3 plans that touched the area.
-      Skips the section entirely if none apply.
-    </li>
-    <li>
-      <strong>Subset the conventions.</strong> Pulls only rules that apply to
-      those files. Prefers already-scoped files
-      (<code>.cursor/rules/&lt;area&gt;.mdc</code>) when they exist.
-    </li>
-    <li>
-      <strong>Pull recent activity.</strong> <code>git log --oneline
-      --since="14 days ago"</code> against the files of interest. Last 5–10
-      commits.
-    </li>
-    <li>
-      <strong>Identify verification.</strong> Fast and full from
-      <code>AGENTS.md</code>, scoped form preferred.
-    </li>
-    <li>
-      <strong>Identify relevant MCP tools</strong> with HITL flags called out.
-    </li>
-    <li>
-      <strong>Define out-of-scope.</strong> Two or three bullets. If you
-      cannot name what is out of scope, the command asks. The agent's default
-      is to expand.
-    </li>
-    <li>
-      <strong>Write the briefing.</strong> Aim 300–600 words. Over 800 means
-      the briefing has failed at its job.
-    </li>
+    <li><strong>Understand the task.</strong> One-sentence summary. If you cannot summarise, the command pushes back.</li>
+    <li><strong>Map to files.</strong> 3 to 10 paths before continuing.</li>
+    <li><strong>Score ADRs for relevance.</strong> Pick top 3 to 5. Never pad.</li>
+    <li><strong>Pull recent plans</strong> that touched the area. Skip the section if none apply.</li>
+    <li><strong>Subset the conventions.</strong> Prefer already-scoped files (<code>.cursor/rules/&lt;area&gt;.mdc</code>).</li>
+    <li><strong>Recent activity.</strong> <code>git log --oneline --since="14 days ago"</code> against the area.</li>
+    <li><strong>Verification.</strong> Pull from <code>AGENTS.md</code>, scoped form preferred.</li>
+    <li><strong>Out of scope.</strong> Two or three bullets. If you cannot name what is out, the command asks.</li>
+    <li><strong>Write.</strong> Aim 300 to 600 words. Over 800 means the briefing has failed at its job.</li>
   </ol>
-
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      Under 600 words. Every section is task-relevant or omitted (never
-      padded). ADRs are listed with one-line summaries, not just titles.
-      Out-of-scope has at least two bullets. The test: a fresh agent reads
-      this and starts work in under two minutes.
-    </p>
-  </Callout>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>Generic context dump.</strong> If the briefing reads like a tour
-      of the whole repo, it has failed.
-    </li>
-    <li>
-      <strong>No out-of-scope.</strong> The agent will scope-creep. Always.
-    </li>
-    <li>
-      <strong>Padding ADRs to 5.</strong> If only 2 apply, the list has 2
-      entries.
-    </li>
-    <li>
-      <strong>Briefing without a task.</strong> If the task cannot fit in one
-      sentence, the briefing will be a guess.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>.
-      Onboarding speed is one of the success metrics.
-    </li>
-    <li>
-      <a href={url('commands/plan/')}><code>plan</code></a>. Recent plans
-      become part of the briefing.
-    </li>
-    <li>
-      <a href={url('commands/adr/')}><code>adr</code></a>. ADRs are the
-      single most useful artifact for a fresh agent.
-    </li>
-    <li>
-      <a href={url('blueprint/#management')}>2026 Blueprint: surge staffing</a>
-    </li>
-  </ul>
 
   <CommandPager slug="onboard" />
 </Doc>

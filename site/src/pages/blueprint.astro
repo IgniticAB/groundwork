@@ -5,58 +5,40 @@ import { url } from '../lib/url';
 
 const title = 'The 2026 Blueprint';
 const description =
-  'A synthesis of the two source documents Groundwork is built from. The Blueprint covers the model and the practice; the Playbook covers operational standards and tool-specific patterns.';
+  'The model behind Groundwork. Five context layers, four ways long sessions rot, and the operational moves that hold the line.';
 ---
 
 <Base title={title} description={description}>
   <div class="container blueprint">
-    <h1>The 2026 Context Engineering Blueprint</h1>
+    <h1>The 2026 Blueprint</h1>
     <p class="lede">
-      A synthesis of the two source documents Groundwork is built from. The
-      first covers the model and the practice; the second covers operational
-      standards and tool-specific patterns. Both are reproduced in full in
-      the repo.
+      The model behind Groundwork. Two source documents, distilled into one
+      page. Follow the links for depth.
     </p>
 
     <Callout label="The full texts" tone="ember">
       <p>
-        The full sources live in the repo with their references and citations:
-        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI-First%20R%26D%20Context%20Engineering%20101.md">
-          AI-First R&amp;D Context Engineering 101.md
-        </a>
+        Source documents live in the repo:
+        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI-First%20R%26D%20Context%20Engineering%20101.md">AI-First R&amp;D Context Engineering 101</a>
         and
-        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI%20Agent%20Context%20Engineering%20Best%20Practices.md">
-          AI Agent Context Engineering Best Practices.md</a>.
-        This page is the navigable summary, with anchors the rest of the site
-        links back to.
+        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI%20Agent%20Context%20Engineering%20Best%20Practices.md">AI Agent Context Engineering Best Practices</a>.
+        This page is the navigable summary.
       </p>
     </Callout>
 
-    <h2>The premise</h2>
+    <h2 id="premise">The premise</h2>
     <p>
-      In 2026, the bottleneck on AI-assisted engineering is no longer model
-      capability, it is the <em>context wall</em>: the limit of how
-      effectively an AI agent can reason over a codebase without being
-      overwhelmed by noise or misguided by ambiguity. Context engineering has
-      replaced prompt engineering as the foundational discipline. The
-      Anthropic 2026 Agentic Coding Trends Report names it as the single most
-      important skill shift for developers; structured context layers have
-      been shown to cut reasoning drift and computational latency by up to
-      86% in published benchmarks.
-    </p>
-    <p>
-      The two source documents converge on the same diagnosis from different
-      angles. The Blueprint takes the architectural view (layers, lifecycle,
-      cognitive debt); the Playbook takes the operational view (rule
-      composition, tool-specific configurations, governance). Together they
-      cover the model, the practice, and the operational standard.
+      Model capability is no longer the bottleneck. Context is. Agents are
+      strong when they can see clean, scoped, current information about the
+      code; they fail when they cannot. Treat context as code: structured,
+      versioned, reviewed, verified.
     </p>
 
-    <h2 id="five-layer">The five-layer context stack</h2>
+    <h2 id="five-layer">Five context layers</h2>
     <p>
-      A mature 2026 context strategy is built on a five-layer stack that
-      ensures the AI agent has the situational awareness it needs to act with
-      precision.
+      Every piece of information an agent reads belongs in exactly one of
+      five layers. Mixing them is the most common cause of "did the right
+      thing locally, broke conventions globally."
     </p>
     <figure class="persistence-axis">
       <svg viewBox="0 0 600 140" role="img" aria-labelledby="pa-title" xmlns="http://www.w3.org/2000/svg">
@@ -83,52 +65,16 @@ const description =
         <text class="pa-end-label" x="555" y="125" text-anchor="end">static</text>
       </svg>
       <figcaption>
-        Five layers, ordered by how long their contents live. Deep dive on the
-        <a href={url('foundation/five-layer-stack/')}>foundation page</a>.
+        Ordered by how long their contents live.
       </figcaption>
     </figure>
+    <p><a href={url('foundation/five-layer-stack/')}>→ Deep dive on the five-layer stack</a></p>
 
+    <h2 id="context-rot">Context rot</h2>
     <p>
-      Used correctly, the layers prevent the common 2025 failure mode where
-      an agent would fix a local bug but inadvertently refactor adjacent
-      code in a way that violated project conventions. Each layer gets its
-      own retention strategy and its own update cadence.
-    </p>
-    <p><a href={url('foundation/five-layer-stack/')}>→ Foundation page: The five-layer stack</a></p>
-
-    <h2 id="cognitive-debt">Cognitive debt, the hidden risk</h2>
-    <p>
-      The most pervasive risk in the rapid adoption of AI-generated code is
-      the accumulation of cognitive debt: the gap between a system's evolving
-      structure and the team's shared understanding of how and why that
-      system works. AI agents reduce technical debt by automating refactors
-      and test generation. They simultaneously accelerate cognitive debt by
-      producing code faster than humans can internalise it.
-    </p>
-    <p>
-      Cognitive debt manifests through "cognitive surrender": developers
-      adopt AI outputs with minimal scrutiny, bypassing deliberate reasoning.
-      Code functions and passes tests, but the human responsible for it has
-      "lost the plot". The danger is invisibility: unlike a linter, cognitive
-      debt only surfaces during a crisis.
-    </p>
-    <p>The four practices high-performing teams have converged on:</p>
-    <ul>
-      <li><strong>Atomic interaction and review.</strong> Large features broken into small, atomic changes. Each reviewed individually.</li>
-      <li><strong>Externalising intent.</strong> Architecture Decision Records and "negative space documentation": explicitly recording what was <em>not</em> done and why.</li>
-      <li><strong>Mandatory Plan Mode.</strong> Before any implementation, the agent enters a plan that serves as a contract.</li>
-      <li><strong>Verification-first workflows.</strong> Rock-solid tests, linters, browser-based agents. The agent self-corrects against verification.</li>
-    </ul>
-    <p><a href={url('foundation/cognitive-debt/')}>→ Foundation page: Cognitive debt</a></p>
-
-    <h2 id="context-rot">Context Rot: four failure modes in long sessions</h2>
-    <p>
-      Even with good context files in place, long agent sessions degrade.
-      Conversation history accumulates, the runtime compacts it, and the
-      original rules get summarised into vague generalisations. The same
-      agent that wrote pristine type-safe code in hour one starts writing
-      unannotated functions in hour four. The Playbook names four distinct
-      rot patterns, each with its own mitigation.
+      Even with good files in place, long agent sessions degrade. History
+      accumulates, the runtime compacts it, the original rules turn into
+      vague generalisations. Four distinct rot patterns, four mitigations.
     </p>
     <table>
       <thead>
@@ -137,368 +83,54 @@ const description =
       <tbody>
         <tr>
           <td><strong>Poisoning</strong></td>
-          <td>The agent uses deprecated APIs, outdated parameters, or stale syntax.</td>
-          <td>Version-controlled deprecation logs; explicit "do not use X, use Y" rules; stale-context checks.</td>
+          <td>The agent uses deprecated APIs or stale syntax.</td>
+          <td>Stale-context checks. Explicit "use X, not Y" rules.</td>
         </tr>
         <tr>
           <td><strong>Distraction</strong></td>
-          <td>Irrelevant rules fire while the agent is editing in an unrelated area.</td>
-          <td>Scoped rules; strict token budgets in always-apply rules; split-file architecture.</td>
+          <td>Irrelevant rules fire in an unrelated area.</td>
+          <td>Scoped rules. Token budgets. Split-file architecture.</td>
         </tr>
         <tr>
           <td><strong>Confusion</strong></td>
-          <td>Similar-but-distinct objects get conflated (<code>User</code> vs <code>UserAccount</code>).</td>
-          <td>Precise namespace mapping; before/after code examples; ADRs that name the distinction.</td>
+          <td>Similar objects get conflated (<code>User</code> vs <code>UserAccount</code>).</td>
+          <td>Namespace mapping. Before/after examples. ADRs.</td>
         </tr>
         <tr>
           <td><strong>Clash</strong></td>
-          <td>Two rules in active memory contradict; output paralysis or silent "last wins".</td>
-          <td>Cross-file consistency checks; one canonical source; centralised governance.</td>
+          <td>Two rules contradict; the last one seen wins, silently.</td>
+          <td>One canonical source. Cross-file consistency checks.</td>
         </tr>
       </tbody>
     </table>
-    <p>
-      The most common rot at hour two is Distraction; at hour four it is
-      Poisoning (the original rules have been summarised away). Frequent
-      session clears (<code>/clear</code> or equivalent) force the agent to
-      reload fresh configurations from disk.
-    </p>
+    <p><a href={url('foundation/cognitive-debt/')}>→ Deep dive on cognitive debt and rot</a></p>
 
-    <h2 id="contextops">Maintainable architecture: ContextOps</h2>
+    <h2 id="moves">The operational moves</h2>
     <p>
-      A maintainable 2026 architecture is "AI-readable" without sacrificing
-      human clarity. The discipline is increasingly codified as
-      <strong>ContextOps</strong>: a systematic lifecycle for context
-      management that mirrors the DevOps revolution.
-    </p>
-    <ol>
-      <li><strong>Build.</strong> Automated tools scan repositories to detect patterns and generate initial standards and commands.</li>
-      <li><strong>Distribute.</strong> Rules generated in the specific formats each tool requires.</li>
-      <li><strong>Maintain.</strong> Pre-commit hooks and CI checks validate context files are updated alongside code changes.</li>
-      <li><strong>Update.</strong> Context evolution handled through delta updates rather than full rewrites, preserving historical knowledge.</li>
-      <li><strong>Measure.</strong> Track the conformity rate of generated code against defined standards to identify where context is failing.</li>
-    </ol>
-    <p>
-      Context-modular patterns standardised in 2026: <strong>scoped
-      rules</strong> with file-pattern frontmatter, <strong>agent persona
-      specialisation</strong> (the "copilot squad"), and
-      <strong>persistent project context</strong> (<code>AGENTS.md</code>
-      with <code>CLAUDE.md</code> as a symlink) at the repo root.
-    </p>
-    <p>
-      Industry data: 59% of developers run three or more AI coding assistants
-      in parallel; without ContextOps, parallel use raises codebase
-      duplication by up to 4x and drives shipping confidence below 30%. The
-      countervailing pattern is exactly what the lifecycle prescribes:
-      treat context as code, version it, peer-review it, and validate it in
-      CI.
-    </p>
-    <p><a href={url('foundation/contextops-lifecycle/')}>→ Foundation page: The ContextOps lifecycle</a></p>
-
-    <h2 id="split-file">The split-file architecture</h2>
-    <p>
-      The single biggest behavioural finding in the Playbook: <strong>do not
-      let <code>CLAUDE.md</code> become a dumping ground</strong>. Because
-      Claude Code (and similar agents) treat the file as mutable, they
-      append session-specific rules over time. The root file bloats, model
-      attention is diluted, and after several weeks the file no longer
-      functions as a stable contract.
-    </p>
-    <p>The corrective pattern is structural:</p>
-    <ul>
-      <li>
-        <strong>Lean root.</strong> <code>AGENTS.md</code> stays under
-        roughly 400 tokens (~80 lines). It is the canonical cross-tool
-        source.
-      </li>
-      <li>
-        <strong>Neutral overflow.</strong> Stable, long-form, or per-area
-        conventions live in <code>docs/agents/&lt;area&gt;.md</code>. Plain
-        markdown, harness-agnostic — any agent can be told to read them.
-        <code>.claude/rules/</code> remains an optional Claude Code-specific
-        auto-loading layer on top.
-      </li>
-      <li>
-        <strong>Symlink.</strong> <code>CLAUDE.md</code> is a symlink to
-        <code>AGENTS.md</code>. One edit feeds both Anthropic and OpenAI
-        orchestrators with zero drift risk. On environments without symlink
-        support, a hand-mirrored two-file fallback works alongside the CLI's
-        <code>agents-claude-sync</code> rule.
-      </li>
-      <li>
-        <strong>Thin pointer files.</strong> Cursor, Copilot, and Windsurf
-        each get a five-line file at their hardcoded path that says
-        "read <code>/AGENTS.md</code>" plus three non-negotiables. No
-        duplication, no generator.
-      </li>
-    </ul>
-    <pre><code>AGENTS.md                          ← canonical, ~80 lines
-CLAUDE.md -&gt; AGENTS.md             ← symlink
-.cursor/rules/main.mdc             ← 5-line pointer
-.github/copilot-instructions.md    ← 5-line pointer
-.windsurf/rules/main.md            ← 5-line pointer
-
-docs/agents/                       ← neutral overflow (harness-agnostic)
-  frontend.md
-  backend.md
-  infra.md
-
-.claude/rules/                     ← optional Claude-Code-only auto-load layer
-  10-style.md
-  30-verification.md</code></pre>
-    <p>
-      <a href={url('foundation/good-practices/')}>→ Foundation page: Good
-      practices § split-file architecture</a>.
-      <a href={url('commands/init/')}><code>init</code></a> sets this up
-      by default and asks the symlink-vs-two-files question explicitly.
-    </p>
-
-    <h2 id="boundary-tiers">Three-tier boundary layout</h2>
-    <p>
-      The older "out-of-bounds" framing is one bucket. The Playbook proposes
-      three explicit tiers, which sharply reduce scope creep:
+      The Playbook organises the practice as five lifecycle stages and a
+      handful of architectural patterns. Each one has a command that
+      operationalises it.
     </p>
     <ul>
-      <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow the non-negotiables in <code>AGENTS.md</code>).</li>
-      <li><strong>Ask first.</strong> Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).</li>
-      <li><strong>Never.</strong> Hard forbids (generated paths, vendored upstream, anything inside <code>&lt;!-- CE:PRESERVE --&gt;</code> tags).</li>
+      <li><strong>Build</strong> the context on day one. <a href={url('commands/init/')}><code>init</code></a>.</li>
+      <li><strong>Distribute</strong> it across harnesses with thin pointer files. Handled by <code>init</code>.</li>
+      <li><strong>Maintain</strong> it with verification baked into every harness file. <a href={url('commands/verify/')}><code>verify</code></a>.</li>
+      <li><strong>Update</strong> it as deltas, never rewrites. <a href={url('commands/document/')}><code>document</code></a>.</li>
+      <li><strong>Measure</strong> it quarterly. <a href={url('commands/audit/')}><code>audit</code></a>.</li>
     </ul>
     <p>
-      State all three explicitly in <code>AGENTS.md</code>. The "ask first"
-      tier is the most often missing one; it is also the one that prevents
-      the most scope creep. For code regions that must not be edited at all,
-      wrap them in HTML preservation tags with a one-line rationale.
+      Three architectural patterns hold it together: a lean canonical file
+      with split overflow, three-tier boundaries (Always / Ask first /
+      Never), and an MCP policy with least-privilege gates.
     </p>
+    <p><a href={url('foundation/contextops-lifecycle/')}>→ The lifecycle</a> · <a href={url('foundation/good-practices/')}>good practices</a> · <a href={url('foundation/mcp-principles/')}>MCP principles</a> · <a href={url('foundation/harness-reference/')}>harness reference</a></p>
 
-    <h2 id="harnesses">The 2026 toolchain</h2>
+    <h2 id="next">Where to go next</h2>
     <p>
-      Four dominant tools, each effective only to the extent the context
-      fed to them is well-engineered.
+      If you maintain a repo: <a href={url('install/')}>install Groundwork</a>, then run <code>init</code>.
+      If you maintain a team: read <a href={url('foundation/cognitive-debt/')}>cognitive debt</a> first, then <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
+      If you build the tooling: the <a href={url('cli/')}>CLI</a> is what enforces it in CI.
     </p>
-    <ul>
-      <li>
-        <strong>Claude Code.</strong> The autonomous CLI specialist for
-        high-autonomy tasks like complex refactoring and git-intensive
-        workflows. Best practices: <code>/init</code> as foundation,
-        verification loops in every prompt, <code>/compact</code> for long
-        sessions, CLI access only with strict security boundaries.
-        <code>CLAUDE.md</code> is a symlink to the canonical
-        <code>AGENTS.md</code>; Claude Code additionally auto-loads any files
-        in <code>.claude/rules/</code> if your team opts in.
-      </li>
-      <li>
-        <strong>Cursor.</strong> The context-aware IDE. Daily driver for
-        most developers. Modern <code>.cursor/rules/*.mdc</code> with YAML
-        frontmatter. Four trigger levels with explicit body-length budgets:
-        Always Apply (&lt;200 words), Auto-Attached (200–500), Agent-Requested
-        (500–800), Manual (no cap). Sizing rules to the trigger is the
-        single biggest determinant of Cursor token-cost performance.
-      </li>
-      <li>
-        <strong>GitHub Copilot.</strong> Tiered ingestion:
-        <code>.github/copilot-instructions.md</code> for repo-wide,
-        <code>.github/instructions/*.instructions.md</code> for path-scoped,
-        and <code>.github/agents/*.agent.md</code> for domain-specific
-        agent profiles invoked via <code>/agent &lt;name&gt;</code>.
-      </li>
-      <li>
-        <strong>Windsurf.</strong> Cascade-powered IDE with semantic
-        workspace indexing. Rules in <code>.windsurfrules</code> (6,000 char
-        limit) or <code>.windsurf/rules/</code> (12,000 char total). Dynamic
-        cross-session facts auto-persist to <code>.windsurfmemories</code>;
-        treat that file as agent-managed.
-      </li>
-    </ul>
-    <p><a href={url('foundation/harness-reference/')}>→ Foundation page: Harness reference</a></p>
-
-    <h2 id="windsurf">Windsurf and the M-Query pipeline</h2>
-    <p>
-      Windsurf's distinct contribution is the multi-layered assembly
-      pipeline: global rules + workspace rules + persistent memories +
-      active editor selection + <code>@-command</code> references + flow
-      context, all trimmed to the target model's window. The agent maintains
-      cross-session context over weeks without manual configuration updates;
-      developers contribute static <code>.windsurfrules</code> and Cascade
-      auto-writes architectural discoveries to <code>.windsurfmemories</code>.
-      The division between human-authored Rules and agent-authored Memories
-      is the operational pattern worth borrowing even on non-Windsurf
-      harnesses: keep the contract static and human-reviewed; let
-      observations flow into a separate, agent-owned log.
-    </p>
-
-    <h2 id="management">Managing an AI-first R&amp;D department</h2>
-    <p>
-      Operating an R&amp;D department in 2026 requires a shift from measuring
-      "lines of code" to measuring <em>architectural consistency</em> and
-      <em>systemic health</em>. Data from the 2026 State of AI-First
-      Operations Report shows a measurable gap between high-performing
-      organisations and underperformers, driven primarily by tool
-      consolidation, ROI measurement frequency, and tracking the business
-      impact of AI.
-    </p>
-    <p>The Playbook adds a phased adoption framework:</p>
-    <ol>
-      <li><strong>Audit.</strong> Map existing context files across repositories. Reveals quality disparity and unshared individual practices.</li>
-      <li><strong>Standardise.</strong> Convert discoveries into team-wide reference templates.</li>
-      <li><strong>Govern.</strong> Pre-commit hooks and CI validation enforce that context updates ship with the code changes they describe.</li>
-      <li><strong>Scale.</strong> Onboard teams to the standard; measure ROI; iterate.</li>
-    </ol>
-    <p>The role shifts:</p>
-    <ul>
-      <li><strong>The Orchestrator role.</strong> Engineers reskilled to act as agent coordinators, focusing on high-level design and quality evaluation rather than tactical implementation.</li>
-      <li><strong>Surge staffing.</strong> With context formalised, onboarding times collapse. Organisations can "surge" talent onto a project by feeding the existing context into the agentic team. Full productivity within hours rather than weeks.</li>
-      <li><strong>Democratisation.</strong> Agentic tools enable non-technical stakeholders to build self-service tools, shifting R&amp;D's focus toward providing secure infrastructure and context playbooks for the rest of the company.</li>
-    </ul>
-
-    <h2 id="mcp">MCP, the protocols of the new perimeter</h2>
-    <p>
-      The Model Context Protocol has emerged as the "USB-C port for AI",
-      providing a standard interface for connecting models to real-world data
-      and tools. In 2026 it is the backbone of any serious AI-first
-      architecture.
-    </p>
-    <p>Three primitives:</p>
-    <ul>
-      <li><strong>Resources.</strong> Read-only data sources (e.g. PostgreSQL URIs) the model can access for context.</li>
-      <li><strong>Tools.</strong> Executable actions with defined JSON-schema inputs that the model can invoke to trigger side effects.</li>
-      <li><strong>Prompts.</strong> Reusable templates the host application can render.</li>
-    </ul>
-    <p>Three non-negotiables for security and governance:</p>
-    <ul>
-      <li><strong>Least-privilege binding.</strong> Agents granted only the minimum permissions required. Read-only context servers physically separated from mutation-capable tool servers.</li>
-      <li><strong>Human-in-the-loop (HITL).</strong> High-stakes actions like production deployments or destructive queries must require explicit human approval via a consent UI.</li>
-      <li><strong>Centralised auditing.</strong> Every tool invocation (agent identity, parameters, response) logged for real-time alerting on unusual patterns or unauthorised access.</li>
-    </ul>
-    <p><a href={url('foundation/mcp-principles/')}>→ Foundation page: MCP principles</a></p>
-
-    <h2 id="pruning">Context pruning: overcoming the context wall</h2>
-    <p>
-      To handle the context wall problem, 2026 R&amp;D departments have moved
-      beyond simple token limits toward task-aware, adaptive pruning.
-      <strong>SWE-Pruner</strong> uses a lightweight model to selectively skim
-      source code, capturing the raw context and filtering it down to lines
-      relevant to the agent's stated goal. <strong>Semantic
-      de-duplication</strong> uses embeddings to detect and merge
-      semantically similar instructions in persistent context files.
-      <strong>Incremental delta updates</strong> (the ACE framework) perform
-      localised updates that accumulate new insights while preserving
-      historical knowledge.
-    </p>
-    <p>
-      A complementary pattern from the Playbook: <strong>Just-In-Time data
-      retrieval</strong>. Instead of overloading the context window with
-      complete schemas or documentation libraries, the agent receives a
-      lightweight metadata index and queries detailed files only when
-      actively editing them. The "librarian" model prevents cognitive
-      overload, reduces token cost, and eliminates context clutter.
-    </p>
-
-    <h2 id="good-practices">Good practices and high-risk anti-patterns</h2>
-
-    <h3>Practices to embrace</h3>
-    <ul>
-      <li><strong>Behaviorally-anchored rules.</strong> Every rule names a specific technology, command, or pattern; never "use good judgment".</li>
-      <li><strong>Negative space documentation.</strong> Documenting rejected paths prevents the AI from suggesting them repeatedly.</li>
-      <li><strong>Defensive commits.</strong> Creating a git checkpoint before refactoring protects against data loss during long sessions.</li>
-      <li><strong>Interface-first development.</strong> Defining types before implementation prevents the AI from building sprawling, incorrect abstractions.</li>
-      <li><strong>Verification-driven logic.</strong> Providing test commands allows the agent to self-correct.</li>
-      <li><strong>Standardised <code>/init</code> commands.</strong> Automating the creation of context files ensures every repo starts with a baseline of rules.</li>
-      <li><strong>HTML preservation tags</strong> wrapping human-designed source files so agents cannot modify the wrapped region.</li>
-      <li><strong>Human-only commit authorship</strong> as a hard rule: agents propose, humans commit. Keeps version-control accountability uncontaminated.</li>
-    </ul>
-
-    <h3>Anchored vs vague rule examples</h3>
-    <p>
-      The single most reliable predictor of agent output quality is whether
-      the rules tell the agent what to <em>do</em>, naming the specific tool
-      or pattern, rather than naming an adjective.
-    </p>
-    <table>
-      <thead>
-        <tr><th>Category</th><th>Anchored (good)</th><th>Vague (bad)</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Error handling</td>
-          <td>Wrap external API calls in try/catch; log via <code>Logger</code>; never swallow exceptions.</td>
-          <td>"Write robust error handling."</td>
-        </tr>
-        <tr>
-          <td>Styling</td>
-          <td>Tailwind utilities only; conditional classes via <code>cn()</code>; assets in <code>/assets/</code>.</td>
-          <td>"Use clean styling patterns."</td>
-        </tr>
-        <tr>
-          <td>Testing</td>
-          <td>Vitest; assert on user actions; run <code>npm run test:coverage</code> before staging.</td>
-          <td>"Maintain high test coverage."</td>
-        </tr>
-        <tr>
-          <td>Git workflow</td>
-          <td>Conventional Commits; one-file scope where reasonable; humans sole authors of record.</td>
-          <td>"Commit often with helpful messages."</td>
-        </tr>
-        <tr>
-          <td>Dependencies</td>
-          <td>Pin critical packages; named imports; <code>npm run build</code> to verify types on modified modules.</td>
-          <td>"Keep dependencies updated."</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>Practices to avoid</h3>
-    <ul>
-      <li><strong>Monolithic prompt bloat.</strong> System prompts as a dumping ground for product docs wastes tokens and pushes important context away from the model's attention.</li>
-      <li><strong>Vague principles without examples.</strong> "Use good judgment" is useless. Anchor every principle (see table above).</li>
-      <li><strong>Placeholder comments.</strong> Never allow <code>// TODO: implement this</code>. Functions are either complete or absent.</li>
-      <li><strong>Implicit local assumptions.</strong> The agent does not know your timezone, device, or permissions. State them in the Session layer.</li>
-      <li><strong>Over-exposing tools.</strong> Route tools by intent. Every tool description costs tokens and adds attention noise.</li>
-      <li><strong>CLAUDE.md as a dumping ground.</strong> See the split-file architecture above for the structural fix.</li>
-    </ul>
-
-    <p>
-      <a href={url('foundation/good-practices/')}>→ Foundation page: Good practices</a><br />
-      <a href={url('foundation/anti-patterns/')}>→ Foundation page: Anti-patterns</a>
-    </p>
-
-    <h2>Actionable strategy for 2026</h2>
-    <ol>
-      <li><strong>Immediate initialisation.</strong> Audit all core repositories and establish <code>AGENTS.md</code> (with <code>CLAUDE.md</code> symlinked) plus <code>.cursor/rules/</code>. Formalises the Project context layer; reduces AI rework by up to 80%.</li>
-      <li><strong>Adopt ContextOps.</strong> Implement a versioned lifecycle for context management. Ensure architectural decisions (ADRs) are automatically converted into context files agents can act upon.</li>
-      <li><strong>Apply three-tier boundaries.</strong> State Always / Ask first / Never explicitly in conventions. Wrap immutable code regions in HTML preservation tags.</li>
-      <li><strong>Harden the MCP layer.</strong> Move integrations to the Model Context Protocol standard. Focus on least-privilege and human-in-the-loop for any destructive operation.</li>
-      <li><strong>Incentivise understanding.</strong> Repay cognitive debt by making "understanding" a core metric. Reward teams that prioritise active plan review and rationale documentation over raw feature velocity.</li>
-      <li><strong>Scale through orchestration.</strong> Reskill the workforce to act as agent coordinators. Shift engineering focus toward strategic problem decomposition and system-wide architectural consistency.</li>
-    </ol>
-
-    <Callout label="The core argument" tone="ember">
-      <p>
-        Context engineering has shifted the R&amp;D narrative from technology
-        in isolation to a strategy of deep integration. <strong>Context is the
-        new code, and engineering it is the new mandate.</strong> The
-        organisations that pull ahead are not those with the best models, but
-        those with the most refined and governed information environments.
-      </p>
-    </Callout>
-
-    <h2>Where to go from here</h2>
-    <ul>
-      <li><a href={url('foundation/')}>The foundation</a>. Seven short pages distilling the model.</li>
-      <li><a href={url('commands/')}>The commands</a>. Nine operational moves that put the model to work.</li>
-      <li><a href={url('install/')}>Install</a>. One command, every harness.</li>
-      <li>
-        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI-First%20R%26D%20Context%20Engineering%20101.md">
-          AI-First R&amp;D Context Engineering 101.md
-        </a>.
-        The first source, with references.
-      </li>
-      <li>
-        <a href="https://github.com/IgniticAB/groundwork/blob/main/AI%20Agent%20Context%20Engineering%20Best%20Practices.md">
-          AI Agent Context Engineering Best Practices.md
-        </a>.
-        The second source, with references.
-      </li>
-    </ul>
   </div>
 
   <style>
@@ -508,7 +140,6 @@ docs/agents/                       ← neutral overflow (harness-agnostic)
       scroll-margin-top: 2rem;
     }
     .blueprint h2:first-of-type { border-top: none; padding-top: 0; }
-    .blueprint h3 { scroll-margin-top: 2rem; }
 
     .persistence-axis {
       margin: 1.75rem 0 2.25rem;

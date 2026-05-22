@@ -1,172 +1,53 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import CommandPager from '../../components/CommandPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'plan';
 const description =
-  'Author a Plan Mode contract before any non-trivial change. Names files, approach, verification, rollback. The human stays the architect. The agent is the implementer.';
+  'Author a Plan Mode contract before any non-trivial change. Names files, approach, verification, rollback. Human stays the architect.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    A short, structured plan written <em>before</em> any code. Reviewed and
-    approved as a contract. Code that strays from the plan is rejected. If
-    reality forces a change, the plan is updated first. Not bureaucracy.
-    Cognitive debt prevention.
+    A short, structured plan written before any code, reviewed and approved
+    as a contract. The agent maps the change before doing it. Scope creep
+    becomes visible.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    The fastest way to accumulate cognitive debt is to let an agent run for an
-    hour, accept a 600-line diff, and ship it. The code works. The tests pass.
-    Six weeks later someone needs to change it and nobody knows why it works.
-    Knowledge erosion. Cognitive surrender.
-  </p>
-  <p>
-    Plan Mode is the cheap insurance against that. Before any non-trivial
-    change, the agent (or the human) writes a plan: <em>intent</em>,
-    <em>files touched</em>, <em>approach</em>, <em>verification</em>,
-    <em>out of scope</em>, <em>rollback</em>. The human reviews it as a
-    contract. Only then does code get written.
-  </p>
-  <p>
-    The point is not the document. The point is the act of writing it. It
-    forces the agent to map the change before doing it, surfaces the
-    files-touched count before they are touched, and makes scope creep
-    visible. Out-of-scope is at least two bullets, always. The agent's instinct
-    is to expand scope; that section is the leash.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      Plan Mode is one of the four
-      <a href={url('foundation/cognitive-debt/')}>cognitive debt repayment
-      practices</a> and a standard
-      <a href={url('foundation/good-practices/')}>good practice</a>. The
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint</a> names it as
-      mandatory in high-performing teams.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
-  <p>
-    Required for any change touching more than three files, or refactors, or
-    migrations, or anything affecting a public API. The exact threshold lives
-    in your <code>AGENTS.md</code>, set by
-    <a href={url('commands/init/')}><code>init</code></a>.
-  </p>
-  <p>
-    Optional but recommended for smaller changes. A two-file change can still
-    benefit from a five-line plan, and the discipline pays for itself.
-  </p>
+  <h2>When to use it</h2>
+  <ul>
+    <li>Any change touching more than three files.</li>
+    <li>Refactors, migrations, public-API changes.</li>
+    <li>Optional but worth it for smaller changes. A two-file change still benefits from a five-line plan.</li>
+  </ul>
 
   <h2>What it produces</h2>
-  <p>One file:</p>
-  <pre><code>.context/plans/&lt;YYYY-MM-DD&gt;-&lt;slug&gt;.md</code></pre>
+  <p>One file at <code>.context/plans/&lt;YYYY-MM-DD&gt;-&lt;slug&gt;.md</code> with non-negotiable sections:</p>
+  <ul>
+    <li><strong>Intent</strong>: the why.</li>
+    <li><strong>Files touched</strong>: real list, not aspirational.</li>
+    <li><strong>Approach</strong>: two or three sentences. Not a design doc.</li>
+    <li><strong>Verification</strong>: real commands.</li>
+    <li><strong>Out of scope</strong>: at least two bullets. Always.</li>
+    <li><strong>Rollback</strong>, <strong>Risks</strong>, <strong>Notes</strong>.</li>
+  </ul>
   <p>
-    The structure is non-negotiable. Sections: <strong>Intent</strong> (the
-    why), <strong>Files touched</strong> (a real list, not aspirational),
-    <strong>Approach</strong> (two or three sentences),
-    <strong>Verification</strong> (real commands),
-    <strong>Out of scope</strong> (at least two bullets),
-    <strong>Rollback</strong>, <strong>Risks</strong>, <strong>Notes</strong>.
-  </p>
-  <p>
-    The plan file survives after the change ships. Status moves from
-    <em>draft</em> → <em>approved</em> → <em>in-progress</em> →
-    <em>shipped</em>. It becomes context for future agents: <em>we did this;
-    here is why</em>.
+    Status moves draft → approved → in-progress → shipped. The file stays in
+    the repo as context for future agents.
   </p>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Understand the task.</strong> If it is vague, ask one focused
-      question. The "Intent" paragraph has to be fillable confidently.
-    </li>
-    <li>
-      <strong>Read the relevant code.</strong> Map the files that will be
-      touched. The list must be accurate, not aspirational.
-    </li>
-    <li>
-      <strong>Draft.</strong> Fill each section. Approach is two or three
-      sentences, not a design doc.
-    </li>
-    <li>
-      <strong>Show the plan, wait for approval.</strong> Three options:
-      approve, edit, reject. Do not start coding before approval. This is the
-      entire point.
-    </li>
-    <li>
-      <strong>Make the checkpoint commit.</strong> Record the hash in the
-      plan. If anything goes sideways during implementation, you have a
-      known-good state.
-    </li>
-    <li>
-      <strong>Implement, verifying as you go.</strong> Run the verification
-      commands after each meaningful step. If the implementation reveals the
-      plan was wrong: stop, update the plan, re-show, continue once
-      re-approved.
-    </li>
-    <li>
-      <strong>Mark shipped.</strong> Update status, record the merge commit.
-      Leave the file in the repo.
-    </li>
-    <li>
-      <strong>Prompt for ADRs.</strong> If the plan made a technology choice,
-      explicitly rejected an alternative, or introduced a new convention,
-      offer to draft an <a href={url('commands/adr/')}><code>adr</code></a>.
-      Never write ADRs without asking.
-    </li>
+    <li><strong>Understand the task.</strong> If it is vague, ask one focused question.</li>
+    <li><strong>Read the relevant code.</strong> Map the actual files.</li>
+    <li><strong>Draft.</strong> Fill each section. Approach is two or three sentences.</li>
+    <li><strong>Show the plan; wait for approval.</strong> Approve, edit, or reject. Never code before approval.</li>
+    <li><strong>Checkpoint commit.</strong> Record the hash. If the change goes sideways, you have a known-good state.</li>
+    <li><strong>Implement, verifying as you go.</strong> If reality forces a change, update the plan first, get re-approval, then continue.</li>
+    <li><strong>Mark shipped.</strong> Record the merge commit. Leave the file in place.</li>
+    <li><strong>Prompt for ADRs.</strong> If the plan made a technology choice or rejected an alternative, offer <a href={url('commands/adr/')}><code>adr</code></a>. Never write one without asking.</li>
   </ol>
-
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      Out-of-scope has at least two bullets and they are specific. The "why"
-      is real: not "to improve the code" but the specific reason the change
-      is happening <em>now</em>. The verification commands actually run.
-    </p>
-  </Callout>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>Plan written after the fact.</strong> That is a retro. Useful,
-      but not what this command does.
-    </li>
-    <li>
-      <strong>Plan that is a design doc.</strong> Approach is two or three
-      sentences. If it is a page, you are writing the wrong artifact.
-    </li>
-    <li>
-      <strong>No out-of-scope.</strong> The agent will scope-creep. Always.
-    </li>
-    <li>
-      <strong>No checkpoint commit.</strong> When the change goes sideways
-      (it sometimes will), you have nothing to revert to.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>. Plan
-      Mode is the third repayment practice.
-    </li>
-    <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a>. Plan
-      Mode discipline, defensive commits, interface-first development.
-    </li>
-    <li>
-      <a href={url('commands/adr/')}><code>adr</code></a>. The natural
-      follow-up when a plan made a durable decision.
-    </li>
-    <li>
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint: Plan Mode</a>
-    </li>
-  </ul>
 
   <CommandPager slug="plan" />
 </Doc>

@@ -5,25 +5,106 @@ import { commands } from '../../data/commands';
 
 const title = 'Commands';
 const description =
-  'Nine commands for the highest-leverage moves in context engineering. Bootstrap, audit, document, plan, decide, scope, secure, verify, onboard.';
+  'Nine commands. Bootstrap, audit, document, plan, decide, scope, secure, verify, onboard.';
 ---
 
 <Base title={title} description={description}>
   <div class="container container--wide commands-index">
     <h1>Nine commands. One job each.</h1>
     <p class="lede">
-      Each command lives in its own file in the skill. Each one is a procedure
-      the agent runs literally, not a vibe. Click through for the
-      <em>why</em>, the <em>when</em>, and the <em>what it produces</em>.
+      Each command is a procedure the agent runs literally. Click through for
+      the when and the what it produces.
     </p>
 
+    <p class="fw-intro">
+      The nine commands and the CLI fall into four roles around one hub.
+      Knowing which role a piece sits in tells you when it should run.
+    </p>
+
+    <figure class="flywheel-diagram">
+      <svg viewBox="50 50 500 500" role="img" aria-labelledby="fw-title" xmlns="http://www.w3.org/2000/svg">
+        <title id="fw-title">A weighted flywheel: four roles around a hub, an amber rotation sweep across the rim.</title>
+        <defs>
+          <marker id="fw-arrow" markerWidth="28" markerHeight="24" refX="0" refY="12" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M 0 0 L 28 12 L 0 24 Z" class="fw-arrow-head" />
+          </marker>
+        </defs>
+
+        <path class="fw-rim" fill-rule="evenodd"
+              d="M 300 50 A 250 250 0 1 0 300 550 A 250 250 0 1 0 300 50 Z
+                 M 300 95 A 205 205 0 1 1 300 505 A 205 205 0 1 1 300 95 Z" />
+
+        <g class="fw-spokes">
+          <line x1="322.6" y1="277.4" x2="452.0" y2="148.0" />
+          <line x1="277.4" y1="277.4" x2="148.0" y2="148.0" />
+          <line x1="322.6" y1="322.6" x2="452.0" y2="452.0" />
+          <line x1="277.4" y1="322.6" x2="148.0" y2="452.0" />
+        </g>
+
+        <circle class="fw-hub-disc" cx="300" cy="300" r="32" />
+        <circle class="fw-hub-spark" cx="300" cy="300" r="6" />
+
+        <text class="fw-role" x="300" y="155" text-anchor="middle">AUTHOR</text>
+        <text class="fw-role" x="440" y="292" text-anchor="middle">GUIDE</text>
+        <text class="fw-role" x="300" y="395" text-anchor="middle">ENFORCE</text>
+        <text class="fw-role" x="160" y="292" text-anchor="middle">ORIENT</text>
+
+        <g class="fw-cmd">
+          <text x="300" y="188" text-anchor="middle">init · document</text>
+          <text x="300" y="212" text-anchor="middle">scope · mcp · verify</text>
+
+          <text x="440" y="322" text-anchor="middle">plan</text>
+          <text x="440" y="346" text-anchor="middle">adr</text>
+
+          <text x="300" y="428" text-anchor="middle">CLI detect · pre-commit</text>
+          <text x="300" y="452" text-anchor="middle">drift hook</text>
+
+          <text x="160" y="322" text-anchor="middle">onboard</text>
+          <text x="160" y="346" text-anchor="middle">audit</text>
+        </g>
+
+        <g class="fw-sweep-rot">
+          <path class="fw-sweep" marker-end="url(#fw-arrow)"
+                d="M 300 72.5 A 227.5 227.5 0 0 1 527.5 300" />
+        </g>
+      </svg>
+      <figcaption>
+        Cadence runs clockwise. Lay the rails. Steer the change. Catch the
+        slip on commit. Re-ground before drift compounds.
+      </figcaption>
+    </figure>
+
+    <p class="fw-outro">
+      Each role runs on its own rhythm. Enforcers fire on every commit.
+      Guides fire inside a single change. Authors run when the stack shifts.
+      Orient pieces run on the calendar.
+    </p>
+
+    <section class="cadence">
+      <h2>Cadence</h2>
+      <p>
+        The commands are independent. Pick the one you need. Day-to-day, this
+        is when each tends to fire.
+      </p>
+      <table class="cadence-table">
+        <thead><tr><th>When</th><th>What to run</th></tr></thead>
+        <tbody>
+          <tr><td>Day 0 on a repo</td><td><a href={url('commands/init/')}><code>init</code></a>, then <a href={url('commands/verify/')}><code>verify</code></a></td></tr>
+          <tr><td>Every non-trivial change</td><td><a href={url('commands/plan/')}><code>plan</code></a> before code</td></tr>
+          <tr><td>Every real decision</td><td><a href={url('commands/adr/')}><code>adr</code></a></td></tr>
+          <tr><td>Stack or convention shifted</td><td><a href={url('commands/document/')}><code>document</code></a></td></tr>
+          <tr><td>New area, multi-stack repo</td><td><a href={url('commands/scope/')}><code>scope</code></a></td></tr>
+          <tr><td>Connecting to production</td><td><a href={url('commands/mcp/')}><code>mcp</code></a></td></tr>
+          <tr><td>Fresh session or handoff</td><td><a href={url('commands/onboard/')}><code>onboard</code></a></td></tr>
+          <tr><td>Quarterly</td><td><a href={url('commands/audit/')}><code>audit</code></a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2>All nine</h2>
     <table class="cmd-table">
       <thead>
-        <tr>
-          <th>Command</th>
-          <th>What it does</th>
-          <th>Reach for it when</th>
-        </tr>
+        <tr><th>Command</th><th>What it does</th><th>Reach for it when</th></tr>
       </thead>
       <tbody>
         {commands.map((c) => (
@@ -40,70 +121,95 @@ const description =
         ))}
       </tbody>
     </table>
-
-    <section class="bundle">
-      <h2>How the commands fit together</h2>
-      <p>
-        The commands are independent. Pick the one you need. There is also a
-        natural lifecycle:
-      </p>
-      <ol class="bundle-list">
-        <li>
-          <strong>Start</strong> with <a href={url('commands/init/')}><code>init</code></a>
-          (new repo) or <a href={url('commands/document/')}><code>document</code></a>
-          (existing repo with stale context).
-        </li>
-        <li>
-          <strong>Wire verification</strong> with
-          <a href={url('commands/verify/')}><code>verify</code></a>. This is the
-          single highest-leverage move. Do not skip it.
-        </li>
-        <li>
-          <strong>Capture decisions</strong> with
-          <a href={url('commands/adr/')}><code>adr</code></a> as they happen.
-          Before any non-trivial change, draft a contract with
-          <a href={url('commands/plan/')}><code>plan</code></a>.
-        </li>
-        <li>
-          <strong>Refine</strong> with <a href={url('commands/scope/')}><code>scope</code></a>
-          (multi-stack repos), <a href={url('commands/mcp/')}><code>mcp</code></a>
-          (before connecting an agent to production), and
-          <a href={url('commands/onboard/')}><code>onboard</code></a> (fresh
-          session, fresh teammate).
-        </li>
-        <li>
-          <strong>Check yourself</strong> with
-          <a href={url('commands/audit/')}><code>audit</code></a> on a
-          cadence. Quarterly is enough.
-        </li>
-      </ol>
-      <p>
-        For the orchestration view across the whole tool (skill, CLI,
-        pre-commit, CI), see <a href={url('flywheel/')}>the flywheel</a>.
-      </p>
-    </section>
-
-    <section class="related">
-      <h2>The model underneath</h2>
-      <p>
-        Every command is built on a small shared vocabulary: five context
-        layers, a five-stage lifecycle, the kinds of debt AI accelerates, and
-        the anti-patterns to reject. If you have not read
-        <a href={url('foundation/')}>the foundation</a> yet, that is the right
-        first stop. Five short pages.
-      </p>
-      <p>
-        The source materials, <em>The 2026 Context Engineering Blueprint</em>
-        and <em>The 2026 Context Engineering Playbook</em>, are synthesized
-        at <a href={url('blueprint/')}>/blueprint</a>.
-      </p>
-    </section>
   </div>
 
   <style>
-    .cmd-table {
-      margin-top: 2rem;
+    .fw-intro,
+    .fw-outro {
+      max-width: 60ch;
+      color: var(--ink-soft);
+      line-height: 1.6;
     }
+    .fw-intro { margin: 2rem 0 0.5rem; }
+    .fw-outro { margin: 0.5rem 0 2rem; }
+
+    .flywheel-diagram {
+      margin: 1.5rem auto 1.5rem;
+      max-width: 600px;
+    }
+    .flywheel-diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .flywheel-diagram figcaption {
+      margin: 0.5rem auto 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+      line-height: 1.55;
+      max-width: 36rem;
+    }
+    .flywheel-diagram .fw-rim { fill: var(--ink); }
+    .flywheel-diagram .fw-spokes line {
+      stroke: var(--ink);
+      stroke-width: 1.25;
+      stroke-linecap: round;
+    }
+    .flywheel-diagram .fw-hub-disc {
+      fill: var(--bg);
+      stroke: var(--ink);
+      stroke-width: 1.5;
+    }
+    .flywheel-diagram .fw-hub-spark { fill: var(--ember); }
+    .flywheel-diagram .fw-role {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      fill: var(--ink);
+    }
+    .flywheel-diagram .fw-cmd text {
+      font-family: var(--mono);
+      font-size: 14px;
+      fill: var(--ink-soft);
+    }
+    .flywheel-diagram .fw-sweep {
+      fill: none;
+      stroke: var(--ember);
+      stroke-width: 10;
+      stroke-linecap: round;
+    }
+    .flywheel-diagram .fw-arrow-head { fill: var(--ember); }
+    .flywheel-diagram .fw-sweep-rot {
+      transform-origin: 300px 300px;
+      transform-box: view-box;
+      animation: fw-spin 2.4s var(--ease-out-quart) 0.3s both;
+    }
+    @keyframes fw-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flywheel-diagram .fw-sweep-rot { animation: none; }
+    }
+    @media (max-width: 520px) {
+      .flywheel-diagram .fw-cmd { display: none; }
+      .flywheel-diagram .fw-role { font-size: 24px; }
+    }
+
+    .cadence {
+      margin-top: 2rem;
+      padding: 1.6rem 1.8rem;
+      background: var(--bg-soft);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+    }
+    .cadence h2 { margin-top: 0; }
+    .cadence-table { margin-top: 1rem; }
+    .cadence-table td { padding: 0.55rem 0.6rem; }
+
+    .cmd-table { margin-top: 2rem; }
     .cmd-table td { padding: 1rem 0.6rem; }
     .cmd-link {
       display: inline-flex;
@@ -128,19 +234,6 @@ const description =
     }
     .cmd-cell-line { color: var(--ink-soft); }
     .cmd-cell-reach { color: var(--muted); font-size: 0.93rem; }
-
-    .bundle {
-      margin-top: 4rem;
-      padding: 2rem;
-      background: var(--bg-soft);
-      border: 1px solid var(--rule);
-      border-radius: 12px;
-    }
-    .bundle h2 { margin-top: 0; }
-    .bundle-list { line-height: 1.7; }
-    .bundle-list li { margin-bottom: 0.8rem; }
-
-    .related { margin-top: 4rem; }
 
     @media (max-width: 720px) {
       .cmd-table { font-size: 0.9rem; }

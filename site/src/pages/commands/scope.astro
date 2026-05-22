@@ -1,221 +1,58 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import CommandPager from '../../components/CommandPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'scope';
 const description =
-  'Scope rules to file patterns so the right context loads in the right files. Frontend rules in frontend files. SQL rules in migrations. Nothing global unless it really is global.';
+  'Scope rules to file patterns so the right context loads in the right files. Nothing global unless it really is global.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    A single <code>CLAUDE.md</code> is fine for a single-stack repo. The moment
-    you have a frontend and a backend, or an app and infra, or three
-    languages, scoped rules become essential. Otherwise the agent sees your
-    SQL conventions while editing a React component and gets distracted.
+    Move rules to where they belong. Frontend conventions apply to frontend
+    files, SQL conventions apply to migrations, infra conventions apply to
+    infra. The agent's attention budget is finite; spend it on what matters.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    The model has a finite attention budget. Every rule it reads is a token of
-    that budget. When unrelated rules fire on the file the agent is editing,
-    two things happen: it costs more, and the agent picks worse.
-  </p>
-  <p>
-    <code>scope</code> moves rules to where they belong. Frontend conventions
-    apply to <code>src/components/**/*.tsx</code>. SQL conventions apply to
-    <code>db/migrations/**/*.sql</code>. Infra conventions apply to
-    <code>terraform/**</code>. The top-level file shrinks to truly global
-    rules (usually three or four), and the per-area files are short, opinionated
-    and exactly what the agent needs in that location.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      The motivation is the
-      <a href={url('foundation/anti-patterns/')}>"rules that fire everywhere"
-      anti-pattern</a> (#6) and the
-      <a href={url('foundation/good-practices/')}>scoped-rules good practice</a>
-      (#8). The
-      <a href={url('blueprint/#contextops')}>2026 Blueprint</a> identifies this
-      as a standard 2026 pattern across Cursor, Copilot, and Claude Code.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
+  <h2>When to use it</h2>
   <ul>
     <li>Multi-stack repo: frontend + backend, app + infra, multiple languages.</li>
-    <li>Monorepo with several packages of distinct character.</li>
-    <li>
-      Rules keep firing where they should not. The agent applies frontend
-      conventions to a Python script.
-    </li>
-    <li>
-      <code>CLAUDE.md</code> has crept past 200 lines because it is trying to
-      cover every area at once.
-    </li>
+    <li>Monorepo with packages of distinct character.</li>
+    <li>Rules keep firing where they should not (frontend conventions on a Python script).</li>
+    <li><code>CLAUDE.md</code> is past 200 lines from trying to cover every area.</li>
   </ul>
 
   <h2>What it produces</h2>
-  <p>Per-harness, one file per area:</p>
   <ul>
-    <li>
-      <strong>Cursor</strong>: <code>.cursor/rules/&lt;area&gt;.mdc</code>
-      with a <code>globs</code> frontmatter list. The cleanest scoping mechanism.
-    </li>
-    <li>
-      <strong>Copilot</strong>:
-      <code>.github/instructions/&lt;area&gt;.instructions.md</code> with
-      <code>applyTo</code> frontmatter.
-    </li>
-    <li>
-      <strong>Claude Code / Codex / generic</strong>: nested
-      <code>CLAUDE.md</code> or <code>AGENTS.md</code> files at directory
-      boundaries. The nested location <em>is</em> the scoping.
-    </li>
+    <li><strong>Cursor</strong>: <code>.cursor/rules/&lt;area&gt;.mdc</code> with a <code>globs</code> list.</li>
+    <li><strong>Copilot</strong>: <code>.github/instructions/&lt;area&gt;.instructions.md</code> with <code>applyTo</code>.</li>
+    <li><strong>Claude Code / Codex</strong>: nested <code>CLAUDE.md</code> / <code>AGENTS.md</code> at directory boundaries.</li>
   </ul>
-  <p>
-    The top-level file is cleaned up at the same time. Rules duplicated in
-    scoped files are removed or replaced with a pointer. The top-level file
-    gets <em>shorter</em>, not longer.
-  </p>
+  <p>The top-level file shrinks in the same pass. Rules duplicated into scoped files are removed.</p>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Map the repo.</strong> Globs top-level directories with source
-      code. Notes primary languages and conventions that look different from
-      the rest of the repo.
-    </li>
-    <li>
-      <strong>Ask which areas need their own rules.</strong> Multi-select,
-      with detected candidates pre-listed: <code>src/components/</code>,
-      <code>src/api/</code>, <code>db/migrations/</code>, <code>infra/</code>,
-      <code>scripts/</code>, <code>tests/</code>. Plus which harnesses to
-      target.
-    </li>
-    <li>
-      <strong>For each area, gather rules.</strong> Reads a sample of files in
-      the area, proposes 3–5 conventions with Preferred / Avoid pairs, asks
-      you to confirm or edit.
-    </li>
-    <li>
-      <strong>Write the scoped files.</strong> Same body, different wrappers
-      per harness.
-    </li>
-    <li>
-      <strong>Reconcile with the top-level file.</strong> Rules now in scoped
-      files are removed or pointered. The top-level file gets leaner.
-    </li>
-    <li>
-      <strong>Verify.</strong> Pick one file in each newly-scoped area and
-      check the right rules apply.
-    </li>
+    <li><strong>Map the repo.</strong> Globs top-level directories. Notes primary languages and conventions that look different across them.</li>
+    <li><strong>Ask which areas need rules.</strong> Multi-select with detected candidates: <code>src/components/</code>, <code>src/api/</code>, <code>db/migrations/</code>, <code>infra/</code>, etc. Plus harnesses.</li>
+    <li><strong>For each area, gather rules.</strong> Sample files, propose 3 to 5 conventions with Preferred / Avoid pairs, confirm.</li>
+    <li><strong>Write the scoped files.</strong> Same body, different wrappers per harness.</li>
+    <li><strong>Reconcile.</strong> Top-level file gets leaner. Rules now in scoped files are removed or pointered.</li>
+    <li><strong>Verify.</strong> Pick one file per scoped area and confirm the right rules apply.</li>
   </ol>
 
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      Every scoped file has 3 to 6 rules. Not 1, not 15. Globs are accurate
-      (test by listing matching files). The top-level file is leaner after
-      this command than before. Every rule has a Preferred / Avoid pair or a
-      verification command attached.
-    </p>
-  </Callout>
-
   <h2>Cursor trigger levels and word budgets</h2>
-  <p>
-    Cursor activates <code>.mdc</code> files via four mechanisms. The body
-    length must match the trigger because the agent pays a token cost on every
-    match. Pick the smallest level that does the job.
-  </p>
-
+  <p>Pick the smallest level that works. Body size must match the trigger; the agent pays a token cost on every match.</p>
   <table>
-    <thead>
-      <tr>
-        <th>Trigger</th>
-        <th>Frontmatter</th>
-        <th>Body budget</th>
-        <th>Typical use</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Trigger</th><th>Frontmatter</th><th>Body budget</th></tr></thead>
     <tbody>
-      <tr>
-        <td>Always Apply</td>
-        <td><code>alwaysApply: true</code>, <code>globs: []</code></td>
-        <td>under 200 words</td>
-        <td>Core stack metadata, global lint targets, framework pins</td>
-      </tr>
-      <tr>
-        <td>Auto-Attached</td>
-        <td><code>alwaysApply: false</code>, <code>globs: [...]</code></td>
-        <td>200 to 500 words</td>
-        <td>Component libraries, DB ORM patterns, test files</td>
-      </tr>
-      <tr>
-        <td>Agent-Requested</td>
-        <td><code>alwaysApply: false</code>, <code>description</code> set</td>
-        <td>500 to 800 words</td>
-        <td>Stripe / SendGrid / auth integrations</td>
-      </tr>
-      <tr>
-        <td>Manual</td>
-        <td><code>alwaysApply: false</code>, referenced via <code>@rule-name</code></td>
-        <td>no strict cap</td>
-        <td>Rare migrations, complex onboarding guides</td>
-      </tr>
+      <tr><td>Always Apply</td><td><code>alwaysApply: true</code>, <code>globs: []</code></td><td>under 200 words</td></tr>
+      <tr><td>Auto-Attached</td><td><code>alwaysApply: false</code>, <code>globs: [...]</code></td><td>200 to 500</td></tr>
+      <tr><td>Agent-Requested</td><td><code>alwaysApply: false</code>, <code>description</code> set</td><td>500 to 800</td></tr>
+      <tr><td>Manual</td><td>referenced via <code>@rule-name</code></td><td>no strict cap</td></tr>
     </tbody>
   </table>
-
-  <p>
-    If a rule body exceeds its budget, split into narrower-glob
-    <code>.mdc</code> files or move long examples into
-    <code>docs/agents/&lt;area&gt;.md</code> and reference them. The templates
-    emitted by <code>scope</code> carry this guidance inline so future
-    maintainers see it in the file they are editing.
-  </p>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>Same rule in two scopes.</strong> If it applies to both
-      frontend and backend, it is global. Put it at the top, not in both.
-    </li>
-    <li>
-      <strong>Glob too broad.</strong> <code>src/**/*</code> is not a scope;
-      it is the whole project. Use it only if the rule really is universal.
-    </li>
-    <li>
-      <strong>Glob too narrow.</strong> A single file does not need its own
-      scope. Inline-comment it instead.
-    </li>
-    <li>
-      <strong>Forgetting to clean up the top-level file.</strong> Scoping
-      without removing duplicates just adds more files for the agent to read.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #6: rules
-      that fire everywhere.
-    </li>
-    <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a> #8:
-      scoped rules.
-    </li>
-    <li>
-      <a href={url('foundation/harness-reference/')}>Harness reference</a>.
-      Cursor frontmatter, Copilot <code>applyTo</code>, nested files for
-      Claude Code.
-    </li>
-    <li>
-      <a href={url('blueprint/#contextops')}>2026 Blueprint: scoped rules and
-      context-modular patterns</a>
-    </li>
-  </ul>
+  <p>If the body overflows, split into narrower-glob files or move long examples into <code>docs/agents/&lt;area&gt;.md</code>.</p>
 
   <CommandPager slug="scope" />
 </Doc>

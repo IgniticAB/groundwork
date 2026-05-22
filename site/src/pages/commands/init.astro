@@ -6,216 +6,61 @@ import { url } from '../../lib/url';
 
 const title = 'init';
 const description =
-  'Bootstrap a repo with the full context engineering scaffolding. The single most leveraged move in Groundwork. One command, one repo, one time.';
+  'Bootstrap a repo with the full context engineering scaffolding. One command, one repo, one time.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    Bootstrap a repo with the full context engineering scaffolding. The single
-    most leveraged move in this skill. Run it once per repo and every other
-    command has the artifacts it expects.
+    Bootstrap a repo with the context-engineering scaffolding every other
+    command assumes. Run it once.
   </p>
 
   <Callout label="Already have context files? Use document instead." tone="ember">
     <p>
       <code>init</code> is for repos with <strong>no context engineering yet</strong>.
-      If your repo already has <code>AGENTS.md</code>, <code>CLAUDE.md</code>,
+      If <code>AGENTS.md</code>, <code>CLAUDE.md</code>,
       <code>.cursor/rules/</code>, <code>.github/copilot-instructions.md</code>,
-      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
-      <code>docs/agents/</code>, or <code>docs/decisions/</code>, run
-      <a href={url('commands/document/')}><code>document</code></a> instead.
-      It does a delta-merge that preserves history (deprecated sections kept
-      with a date and reason rather than overwritten).
-    </p>
-    <p>
-      The skill detects this on its own as Step 1: if it finds any of the files
-      above when you invoke <code>init</code>, it will stop and ask whether you
-      meant <code>document</code>. The default is to switch. You can override
-      and force <code>init</code> if you are intentionally rebuilding from a
-      clean slate, but it will refuse to overwrite anything that already
-      exists.
+      <code>.windsurf/rules/</code>, <code>docs/agents/</code>, or
+      <code>docs/decisions/</code> already exist, run
+      <a href={url('commands/document/')}><code>document</code></a>. The skill
+      detects this on its own and asks before doing anything.
     </p>
   </Callout>
 
-  <h2>Why this command exists</h2>
-  <p>
-    Most repos either have no context files at all or one bloated
-    <code>CLAUDE.md</code> that says "use good judgment" and "follow our
-    conventions". Both fail in the same way: the agent has to guess. It guesses
-    wrong, you spend the day correcting it, and "AI is unreliable" becomes the
-    team's narrative.
-  </p>
-  <p>
-    <code>init</code> replaces guessing with detection. It reads your repo
-    (package manifests, scripts, recent commits) and emits a complete starter
-    set of context files: one canonical <code>AGENTS.md</code>, with
-    <code>CLAUDE.md</code> as a symlink to it and a five-line pointer file
-    for each non-Codex harness you target. No duplication. No placeholders.
-    No "TODO: implement this".
-  </p>
-  <p>
-    The point is not the files. The point is that every other command in this
-    skill (<a href={url('commands/plan/')}><code>plan</code></a>,
-    <a href={url('commands/adr/')}><code>adr</code></a>,
-    <a href={url('commands/verify/')}><code>verify</code></a>,
-    <a href={url('commands/onboard/')}><code>onboard</code></a>) assumes
-    these files exist. <code>init</code> is the foundation under the
-    foundation.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      The motivation comes from the
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>
-      (Build stage) and the
-      <a href={url('foundation/five-layer-stack/')}>five-layer stack</a>
-      (Project layer). The full argument lives in the
-      <a href={url('blueprint/#contextops')}>2026 Blueprint</a>.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
+  <h2>When to use it</h2>
   <ul>
-    <li>A brand new repo with no context files yet.</li>
-    <li>
-      A mature repo that has <strong>never</strong> had context engineering.
-      Nothing in the list above (<code>AGENTS.md</code>, <code>CLAUDE.md</code>,
-      <code>.cursor/rules/</code>, <code>.github/copilot-instructions.md</code>,
-      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
-      <code>docs/agents/</code>, <code>docs/decisions/</code>) exists yet.
-    </li>
-    <li>
-      Standardising an org's context engineering across multiple repos.
-      <code>init</code> is the baseline; per-repo tweaks happen after.
-    </li>
+    <li>A brand new repo with no context files.</li>
+    <li>A mature repo that has never had context engineering.</li>
+    <li>Standardising context engineering across an org's repos.</li>
   </ul>
 
-  <h3>When <em>not</em> to reach for it</h3>
+  <h3>When not to</h3>
   <ul>
-    <li>
-      <strong>Any of those files already exist.</strong> Even one. Use
-      <a href={url('commands/document/')}><code>document</code></a>: it
-      refreshes per-harness files with delta updates, preserves history, and
-      marks stale sections deprecated with a date and reason.
-    </li>
-    <li>
-      <strong>You want to add a new harness to an existing setup.</strong>
-      That is <code>document</code> with a different target set, not
-      <code>init</code>.
-    </li>
+    <li>Any of the files above already exist. Use <a href={url('commands/document/')}><code>document</code></a>.</li>
+    <li>You want to add a new harness to an existing setup. Same: <code>document</code> with a different target set.</li>
   </ul>
 
   <h2>What it produces</h2>
-  <p>Depending on which harnesses you target, some subset of:</p>
   <ul>
-    <li><code>AGENTS.md</code>, the canonical hand-edited source (aim under ~80 lines)</li>
-    <li><code>CLAUDE.md</code> → <code>AGENTS.md</code> (symlink by default; two-file fallback for Windows / <code>core.symlinks=false</code>)</li>
-    <li><code>.cursor/rules/main.mdc</code> for Cursor (5-line pointer with <code>alwaysApply: true</code>)</li>
-    <li><code>.github/copilot-instructions.md</code> for GitHub Copilot (5-line pointer)</li>
-    <li><code>.windsurf/rules/main.md</code> for Windsurf (5-line pointer)</li>
-    <li><code>docs/decisions/</code>: README, a starter ADR, and a negative-space stub</li>
-    <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook (ADR coverage, ADR status, package-manager drift; no parity check)</li>
+    <li><code>AGENTS.md</code>: canonical, hand-edited, under ~80 lines.</li>
+    <li><code>CLAUDE.md</code> → <code>AGENTS.md</code>: symlink (default) or two-file mirror.</li>
+    <li><code>.cursor/rules/main.mdc</code>: 5-line pointer (Cursor).</li>
+    <li><code>.github/copilot-instructions.md</code>: 5-line pointer (Copilot).</li>
+    <li><code>.windsurf/rules/main.md</code>: 5-line pointer (Windsurf).</li>
+    <li><code>docs/decisions/</code>: README, the meta-ADR, and a negative-space stub.</li>
+    <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook.</li>
   </ul>
-  <p>
-    <code>AGENTS.md</code> is self-sufficient. The per-harness pointer files
-    are five lines each: they say "read <code>/AGENTS.md</code>" and inline
-    three non-negotiables. They are hand-maintained: short and stable enough
-    that hand maintenance is fine.
-  </p>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Safety check.</strong> Globs for <code>AGENTS.md</code>,
-      <code>CLAUDE.md</code>, <code>.cursor/rules/</code>,
-      <code>.github/copilot-instructions.md</code>,
-      <code>.windsurf/rules/</code>, <code>.claude/rules/</code>,
-      <code>docs/agents/</code>, <code>docs/decisions/</code>,
-      <code>.context/hooks/check-context.sh</code>. If any match, stops and
-      asks whether you meant
-      <a href={url('commands/document/')}><code>document</code></a>. The
-      default is yes. You can override and continue with <code>init</code>,
-      in which case it skips anything that already exists rather than
-      overwriting.
-    </li>
-    <li>
-      <strong>Detect stack.</strong> Reads package manifests, scripts,
-      <code>README.md</code>, recent commits. Identifies stack, package
-      manager, test commands. Surfaces a one-paragraph summary before asking
-      anything.
-    </li>
-    <li>
-      <strong>Ask five questions, never more.</strong>
-      <em>Which harnesses?</em> <em>Which verification commands?</em>
-      <em>Which conventions?</em> <em>Three-tier boundaries (Always / Ask first / Never)?</em>
-      <em>Symlink CLAUDE.md or keep two files?</em>
-      Pre-selects detected answers; you adjust.
-    </li>
-    <li>
-      <strong>Write <code>AGENTS.md</code></strong> directly from your
-      answers. Self-sufficient; aim under ~80 lines. Overflow goes to
-      <code>docs/agents/&lt;area&gt;.md</code> (harness-agnostic), not back
-      into the root file.
-    </li>
-    <li>
-      <strong>Wire up <code>CLAUDE.md</code> and the per-harness pointers.</strong>
-      Symlink by default; two-file fallback when symlinks are unavailable.
-      For each non-Codex harness, drop the same 5-line pointer file at its
-      hardcoded path.
-    </li>
-    <li>
-      <strong>Set up ADRs and the pre-commit hook.</strong> Suggests the
-      install command for husky / pre-commit / lefthook if none is present.
-      Does not silently install.
-    </li>
-    <li>
-      <strong>Run verification.</strong> The commands you picked actually
-      execute. Failures are surfaced, not hidden.
-    </li>
+    <li><strong>Safety check.</strong> If any context files exist, stop and ask whether you meant <code>document</code>.</li>
+    <li><strong>Detect stack.</strong> Reads manifests, scripts, README, recent commits.</li>
+    <li><strong>Ask five questions.</strong> Harnesses, verification commands, conventions, three-tier boundaries, symlink-or-two-files.</li>
+    <li><strong>Write <code>AGENTS.md</code></strong> from the answers. Overflow goes to <code>docs/agents/&lt;area&gt;.md</code>, not back into the root.</li>
+    <li><strong>Wire <code>CLAUDE.md</code> and the per-harness pointers.</strong></li>
+    <li><strong>Set up ADRs and the pre-commit hook.</strong> Suggests the install command if no hook runner is present. Does not silently install.</li>
+    <li><strong>Run verification.</strong> The commands you picked actually execute. Failures are surfaced, not hidden.</li>
   </ol>
-
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      No placeholder text. <code>AGENTS.md</code> under ~80 lines. Per-harness
-      pointer files exactly the five-line shape, no duplicated rules. If the
-      repo already had partial context files, they are not overwritten; you
-      get a diff and decide.
-    </p>
-  </Callout>
-
-  <h2>What this command does <em>not</em> do</h2>
-  <p>
-    <code>init</code> deliberately stops at scaffolding. It does not author
-    skills, set up MCP servers, scope rules per directory, or onboard a
-    specific task. Those have their own commands
-    (<a href={url('commands/mcp/')}><code>mcp</code></a>,
-    <a href={url('commands/scope/')}><code>scope</code></a>,
-    <a href={url('commands/onboard/')}><code>onboard</code></a>)
-    so that <code>init</code> stays predictable.
-  </p>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
-      Where Build sits in the larger story.
-    </li>
-    <li>
-      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a>.
-      Why per-harness files belong in the Project layer and nothing else.
-    </li>
-    <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a>.
-      Standardised initialisation, scoped rules, defensive commits.
-    </li>
-    <li>
-      <a href={url('foundation/harness-reference/')}>Harness reference</a>.
-      Where each harness expects files.
-    </li>
-    <li>
-      <a href={url('blueprint/#contextops')}>2026 Blueprint: ContextOps</a>
-    </li>
-  </ul>
 
   <CommandPager slug="init" />
 </Doc>

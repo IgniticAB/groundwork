@@ -1,164 +1,46 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import CommandPager from '../../components/CommandPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'mcp';
 const description =
-  'Design an MCP setup with least-privilege, human-in-the-loop, and centralised auditing. Tier the servers. Name the credentials. Write a policy an auditor would accept.';
+  'Design an MCP setup with least-privilege, human-in-the-loop, and centralised auditing. The policy an auditor would accept.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    Before any agent gets write access to a real system, the access pattern
-    has to be designed. <code>mcp</code> does not stand up servers for you. It
-    produces the configuration and the policy that tells the team how to
-    implement them safely, and how an auditor would expect to see them.
+    Before an agent gets write access to a real system, design the access
+    pattern. The Model Context Protocol is the biggest attack surface in an
+    AI-first stack; this command produces the config and policy that
+    operationalise the <a href={url('foundation/mcp-principles/')}>three non-negotiables</a>.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    The Model Context Protocol has become the "USB-C port for AI": the
-    standard way agents reach real systems. That makes it the largest attack
-    surface and the largest source of operational risk in an AI-first stack.
-    Get it wrong and an unscoped credential or a missing confirmation modal
-    becomes the incident headline.
-  </p>
-  <p>
-    Most teams build MCP servers the way they build internal tools: one
-    server, all the tools, one credential, "we will figure out auditing
-    later". <code>mcp</code> exists to stop that. It walks the
-    <a href={url('foundation/mcp-principles/')}>three non-negotiables</a>
-    (least-privilege binding, human-in-the-loop, centralised auditing) and
-    produces config files and a policy doc that operationalise them from the
-    first day.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      The full argument is in
-      <a href={url('foundation/mcp-principles/')}>MCP principles</a>. The
-      <a href={url('blueprint/#mcp')}>2026 Blueprint</a> section on MCP gives
-      the industry context.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
+  <h2>When to use it</h2>
   <ul>
-    <li>Before connecting an agent to a production database, deploy pipeline, payments system, or anything customer-facing.</li>
+    <li>Before connecting an agent to a production database, deploy pipeline, payments system.</li>
     <li>Before exposing destructive operations (DELETE, refunds, sends).</li>
-    <li>When the security team asks "what does the agent have access to?" and the answer is "everything".</li>
-    <li>
-      <a href={url('commands/audit/')}><code>audit</code></a> flagged an
-      ungated MCP config.
-    </li>
+    <li>When security asks "what does the agent have access to?" and you cannot answer.</li>
+    <li><a href={url('commands/audit/')}><code>audit</code></a> flagged an ungated MCP config.</li>
   </ul>
 
   <h2>What it produces</h2>
   <ul>
-    <li>
-      <code>.context/mcp-config.json</code>: a starter configuration in
-      standard MCP host format, scoped to the four tiers.
-    </li>
-    <li>
-      <code>docs/mcp-policy.md</code>: the human-readable policy that names
-      which tiers exist, which actions require HITL, who can attach which
-      servers, and where audit logs live.
-    </li>
-    <li>
-      Optionally, individual <code>mcp-server-&lt;name&gt;.config.json</code>
-      stubs for each server tier.
-    </li>
+    <li><code>.context/mcp-config.json</code>: starter configuration, scoped into four tiers.</li>
+    <li><code>docs/mcp-policy.md</code>: human-readable policy. Tiers, HITL rules, audit destinations.</li>
+    <li>Optional per-server <code>mcp-server-&lt;name&gt;.config.json</code> stubs.</li>
   </ul>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Inventory the systems.</strong> Which systems does the agent
-      need to interact with? Which are read vs write? Who is the agent
-      identity, service account or user impersonation? "Just hook it up to
-      everything" is politely refused.
-    </li>
-    <li>
-      <strong>Sort into four tiers.</strong> Tier 1 context (read-only,
-      low-risk). Tier 2 internal write. Tier 3 production read. Tier 4
-      production write. Placement is shown to you before anything is generated.
-    </li>
-    <li>
-      <strong>Name the tools.</strong> Verb plus qualifier:
-      <code>read_payment_by_id</code>, <code>refund_payment_to_customer</code>.
-      The blast radius is visible in the name.
-    </li>
-    <li>
-      <strong>Configure HITL in the config, not the prompt.</strong> Every
-      Tier 4 tool gets <code>requiresConfirmation: true</code>. The policy
-      doc names the modal, the approvers, and the audit trail.
-    </li>
-    <li>
-      <strong>Configure auditing.</strong> Every server has a named log
-      destination: a specific system, not "TBD". Alerting rules: tools
-      invoked outside business hours, sensitive parameter patterns, failure
-      spikes, new tool combinations.
-    </li>
-    <li>
-      <strong>Configure credentials.</strong> One credential per tier, scoped
-      to the smallest possible role, stored in a named secret manager. The
-      config references env var names, never literal secrets.
-    </li>
-    <li>
-      <strong>Cross-link.</strong>
-      <code>AGENTS.md</code> gets a pointer to the policy (in its "See also"
-      section) so the agent can find it when it asks "can I do X?".
-    </li>
+    <li><strong>Inventory the systems.</strong> Read or write? Service account or user impersonation? "Hook it up to everything" is refused.</li>
+    <li><strong>Sort into four tiers.</strong> Tier 1 read-only context. Tier 2 internal write. Tier 3 production read. Tier 4 production write. Placement shown before generation.</li>
+    <li><strong>Name the tools.</strong> Verb plus qualifier (<code>read_payment_by_id</code>, <code>refund_payment_to_customer</code>). Blast radius visible in the name.</li>
+    <li><strong>HITL in the config, not the prompt.</strong> Every Tier 4 tool gets <code>requiresConfirmation: true</code>. The policy names the modal, the approvers, the audit trail.</li>
+    <li><strong>Auditing.</strong> Every server has a named log destination. Alerting on off-hours invocations, sensitive parameters, failure spikes, new tool combinations.</li>
+    <li><strong>Credentials.</strong> One per tier, smallest possible role, stored in a named secret manager. Config references env var names, never literal secrets.</li>
+    <li><strong>Cross-link.</strong> <code>AGENTS.md</code> gets a pointer to the policy so the agent finds it when it asks "can I do X?"</li>
   </ol>
-
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      Every server is in exactly one tier. Every Tier 4 tool has
-      <code>requiresConfirmation: true</code>. Every server has a named audit
-      destination. No credentials in the config file (only env var
-      references). The policy file is something an auditor would accept, not
-      a vibe.
-    </p>
-  </Callout>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>One server, all tiers.</strong> Hard no. Split.
-    </li>
-    <li>
-      <strong>HITL via prompt instruction.</strong> "Tell the agent to ask
-      first" is not a security control. Enforce in config.
-    </li>
-    <li>
-      <strong>Audit "TBD".</strong> If you cannot name the destination, the
-      system is not ready for the agent. Push back.
-    </li>
-    <li>
-      <strong>Credentials in the repo.</strong> Never. Even for testing.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/mcp-principles/')}>MCP principles</a>. The
-      three non-negotiables and the four-tier server layout.
-    </li>
-    <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #5:
-      over-exposing tools.
-    </li>
-    <li>
-      <a href={url('foundation/five-layer-stack/')}>The five-layer stack</a>.
-      Tooling is its own layer for a reason.
-    </li>
-    <li>
-      <a href={url('blueprint/#mcp')}>2026 Blueprint: MCP in production</a>
-    </li>
-  </ul>
 
   <CommandPager slug="mcp" />
 </Doc>

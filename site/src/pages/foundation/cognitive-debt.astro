@@ -1,190 +1,72 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'Cognitive debt';
 const description =
-  'Technical debt is code you wish was cleaner. Cognitive debt is code you wish you understood. AI accelerates the second while paying down the first. That is the real risk.';
+  'Technical debt is code you wish was cleaner. Cognitive debt is code you wish you understood. AI accelerates one and pays down the other.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
     Technical debt is code you wish was cleaner. Cognitive debt is code you
-    wish you <em>understood</em>. AI accelerates both. But it pays down
-    technical debt and accelerates cognitive debt at the same time. That is
-    the real risk.
+    wish you understood. AI pays down the first and accelerates the second.
+    That is the real risk.
   </p>
 
   <h2>The mechanism</h2>
-  <p>When an agent produces code faster than the team can internalise it, two things happen:</p>
   <ol>
-    <li>
-      <strong>Cognitive surrender.</strong> Developers accept the diff because
-      it passes tests, without forming a mental model of why it works. Fine
-      for one PR. Fatal across a quarter.
-    </li>
-    <li>
-      <strong>Knowledge erosion.</strong> The team's collective theory of the
-      system drifts away from the system itself. When something breaks in
-      production, no one knows where to look.
-    </li>
+    <li><strong>Cognitive surrender.</strong> Developers accept the diff because tests pass, without forming a mental model. Fine for one PR; fatal across a quarter.</li>
+    <li><strong>Knowledge erosion.</strong> The team's collective theory drifts from the system. When something breaks, no one knows where to look.</li>
   </ol>
-  <p>
-    Cognitive debt is invisible to linters and tests. It only surfaces during
-    incidents.
-  </p>
+  <p>Cognitive debt is invisible to linters and tests. It surfaces during incidents.</p>
 
   <h2>Three kinds of debt</h2>
-
   <table>
-    <thead>
-      <tr><th>Type</th><th>Indicator</th><th>AI's effect</th><th>Repayment</th></tr>
-    </thead>
+    <thead><tr><th>Type</th><th>Indicator</th><th>AI's effect</th><th>Repayment</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>Technical</strong></td>
-        <td>Duplication, poor structure, dead code</td>
-        <td>Reduces it (AI refactors well)</td>
-        <td>Automated linting, refactor passes</td>
-      </tr>
-      <tr>
-        <td><strong>Cognitive</strong></td>
-        <td>Slow onboarding, loss of confidence, "no one understands X anymore"</td>
-        <td>Accelerates it (generates faster than humans read)</td>
-        <td>Active design participation, plan reviews</td>
-      </tr>
-      <tr>
-        <td><strong>Intent</strong></td>
-        <td>"Why was this built this way?" has no answer</td>
-        <td>Accelerates it (the agent makes choices from training patterns, not from your context)</td>
-        <td>ADRs, negative-space docs, rationale in PRs</td>
-      </tr>
+      <tr><td><strong>Technical</strong></td><td>Duplication, dead code</td><td>Reduces it</td><td>Linting, refactor passes</td></tr>
+      <tr><td><strong>Cognitive</strong></td><td>Slow onboarding, "no one understands X"</td><td>Accelerates it</td><td>Plan reviews, active design</td></tr>
+      <tr><td><strong>Intent</strong></td><td>"Why was this built this way?" has no answer</td><td>Accelerates it</td><td>ADRs, negative-space docs</td></tr>
     </tbody>
   </table>
+  <p>Intent debt is the most subtle: the code works, but the next change reverse-engineers the choices from scratch.</p>
 
+  <h2 id="context-rot">Context rot in long sessions</h2>
   <p>
-    Intent debt is the most subtle. It looks like nothing went wrong. The code
-    works. But the next time someone needs to change it, they have to
-    reverse-engineer the choices from scratch.
+    Even with good files, long sessions degrade. History accumulates, the
+    runtime compacts it, the original rules become vague. Four patterns:
   </p>
-
-  <h2 id="context-rot">Context Rot: four failure modes in long sessions</h2>
-
-  <p>
-    Even with good context files in place, long-running agent sessions
-    degrade. The conversation history accumulates, the agent runtime compacts
-    it, and the original rules get summarised into vague generalisations. The
-    same agent that wrote pristine type-safe code in hour one starts writing
-    unannotated functions in hour four.
-  </p>
-
-  <p>The 2026 playbook taxonomy names four distinct rot patterns. Each has a different mitigation.</p>
-
   <table>
-    <thead>
-      <tr><th>Rot</th><th>What it looks like</th><th>Mitigation</th></tr>
-    </thead>
+    <thead><tr><th>Rot</th><th>What it looks like</th><th>Mitigation</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>Poisoning</strong></td>
-        <td>The agent uses deprecated APIs, outdated parameters, or stale syntax. The model's training data contradicts the current code.</td>
-        <td>Version-controlled deprecation logs; explicit "do not use X, use Y" rules; the <a href={url('commands/audit/')}><code>audit</code></a> command's stale-context check.</td>
-      </tr>
-      <tr>
-        <td><strong>Distraction</strong></td>
-        <td>Irrelevant rules fire while the agent is editing in an unrelated area. SQL conventions distract while editing a React component.</td>
-        <td>Scoped rules via <a href={url('commands/scope/')}><code>scope</code></a>; strict token budgets in always-apply rules; the split-file architecture.</td>
-      </tr>
-      <tr>
-        <td><strong>Confusion</strong></td>
-        <td>The agent conflates two similar-but-distinct objects. <code>User</code> and <code>UserAccount</code>, <code>Order</code> and <code>Invoice</code>.</td>
-        <td>Precise namespace mapping in conventions; before/after code examples; ADRs that name the distinction.</td>
-      </tr>
-      <tr>
-        <td><strong>Clash</strong></td>
-        <td>Two rules in active memory contradict. Output paralysis, or whichever rule the agent saw last "wins" silently.</td>
-        <td>Cross-file consistency check in <code>audit</code>; one canonical source (<code>AGENTS.md</code>) plus thin pointer files; centralised governance.</td>
-      </tr>
+      <tr><td><strong>Poisoning</strong></td><td>Uses deprecated APIs.</td><td>Stale-context checks; explicit "use X, not Y" rules.</td></tr>
+      <tr><td><strong>Distraction</strong></td><td>Irrelevant rules fire.</td><td>Scoped rules. Split-file architecture.</td></tr>
+      <tr><td><strong>Confusion</strong></td><td>Similar objects conflated (<code>User</code> vs <code>UserAccount</code>).</td><td>Namespace mapping. Before/after examples.</td></tr>
+      <tr><td><strong>Clash</strong></td><td>Two rules contradict; last seen wins.</td><td>One canonical source. Consistency checks.</td></tr>
     </tbody>
   </table>
-
   <p>
-    The most common rot at hour two of a session is Distraction; at hour four
-    it's Poisoning (the original rules have been summarised away). The
-    <a href={url('commands/verify/')}><code>verify</code></a> hook plus the
-    <a href={url('commands/audit/')}><code>audit</code></a> command catch
-    most cases. Frequent session clears (<code>/clear</code> in Claude Code,
-    equivalent elsewhere) force the agent to reload fresh configurations from
-    disk rather than relying on compacted history.
+    Distraction at hour two; Poisoning at hour four. Frequent session clears
+    (<code>/clear</code>) force the agent to reload from disk rather than
+    relying on compacted history.
   </p>
 
   <h2>The four repayment practices</h2>
+  <ol>
+    <li><strong>Atomic interaction and review.</strong> Small changes, reviewed individually. Human stays the architect. → <a href={url('commands/plan/')}><code>plan</code></a></li>
+    <li><strong>Externalise intent.</strong> ADRs for the why, negative-space docs for the rejected. → <a href={url('commands/adr/')}><code>adr</code></a></li>
+    <li><strong>Plan Mode discipline.</strong> A reviewed plan before any code. → <a href={url('commands/plan/')}><code>plan</code></a></li>
+    <li><strong>Verification first.</strong> Tests, linters, types baked into context. Agent iterates until they pass. → <a href={url('commands/verify/')}><code>verify</code></a></li>
+  </ol>
 
-  <p>The moves high-performing teams have converged on. Every command in this skill is built to support at least one.</p>
-
-  <h3>1. Atomic interaction and review</h3>
+  <h2>What to do with this</h2>
   <p>
-    Large features get broken into small, atomic changes. Each change is
-    reviewed individually. The human stays the architect of the logic; the
-    agent is the implementer.
+    Run <a href={url('commands/audit/')}><code>audit</code></a> to find which
+    kind of debt your repo has. The audit scores each layer with one sentence
+    of evidence and names the highest-leverage next moves.
   </p>
-  <p>
-    Commanded by: <a href={url('commands/plan/')}><code>plan</code></a> (names
-    the smallest reasonable unit),
-    <a href={url('commands/verify/')}><code>verify</code></a> (ensures each
-    unit has its own check).
-  </p>
-
-  <h3>2. Externalise intent</h3>
-  <p>
-    Capture the <em>why</em> in files the agent will read on future runs. Two
-    flavors: <strong>ADRs</strong> ("we chose X over Y because Z") and
-    <strong>negative-space docs</strong> ("we considered W and rejected it
-    because V"). Without the negative space, the agent will eventually suggest
-    W again, because W is in its training data and your "we do not do W here"
-    never made it into the repo.
-  </p>
-  <p>Commanded by: <a href={url('commands/adr/')}><code>adr</code></a>, <a href={url('commands/init/')}><code>init</code></a>.</p>
-
-  <h3>3. Plan Mode discipline</h3>
-  <p>
-    Before any non-trivial implementation, the agent produces a plan: files,
-    approach, verification, rollback. The human reviews it as a contract before
-    any code is written.
-  </p>
-  <p>Commanded by: <a href={url('commands/plan/')}><code>plan</code></a>.</p>
-
-  <h3>4. Verification-first workflows</h3>
-  <p>
-    The most reliable way to manage AI output is to give the agent rock-solid
-    verification. Tests, linters, typecheckers, build commands. The agent
-    iterates until verification passes; you only review the final state.
-  </p>
-  <p>Commanded by: <a href={url('commands/verify/')}><code>verify</code></a>.</p>
-
-  <h2>What success looks like</h2>
-
-  <p>A team has repaid cognitive debt when:</p>
-  <ul>
-    <li>A new engineer joins, reads the context files, and is productive in hours not weeks.</li>
-    <li>An incident happens and the on-call can pinpoint the relevant ADR within five minutes.</li>
-    <li>The agent's first-pass output matches the team's conventions without correction more than 80% of the time.</li>
-    <li>Refactors do not require a synchronous meeting to explain the original intent.</li>
-  </ul>
-  <p>
-    If any of those is not true, there is debt to repay. Run
-    <a href={url('commands/audit/')}><code>audit</code></a> to find which kind.
-  </p>
-
-  <Callout label="Source" tone="mute">
-    <p>
-      <a href={url('blueprint/#cognitive-debt')}>2026 Context Engineering
-      Blueprint: Eliminating Cognitive Debt</a>. The concept has gained
-      board-level urgency in 2026. The danger is invisibility.
-    </p>
-  </Callout>
 
   <FoundationPager slug="cognitive-debt" />
 </Doc>

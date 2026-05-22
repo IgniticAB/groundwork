@@ -1,219 +1,100 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'Good practices';
 const description =
-  'Ten practices high-performing AI-first teams have converged on. Every one of them has a Groundwork command that operationalises it.';
+  'The moves high-performing AI-first teams converge on. Every one has a command behind it.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
-    Ten practices high-performing AI-first teams have converged on. Every one
-    of them has a Groundwork command behind it.
+    Practices that hold across teams shipping AI-assisted code at pace. Each
+    one is operationalised by a command.
   </p>
 
-  <h2>1. Negative space documentation</h2>
-  <p>
-    Document what was <em>not</em> done and why. Future agents (and humans)
-    read this and stop re-suggesting rejected paths. The
-    <strong>Reconsider if</strong> line is the magic: it tells future
-    engineers when the rejection should be revisited and when it should stay
-    closed.
-  </p>
-  <p>Command: <a href={url('commands/adr/')}><code>adr</code></a>.</p>
+  <h2>1. Negative-space documentation</h2>
+  <p>Document what was not done and why. Future agents stop re-suggesting rejected paths. The <strong>Reconsider if</strong> line keeps the rejection live.</p>
+  <p>→ <a href={url('commands/adr/')}><code>adr</code></a></p>
 
   <h2>2. Defensive commits</h2>
-  <p>
-    Make a git commit before any large refactor or agent-driven change. Not
-    version-control hygiene. Data loss prevention. Long agent sessions touch
-    dozens of files; without a checkpoint, partial rollback is painful.
-  </p>
-  <p>Command: <a href={url('commands/plan/')}><code>plan</code></a> includes a checkpoint step.</p>
+  <p>Commit before any large refactor. Long agent sessions touch dozens of files; without a checkpoint, partial rollback is painful.</p>
+  <p>→ <a href={url('commands/plan/')}><code>plan</code></a> includes a checkpoint step.</p>
 
   <h2>3. Interface-first development</h2>
-  <p>
-    Define the types, the function signatures, the API contract,
-    <em>before</em> the implementation. The agent then has a hard constraint
-    and cannot invent a sprawling abstraction. The model is good at filling in
-    a defined shape. It is bad at choosing the shape.
-  </p>
+  <p>Define types, signatures, API contract before implementation. The agent fills a defined shape well; it chooses shapes poorly.</p>
 
   <h2>4. Verification-driven logic</h2>
-  <p>
-    Every agent task ships with a verification command. The agent iterates
-    until verification passes. Without it, you become the reviewer for
-    syntax-level details. With it, you only review the design.
-  </p>
-  <p>Command: <a href={url('commands/verify/')}><code>verify</code></a>.</p>
+  <p>Every task ships with a verification command. The agent iterates until verification passes; you review the design, not the syntax.</p>
+  <p>→ <a href={url('commands/verify/')}><code>verify</code></a></p>
 
   <h2>5. Plan Mode discipline</h2>
-  <p>
-    Before any non-trivial implementation, the agent produces a plan. The
-    plan is reviewed and approved as a contract before any code is written.
-    The plan names what, where, how, and how to roll back.
-  </p>
-  <p>Command: <a href={url('commands/plan/')}><code>plan</code></a>.</p>
+  <p>The plan is reviewed as a contract before any code is written.</p>
+  <p>→ <a href={url('commands/plan/')}><code>plan</code></a></p>
 
   <h2>6. Standardised initialisation</h2>
-  <p>
-    Every new repo starts with the same scaffolding. A single command does it
-    so it is not skipped. The skipping is what kills teams: one repo without
-    context files becomes the one where the agent always misbehaves, and then
-    "AI is unreliable" becomes the team's narrative.
-  </p>
-  <p>Command: <a href={url('commands/init/')}><code>init</code></a>.</p>
+  <p>Every new repo starts with the same scaffolding. One command, so it is not skipped.</p>
+  <p>→ <a href={url('commands/init/')}><code>init</code></a></p>
 
   <h2>7. Delta updates over rewrites</h2>
-  <p>
-    When a convention changes, do not rewrite the file. Add the new
-    convention with a date, mark the old one deprecated with a date and a
-    reason, and keep both visible. The <em>why</em> of the old convention is
-    often still relevant context.
-  </p>
-  <p>Command: <a href={url('commands/document/')}><code>document</code></a>.</p>
+  <p>When a convention changes, add the new one with a date and mark the old one deprecated with a reason. Rewrites lose the why.</p>
+  <p>→ <a href={url('commands/document/')}><code>document</code></a></p>
 
   <h2>8. Scoped rules</h2>
-  <p>
-    Rules apply where they make sense. Frontend rules in frontend files;
-    database rules in migrations; nothing applies "globally" unless it really
-    is global (like "no placeholder comments").
-  </p>
-  <p>Command: <a href={url('commands/scope/')}><code>scope</code></a>.</p>
+  <p>Rules apply where they make sense. Frontend rules in frontend files; database rules in migrations. Nothing global unless really global.</p>
+  <p>→ <a href={url('commands/scope/')}><code>scope</code></a></p>
 
   <h2>9. Least-privilege tooling</h2>
-  <p>
-    Agent access to live systems is partitioned. Read-only context is one
-    server; write actions are another. Destructive actions require human
-    approval. Operational, not just security: it also makes the agent's
-    mental model cleaner. "I am in read mode" produces better suggestions
-    than "I have all the tools".
-  </p>
-  <p>Command: <a href={url('commands/mcp/')}><code>mcp</code></a>.</p>
+  <p>Agent access partitioned. Read-only context is one server; write actions another. Destructive actions require human approval.</p>
+  <p>→ <a href={url('commands/mcp/')}><code>mcp</code></a></p>
 
   <h2>10. Measure conformity</h2>
+  <p>The metric worth tracking: percentage of generated code passing the project's own checks without modification. Below 80% means the context is not communicating.</p>
+  <p>→ <a href={url('commands/audit/')}><code>audit</code></a></p>
+
+  <h2 id="split-file">11. Split-file architecture</h2>
   <p>
-    The single metric worth tracking: percentage of generated code that
-    passes the project's own checks (tests, lint, types) without human
-    modification. Anything below 80% means the context is not communicating.
+    A single <code>CLAUDE.md</code> that grows becomes a dumping ground.
+    <code>AGENTS.md</code> stays canonical, hand-edited, capped around 80
+    lines. <code>CLAUDE.md</code> is a symlink. Per-harness pointer files for
+    Cursor, Copilot, Windsurf are five lines each. Overflow goes to
+    <code>docs/agents/&lt;area&gt;.md</code>.
   </p>
-  <p>Command: <a href={url('commands/audit/')}><code>audit</code></a> reports this.</p>
-
-  <h2 id="split-file">11. Split-file architecture (lean root, fat directory)</h2>
-
-  <p>
-    A single <code>CLAUDE.md</code> that grows over time becomes a dumping
-    ground. The agent treats it as mutable and appends narrow, session-specific
-    rules. Over weeks the file is unreadable and the model's attention is
-    diluted.
-  </p>
-
-  <p>
-    The fix is structural. <code>AGENTS.md</code> is the <strong>only canonical
-    file</strong>: hand-edited, self-sufficient, capped around 400 tokens
-    (~80 lines). <code>CLAUDE.md</code> is a symlink to it. Per-harness pointer
-    files for Cursor, Copilot, and Windsurf are five lines each:
-    "read <code>/AGENTS.md</code>" plus three non-negotiables. When
-    <code>AGENTS.md</code> overflows, per-area conventions split into
-    <code>docs/agents/&lt;area&gt;.md</code> — plain markdown, harness-agnostic,
-    referenced from <code>AGENTS.md</code>'s "See also". Any agent in any
-    harness can be told to read these files.
-  </p>
-
   <pre><code>AGENTS.md                          ← canonical, lean (~80 lines)
-CLAUDE.md -&gt; AGENTS.md             ← symlink; same content
+CLAUDE.md -&gt; AGENTS.md             ← symlink
 .cursor/rules/main.mdc             ← 5-line pointer
 .github/copilot-instructions.md    ← 5-line pointer
 .windsurf/rules/main.md            ← 5-line pointer
 
-docs/agents/                       ← neutral overflow (harness-agnostic)
+docs/agents/                       ← neutral overflow
   frontend.md
   backend.md
-  infra.md
 
-.claude/rules/                     ← optional Claude-Code-only auto-load layer
-  10-style.md
-  30-verification.md</code></pre>
-
+.claude/rules/                     ← optional Claude-Code-only auto-load</code></pre>
   <p>
-    <code>.claude/rules/</code> is a <strong>separate, optional layer</strong>
-    specific to Claude Code. Claude Code auto-loads every file in that
-    directory on session start, in filename-sort order. No other harness
-    reads <code>.claude/</code>. Use it only when you specifically want
-    Claude Code's auto-loading behavior — typically hooks, slash-command
-    guidance, or per-area conventions you want preloaded without the agent
-    having to find them. For everything else, use <code>docs/agents/</code>.
-  </p>
-
-  <p>
-    Why the symlink. <code>AGENTS.md</code> is the emerging cross-tool
-    standard. <code>CLAUDE.md</code> is Anthropic-specific. A symlink lets a
-    single edit feed both harnesses with zero drift risk. On environments
-    that cannot create symlinks (some Windows + <code>git config
-    core.symlinks=false</code> setups),
-    <a href={url('commands/init/')}><code>init</code></a> emits two files; the
-    CLI's <code>agents-claude-sync</code> rule flags drift, and there is no
-    parity hook — drift is rare enough that a single P1 finding is the right
-    response.
-  </p>
-
-  <p>
-    Command: <a href={url('commands/init/')}><code>init</code></a> sets up
-    this layout. <a href={url('commands/audit/')}><code>audit</code></a> flags
-    root files that have crept past the threshold.
+    <code>.claude/rules/</code> is a Claude Code-specific feature: auto-loads
+    every file in filename-sort order. Use it only when you want that
+    behaviour; for harness-agnostic overflow use <code>docs/agents/</code>.
   </p>
 
   <h2 id="boundary-tiers">12. Three-tier boundary layout</h2>
-
-  <p>
-    The older "out-of-bounds" framing is a single bucket. Real projects have
-    three:
-  </p>
-
+  <p>The old "out-of-bounds" framing is one bucket. Real projects have three:</p>
   <ul>
-    <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow the non-negotiables in <code>AGENTS.md</code>).</li>
-    <li><strong>Ask first.</strong> Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).</li>
-    <li><strong>Never.</strong> Hard forbids (generated paths, vendored upstream, anything inside <code>&lt;!-- CE:PRESERVE --&gt;</code> tags).</li>
+    <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow Non-negotiables).</li>
+    <li><strong>Ask first.</strong> Things the agent proposes (multi-file changes, dependency additions, public-API edits).</li>
+    <li><strong>Never.</strong> Forbidden paths or destructive actions.</li>
   </ul>
-
-  <p>
-    State all three explicitly in <code>AGENTS.md</code>. The "ask first" tier
-    is the most often missing one; it's also the one that prevents the most
-    scope creep.
-  </p>
+  <p>State all three explicitly in <code>AGENTS.md</code>. "Ask first" is the tier most often missing, and the one that prevents the most scope creep.</p>
 
   <h2>13. HTML preservation tags</h2>
-
-  <p>
-    When a piece of code must not be edited by an agent (legacy compromises,
-    performance-tuned hot paths, compatibility shims whose subtleties an
-    agent will miss), wrap it in HTML preservation markers:
-  </p>
-
+  <p>For code that must not be edited (legacy compromises, hot paths, compatibility shims), wrap with markers:</p>
   <pre><code>{`<!-- CE:PRESERVE: legacy auth flow, removed in v3. Do not modernize. -->
 function legacyHash(input: string): string {
   // ...
 }
 <!-- /CE:PRESERVE -->`}</code></pre>
-
-  <p>Rules:</p>
-  <ul>
-    <li>Always include a one-line reason in the opening tag.</li>
-    <li>Use sparingly. A growing pile of CE:PRESERVE pairs is a smell.</li>
-    <li>Audit the count in code review.</li>
-  </ul>
-
-  <Callout label="Source" tone="mute">
-    <p>
-      Drawn from both source documents synthesised at
-      <a href={url('blueprint/#good-practices')}>/blueprint § good
-      practices</a> and <a href={url('blueprint/#split-file')}>§ split-file
-      architecture</a>. For the flipside, see
-      <a href={url('foundation/anti-patterns/')}>anti-patterns</a>.
-    </p>
-  </Callout>
+  <p>Always include a one-line reason. Use sparingly; a growing pile is a smell. Audit the count in code review.</p>
 
   <FoundationPager slug="good-practices" />
 </Doc>

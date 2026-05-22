@@ -1,225 +1,67 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'Anti-patterns';
 const description =
-  'Ten things that look like good context engineering and are not. Reject every one of them, including in your own output.';
+  'Ten things that look like good context engineering and are not. Reject every one of them.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
-    Things that look like good context engineering and are not. Reject every
-    one of them, including in your own output.
+    Practices that look right and fail. Reject every one, including in your
+    own output.
   </p>
 
   <h2>1. Monolithic prompt bloat</h2>
-  <p>
-    <strong>Symptom.</strong> A <code>CLAUDE.md</code> or system prompt that
-    runs to thousands of words and includes the product roadmap, customer
-    personas, architecture diagram, and brand voice guidelines.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> The model has a finite attention budget.
-    Burying the actual rules under marketing copy means the rules get ignored.
-    Every token of bloat also costs money on every invocation.
-  </p>
-  <p>
-    <strong>Fix.</strong> One kind of content per file. Reference docs are
-    pulled in on demand via <code>@docs</code> or filepath mentions. The
-    Project layer file stays under 200 lines.
-  </p>
+  <p><strong>Symptom.</strong> A <code>CLAUDE.md</code> that runs thousands of words, including roadmap, personas, brand voice.</p>
+  <p><strong>Fix.</strong> One kind of content per file. Reference long docs on demand. Keep the Project-layer file under 200 lines.</p>
 
   <h2>2. Vague principles without examples</h2>
-  <p>
-    <strong>Symptom.</strong> Rules like "use good judgment", "write clean
-    code", "follow our style guide", "maintain high test coverage".
-  </p>
-  <p>
-    <strong>Why it fails.</strong> "Clean" is a vibe, not a rule. The agent
-    has seen every "clean code" book in training and will pick whichever
-    interpretation produces the most output. There is no shared definition.
-  </p>
-  <p>
-    <strong>Fix.</strong> Every rule is <strong>behaviorally anchored</strong>:
-    it names the exact technology, command, or pattern the agent should reach
-    for. Anchored beats abstract in every category.
-  </p>
-
+  <p><strong>Symptom.</strong> "Use good judgment", "write clean code", "follow our style guide".</p>
+  <p><strong>Fix.</strong> Behaviourally anchored rules name the exact technology, command, or pattern.</p>
   <table>
-    <thead>
-      <tr><th>Category</th><th>Anchored (good)</th><th>Vague (bad)</th></tr>
-    </thead>
+    <thead><tr><th>Category</th><th>Anchored</th><th>Vague</th></tr></thead>
     <tbody>
-      <tr>
-        <td>Error handling</td>
-        <td>Wrap external API calls in try/catch; log failures via <code>Logger</code>; never swallow exceptions.</td>
-        <td>"Write robust error handling."</td>
-      </tr>
-      <tr>
-        <td>Styling</td>
-        <td>Tailwind utilities only; conditional classes via <code>cn()</code>; assets in <code>/assets/</code>.</td>
-        <td>"Use clean styling patterns."</td>
-      </tr>
-      <tr>
-        <td>Testing</td>
-        <td>Vitest; assert on user actions; run <code>npm run test:coverage</code> before staging.</td>
-        <td>"Maintain high test coverage."</td>
-      </tr>
-      <tr>
-        <td>Git workflow</td>
-        <td>Conventional Commits; one-file scope where reasonable; humans sole authors of record.</td>
-        <td>"Commit often with helpful messages."</td>
-      </tr>
-      <tr>
-        <td>Dependencies</td>
-        <td>Pin critical packages; named imports; <code>npm run build</code> to verify types on modified modules.</td>
-        <td>"Keep dependencies updated."</td>
-      </tr>
+      <tr><td>Error handling</td><td>Wrap external calls in try/catch; log via <code>Logger</code>; never swallow exceptions.</td><td>"Write robust error handling."</td></tr>
+      <tr><td>Styling</td><td>Tailwind utilities only; conditional classes via <code>cn()</code>.</td><td>"Use clean styling patterns."</td></tr>
+      <tr><td>Testing</td><td>Vitest; assert on user actions; run <code>npm run test:coverage</code> before staging.</td><td>"Maintain high test coverage."</td></tr>
+      <tr><td>Git</td><td>Conventional Commits; one-file scope where reasonable.</td><td>"Commit often with helpful messages."</td></tr>
     </tbody>
   </table>
 
-  <p>
-    Anchored rules carry a verb, a named tool or pattern, and a verification
-    path. Vague rules carry an adjective and hope.
-  </p>
-
   <h2>3. Placeholder comments</h2>
-  <p>
-    <strong>Symptom.</strong> The agent leaves <code>// TODO: implement
-    this</code> or <code>pass  # come back later</code> in shipped code.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> TODOs never come back. They become
-    permanent. The next agent reading the file thinks "implement this" is a
-    real instruction and writes something speculative.
-  </p>
-  <p>
-    <strong>Fix.</strong> Every function is either fully implemented or not
-    included. If the agent does not have enough context to implement, it
-    stops and asks.
-  </p>
+  <p><strong>Symptom.</strong> <code>// TODO: implement this</code>, <code>pass  # come back later</code> in shipped code.</p>
+  <p><strong>Fix.</strong> Every function is either fully implemented or not included. If the agent lacks context, it stops and asks.</p>
 
   <h2>4. Implicit local assumptions</h2>
-  <p>
-    <strong>Symptom.</strong> Instructions like "use the local Postgres" or
-    "open the file in VS Code" without specifying which.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> The agent does not know your timezone, OS,
-    shell, Node version, default browser, or scratch directory. It will guess,
-    and the guess is statistically wrong.
-  </p>
-  <p>
-    <strong>Fix.</strong> State the assumption explicitly in the Session
-    layer, or have the agent ask before assuming. Never bake
-    personal-environment assumptions into the Project layer.
-  </p>
+  <p><strong>Symptom.</strong> "Use the local Postgres" or "open the file in VS Code".</p>
+  <p><strong>Fix.</strong> State the assumption in the Session layer, or have the agent ask. Never bake personal environment into the Project layer.</p>
 
   <h2>5. Over-exposing tools</h2>
-  <p>
-    <strong>Symptom.</strong> An MCP configuration that exposes every tool
-    the agent could possibly need, "just in case".
-  </p>
-  <p>
-    <strong>Why it fails.</strong> Every tool description costs tokens. Twenty
-    tool descriptions means twenty competing things to consider before doing
-    anything. The agent picks wrong more often, costs more, and the security
-    blast radius is huge.
-  </p>
-  <p>
-    <strong>Fix.</strong> Route tools by intent. See
-    <a href={url('foundation/mcp-principles/')}>MCP principles</a>.
-  </p>
+  <p><strong>Symptom.</strong> MCP config exposes every tool "just in case".</p>
+  <p><strong>Fix.</strong> Route tools by intent. See <a href={url('foundation/mcp-principles/')}>MCP principles</a>.</p>
 
   <h2>6. Rules that fire everywhere</h2>
-  <p>
-    <strong>Symptom.</strong> A <code>.cursor/rules/global.mdc</code> that
-    applies to every file in the repo and contains both frontend and backend
-    conventions.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> When the agent edits a React component, it
-    does not need SQL migration conventions. They distract.
-  </p>
-  <p>
-    <strong>Fix.</strong> Scope rules to file patterns. The
-    <a href={url('commands/scope/')}><code>scope</code></a> command exists for
-    this.
-  </p>
+  <p><strong>Symptom.</strong> A global rules file with both frontend and backend conventions.</p>
+  <p><strong>Fix.</strong> Scope to file patterns. → <a href={url('commands/scope/')}><code>scope</code></a></p>
 
   <h2>7. Stale context</h2>
-  <p>
-    <strong>Symptom.</strong> A <code>CLAUDE.md</code> that still says "we use
-    Yarn 1" three months after the team migrated to pnpm.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> The agent confidently follows the stale
-    instructions and produces non-working scripts. The team blames AI when
-    the real failure is ContextOps.
-  </p>
-  <p>
-    <strong>Fix.</strong> Pre-commit hook that validates context files against
-    detected stack. <a href={url('commands/verify/')}><code>verify</code></a>
-    sets this up; <a href={url('commands/audit/')}><code>audit</code></a>
-    catches existing drift.
-  </p>
+  <p><strong>Symptom.</strong> <code>CLAUDE.md</code> still says "we use Yarn 1" three months after migrating to pnpm.</p>
+  <p><strong>Fix.</strong> Pre-commit hook that validates context against detected stack. → <a href={url('commands/verify/')}><code>verify</code></a></p>
 
   <h2>8. Treating memory as repo context</h2>
-  <p>
-    <strong>Symptom.</strong> "Magnus prefers terse responses" written into
-    <code>CLAUDE.md</code>.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> That is a fact about Magnus, not about the
-    repo. Another engineer joins, reads the file, and the agent now thinks
-    they prefer terse responses too. Cross-contamination.
-  </p>
-  <p>
-    <strong>Fix.</strong> User preferences live in agent memory or per-user
-    config, not in versioned repo files. The Project layer describes the
-    <em>project</em>, not the <em>people</em>.
-  </p>
+  <p><strong>Symptom.</strong> "Magnus prefers terse responses" in <code>CLAUDE.md</code>.</p>
+  <p><strong>Fix.</strong> User preferences belong in agent memory or per-user config. The Project layer describes the project, not the people.</p>
 
   <h2>9. Negative-space silence</h2>
-  <p>
-    <strong>Symptom.</strong> No record anywhere of approaches the team
-    considered and rejected.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> The agent will eventually suggest the
-    rejected approach (every time, forever), because it does not know it was
-    rejected.
-  </p>
-  <p>
-    <strong>Fix.</strong> Capture rejections in ADRs with a "Considered
-    alternatives" section, or in a dedicated <code>docs/decisions/negative-space.md</code>.
-  </p>
+  <p><strong>Symptom.</strong> No record of approaches considered and rejected.</p>
+  <p><strong>Fix.</strong> ADRs with a "Considered alternatives" section, or <code>docs/decisions/negative-space.md</code>. → <a href={url('commands/adr/')}><code>adr</code></a></p>
 
   <h2>10. Verification as an afterthought</h2>
-  <p>
-    <strong>Symptom.</strong> Context files that tell the agent what to do
-    but not how to check the result.
-  </p>
-  <p>
-    <strong>Why it fails.</strong> The agent has no way to self-correct. The
-    human becomes the verification step, which is slow and unreliable.
-  </p>
-  <p>
-    <strong>Fix.</strong> Every instruction that produces an artifact also
-    names the command that verifies it. Bake it in with
-    <a href={url('commands/verify/')}><code>verify</code></a>.
-  </p>
-
-  <Callout label="Source" tone="mute">
-    <p>
-      <a href={url('blueprint/#good-practices')}>2026 Context Engineering
-      Blueprint: Practices to Avoid</a>. The flipside is
-      <a href={url('foundation/good-practices/')}>good practices</a>.
-    </p>
-  </Callout>
+  <p><strong>Symptom.</strong> Context files tell the agent what to do, not how to check the result.</p>
+  <p><strong>Fix.</strong> Every instruction that produces an artifact names the command that verifies it. → <a href={url('commands/verify/')}><code>verify</code></a></p>
 
   <FoundationPager slug="anti-patterns" />
 </Doc>

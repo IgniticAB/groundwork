@@ -1,204 +1,58 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import CommandPager from '../../components/CommandPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'adr';
 const description =
-  'Architecture Decision Records with a real "Considered alternatives" section and a "Reconsider if" trigger. Stops the agent from re-suggesting paths the team already rejected.';
+  'Architecture Decision Records with a real "Considered alternatives" section and a "Reconsider if" trigger.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    An Architecture Decision Record captures the why behind a choice so future
-    agents and humans do not have to re-derive it. With Groundwork, every ADR
-    includes a real <em>considered alternatives</em> section (the negative
-    space) and a <em>reconsider if</em> trigger that keeps it from becoming a
-    tombstone.
+    Capture the why behind a choice so future agents and humans do not
+    re-derive it. Every ADR includes the alternatives you rejected and a
+    "Reconsider if" trigger that keeps it from becoming a tombstone.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    The most subtle form of context debt is <strong>intent debt</strong>: the
-    code works, the tests pass, but nobody knows why this particular shape was
-    chosen. The next agent suggests GraphQL again. Or Redux. Or whatever you
-    rejected six months ago, because the rejection never made it into the
-    repo and the agent's training data is full of the alternatives.
-  </p>
-  <p>
-    An ADR is the externalized intent that prevents that. The format is
-    MADR-lite: numbered, dated, with status, context, decision, alternatives,
-    consequences. Two ingredients are non-negotiable:
-  </p>
-  <ul>
-    <li>
-      <strong>Considered alternatives.</strong> Real options the team weighed,
-      not strawmen. This is the negative space, the most valuable part of the
-      file.
-    </li>
-    <li>
-      <strong>Reconsider if.</strong> The future-trigger that makes the ADR a
-      living artifact rather than a tombstone. When the named condition is
-      met, the team knows to revisit.
-    </li>
-  </ul>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      ADRs operationalise
-      <a href={url('foundation/cognitive-debt/')}>cognitive debt repayment</a>
-      practice #2: externalize intent. Their structure comes from the
-      <a href={url('foundation/good-practices/')}>good practices</a> doc
-      (negative space documentation). The
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint</a> argues this
-      is now board-level.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
+  <h2>When to use it</h2>
   <ul>
     <li>A non-obvious technical choice was made.</li>
     <li>An obvious choice was made for a non-obvious reason.</li>
-    <li>
-      A <em>non-choice</em> was made deliberately. ("We considered GraphQL and
-      stayed with REST because…")
-    </li>
+    <li>A non-choice was made deliberately. ("Considered GraphQL, stayed with REST because…")</li>
     <li>A constraint was discovered that will shape future decisions.</li>
-    <li>
-      <a href={url('commands/audit/')}><code>audit</code></a> flagged a recent
-      merge as decision-shaped but ADR-less.
-    </li>
+    <li><a href={url('commands/audit/')}><code>audit</code></a> flagged a recent merge as decision-shaped but ADR-less.</li>
   </ul>
-  <p>And when <em>not</em> to write one:</p>
+
+  <h3>When not to</h3>
   <ul>
     <li>Implementation details the code expresses well on its own.</li>
-    <li>
-      Preferences with no real tradeoff (indent style goes in conventions, not
-      ADRs).
-    </li>
-    <li>Decisions still being debated. Wait until it is decided.</li>
+    <li>Preferences with no real tradeoff. Those go in <code>AGENTS.md</code>.</li>
+    <li>Decisions still being debated. Wait until decided.</li>
   </ul>
 
   <h2>What it produces</h2>
-  <p>One file:</p>
-  <pre><code>docs/decisions/&lt;NNNN&gt;-&lt;slug&gt;.md</code></pre>
-  <p>
-    Plus, if missing, a <code>docs/decisions/README.md</code> and a
-    <code>docs/decisions/negative-space.md</code> for lightweight rejections
-    that do not warrant a full ADR.
-  </p>
+  <ul>
+    <li><code>docs/decisions/&lt;NNNN&gt;-&lt;slug&gt;.md</code>: the ADR.</li>
+    <li>If missing: <code>docs/decisions/README.md</code> and <code>docs/decisions/negative-space.md</code>.</li>
+    <li>A one-liner in <code>AGENTS.md</code> (or a <code>docs/agents/</code> file) if the decision creates an ongoing rule.</li>
+  </ul>
 
   <h2>How it works</h2>
-  <p>Three input modes. The command detects which from your first message.</p>
+  <p>Three input modes, detected from your first message:</p>
   <ul>
-    <li>
-      <strong>Mode A, live decision.</strong> You describe a choice you are
-      making now. The command asks for the four things it needs and drafts.
-    </li>
-    <li>
-      <strong>Mode B, from a merged PR.</strong> Paste a PR URL or number.
-      The command uses <code>gh pr view</code> (or WebFetch) to pull title,
-      description, files, reviews, and dates. It pre-fills almost everything
-      and asks only about alternatives and "Reconsider if".
-    </li>
-    <li>
-      <strong>Mode C, from a commit range.</strong> Name commits or an area
-      ("last week's auth refactor"). The command reads <code>git log</code>
-      and <code>git diff</code>, pre-fills, and surfaces lower-confidence
-      inferences for you to correct.
-    </li>
+    <li><strong>Live decision.</strong> You describe the choice. The command asks for the four things it needs.</li>
+    <li><strong>From a merged PR.</strong> Paste a PR URL. The command pulls title, description, files, reviews via <code>gh pr view</code> and pre-fills.</li>
+    <li><strong>From a commit range.</strong> Name commits or an area. The command reads <code>git log</code> / <code>git diff</code> and pre-fills.</li>
   </ul>
-
-  <p>From there, the procedure is the same:</p>
   <ol>
-    <li>
-      <strong>Find the next number.</strong> Globs existing ADRs, takes the
-      max, adds one.
-    </li>
-    <li>
-      <strong>Draft.</strong> Hard rules: context has constraints (not
-      background); alternatives has at least one rejected option; reconsider-if
-      is specific; title describes the <em>decision</em>, not the topic.
-    </li>
-    <li>
-      <strong>Show the draft.</strong> ADRs are durable. A rushed ADR is
-      worse than a delayed ADR.
-    </li>
-    <li>
-      <strong>Set status and write.</strong> <em>accepted</em> if in effect,
-      <em>proposed</em> if still being formalized, <em>superseded by
-      ADR-NNNN</em> if it replaces an older one (with the older one updated
-      too).
-    </li>
-    <li>
-      <strong>Cross-link.</strong> If the ADR creates an ongoing rule, a
-      one-liner is added to <code>AGENTS.md</code> (or a
-      <code>docs/agents/</code> file if the rule is per-area) pointing back
-      at the ADR. The agent reads the rule in the Project layer and can drill
-      down for the why.
-    </li>
-    <li>
-      <strong>Negative-space sweep.</strong> Briefly considered options that
-      do not deserve a full ADR get a paragraph in
-      <code>docs/decisions/negative-space.md</code>. They do not deserve a
-      monument; they should not be invisible either.
-    </li>
+    <li><strong>Find the next number.</strong> Globs existing ADRs, takes the max, adds one.</li>
+    <li><strong>Draft.</strong> Context names constraints, not background. Alternatives has at least one rejected option. Reconsider-if is specific. Title is the decision, not the topic.</li>
+    <li><strong>Show the draft.</strong> ADRs are durable. A rushed one is worse than a delayed one.</li>
+    <li><strong>Set status and write.</strong> <em>accepted</em>, <em>proposed</em>, or <em>superseded by ADR-NNNN</em> (with the older file updated).</li>
+    <li><strong>Cross-link.</strong> Add a one-liner in <code>AGENTS.md</code> if the ADR creates an ongoing rule.</li>
+    <li><strong>Negative-space sweep.</strong> Briefly considered options that do not warrant a full ADR get a paragraph in <code>negative-space.md</code>.</li>
   </ol>
-
-  <Callout label="The quality bar" tone="mute">
-    <p>
-      Real alternatives, not strawmen. Reconsider-if is named and specific.
-      An agent reading the ADR six months later understands the choice without
-      further context. Title is the decision, not the topic.
-    </p>
-  </Callout>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>Status: accepted, alternatives: none considered.</strong> The
-      most common failure. There were always alternatives. Even "do nothing"
-      is one. Surface them.
-    </li>
-    <li>
-      <strong>Context paragraph is a brain dump.</strong> Two or three
-      paragraphs, focused on the constraints that forced the choice. Trim the
-      rest.
-    </li>
-    <li>
-      <strong>No reconsider-if.</strong> Without it, the ADR is a tombstone.
-      Always name the future trigger.
-    </li>
-    <li>
-      <strong>Title is the topic.</strong> "Testing framework" is a topic.
-      "Use Vitest for unit tests" is a decision. The latter is what searches
-      will find.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>. Intent
-      debt and how ADRs repay it.
-    </li>
-    <li>
-      <a href={url('foundation/good-practices/')}>Good practices</a>. Negative
-      space documentation.
-    </li>
-    <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #9: negative
-      space silence.
-    </li>
-    <li>
-      <a href={url('commands/plan/')}><code>plan</code></a>. Plans often
-      surface ADR-worthy decisions; <code>plan</code> step 8 prompts for them.
-    </li>
-    <li>
-      <a href={url('blueprint/#cognitive-debt')}>2026 Blueprint: externalising intent</a>
-    </li>
-  </ul>
 
   <CommandPager slug="adr" />
 </Doc>

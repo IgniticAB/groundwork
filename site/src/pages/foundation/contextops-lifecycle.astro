@@ -1,101 +1,67 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'The ContextOps lifecycle';
 const description =
-  'Build, distribute, maintain, update, measure. ContextOps is to context what DevOps is to code: a versioned, governed lifecycle that prevents drift between what the agent thinks is true and what the code actually does.';
+  'Build, distribute, maintain, update, measure. Five stages. Every command maps to one.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
     ContextOps is to context what DevOps is to code: a versioned, governed
     lifecycle that prevents drift between what the agent thinks is true and
-    what the code actually does. Five stages. Every command in this skill
-    maps to one or more.
+    what the code actually does.
   </p>
 
   <h2>1. Build</h2>
   <p>
-    Generate the initial context files by <em>scanning</em> the repo, not by
-    guessing. Detect the stack from package manifests, the test commands
-    from scripts and configs, the dominant style by reading a sample of recent
-    files and recent commits. Output one file per harness, not one mega-file.
+    Generate the initial context files by scanning the repo, not by guessing.
+    Detect the stack from manifests, test commands from scripts, the dominant
+    style from recent commits.
   </p>
   <p>Commands: <a href={url('commands/init/')}><code>init</code></a>, <a href={url('commands/document/')}><code>document</code></a>.</p>
 
   <h2>2. Distribute</h2>
   <p>
-    The same rules, in the format each harness expects. Single source of
-    truth, multiple emitted files.
+    Same rules, in the format each harness expects. Single source of truth,
+    thin pointer files per harness.
   </p>
-  <ul>
-    <li>Claude Code reads <code>CLAUDE.md</code> and <code>.claude/skills/*</code>.</li>
-    <li>Cursor reads <code>.cursor/rules/*.mdc</code> with YAML frontmatter for file-scoping.</li>
-    <li>Codex / generic agents read <code>AGENTS.md</code>.</li>
-    <li>GitHub Copilot reads <code>.github/copilot-instructions.md</code>.</li>
-  </ul>
-  <p>Do not write the same rules five times. Write them once, transform them into each format.</p>
-  <p>Commands: <a href={url('commands/init/')}><code>init</code></a>, <a href={url('commands/document/')}><code>document</code></a>, <a href={url('commands/scope/')}><code>scope</code></a>.</p>
+  <p>Commands: <a href={url('commands/init/')}><code>init</code></a>, <a href={url('commands/scope/')}><code>scope</code></a>.</p>
 
   <h2>3. Maintain</h2>
   <p>
-    Pre-commit hooks and CI checks that validate context files are updated when
-    the code they describe changes.
+    Pre-commit hooks and CI checks that validate context files when the code
+    they describe changes. If <code>package.json</code> changes and
+    <code>AGENTS.md</code> still names the old framework, fail the commit.
+    Without this stage, context rots.
   </p>
-  <ul>
-    <li>If <code>package.json</code> changes and <code>CLAUDE.md</code> still names the old framework, fail the commit.</li>
-    <li>If a new directory is added and no <code>.cursor/rules/*.mdc</code> covers it, warn.</li>
-    <li>If an ADR references a file that no longer exists, flag it.</li>
-  </ul>
-  <p>This is the stage most teams skip. Without it, context rots.</p>
-  <p>Commands: <a href={url('commands/verify/')}><code>verify</code></a> (sets up the hook), <a href={url('commands/audit/')}><code>audit</code></a> (finds existing rot).</p>
+  <p>Commands: <a href={url('commands/verify/')}><code>verify</code></a>, <a href={url('commands/audit/')}><code>audit</code></a>.</p>
 
   <h2>4. Update</h2>
   <p>
-    Context evolves through <em>delta updates</em>, not full rewrites.
-    Preserve history.
+    Context evolves through delta updates, not full rewrites. New conventions
+    added with a date. Deprecated ones marked, not deleted, with the reason.
+    Rewrites lose the why; the why is the valuable part.
   </p>
-  <ul>
-    <li>New conventions go in as additions, with a date.</li>
-    <li>Deprecated conventions are not deleted; they are marked deprecated with the date and the reason.</li>
-    <li>The agent reading the file can tell the difference between "this is how we do it now" and "this is how we used to do it and here's why we stopped".</li>
-  </ul>
-  <p>
-    Full rewrites lose the <em>why</em>. The why is the most valuable part.
-  </p>
-  <p>Commands: <a href={url('commands/adr/')}><code>adr</code></a> (captures the why), <a href={url('commands/document/')}><code>document</code></a> (does the delta merge).</p>
+  <p>Commands: <a href={url('commands/adr/')}><code>adr</code></a>, <a href={url('commands/document/')}><code>document</code></a>.</p>
 
   <h2>5. Measure</h2>
   <p>
-    Track how often the AI's output actually conforms to the rules in the
-    context files. Low conformity means the context is failing to communicate.
+    Track how often the agent's output passes the project's own checks
+    without modification. Low conformity means the context is failing to
+    communicate.
   </p>
-  <ul>
-    <li>Lint rules and tests catch some of this automatically.</li>
-    <li>For convention-level conformity, a periodic audit by a fresh agent is the cheap version.</li>
-    <li>The number to watch: percentage of generated code that passes the project's own checks without modification.</li>
-  </ul>
   <p>Command: <a href={url('commands/audit/')}><code>audit</code></a>.</p>
 
-  <h2>The order matters</h2>
+  <h2>What to do with this</h2>
   <p>
-    Build → Distribute → verify the loop runs → iterate. Skipping
-    <em>verify</em> is the most common failure: teams build beautiful context
-    files and never check whether the agent actually follows them.
-    <a href={url('commands/verify/')}><code>verify</code></a> exists to close
-    that loop.
+    Build → Distribute → wire Maintain. Skipping Maintain is the most common
+    failure: teams build beautiful context files and never check whether the
+    agent actually follows them. <a href={url('commands/verify/')}><code>verify</code></a>
+    closes that loop.
   </p>
-
-  <Callout label="Source" tone="mute">
-    <p>
-      <a href={url('blueprint/#contextops')}>2026 Context Engineering
-      Blueprint: The ContextOps Lifecycle</a>. The discipline is mirrored on
-      DevOps's path from heroics to infrastructure.
-    </p>
-  </Callout>
 
   <FoundationPager slug="contextops-lifecycle" />
 </Doc>

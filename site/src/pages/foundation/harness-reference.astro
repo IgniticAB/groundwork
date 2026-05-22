@@ -1,221 +1,111 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
 const title = 'Harness reference';
 const description =
-  'Where each AI coding harness expects to find its context files. Claude Code, Cursor, Codex, Copilot, Cowork: locations, formats, frontmatter conventions.';
+  'Where each AI coding harness expects its context files. Claude Code, Cursor, Codex, Copilot, Windsurf, Cowork.';
 ---
 
 <Doc title={title} description={description} section="foundation">
   <p class="doc-lede">
-    Where each AI coding harness expects to find its context files. This page
-    is the source of truth that
+    Where each harness expects context files. The source of truth
     <a href={url('commands/init/')}><code>init</code></a>,
-    <a href={url('commands/document/')}><code>document</code></a> and
-    <a href={url('commands/scope/')}><code>scope</code></a> read from when
-    deciding what to emit.
+    <a href={url('commands/document/')}><code>document</code></a>, and
+    <a href={url('commands/scope/')}><code>scope</code></a> read from.
   </p>
 
   <h2>Claude Code</h2>
-
   <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <thead><tr><th>Purpose</th><th>Location</th></tr></thead>
     <tbody>
-      <tr><td>Project rules</td><td><code>CLAUDE.md</code> at repo root</td><td>Always loaded when Claude Code opens the repo</td></tr>
-      <tr><td>Skills</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>Directory per skill. YAML frontmatter with <code>name</code>, <code>description</code></td></tr>
-      <tr><td>Slash commands</td><td><code>.claude/commands/&lt;name&gt;.md</code></td><td>Invoked as <code>/&lt;name&gt;</code></td></tr>
-      <tr><td>Sub-agents</td><td><code>.claude/agents/&lt;name&gt;.md</code></td><td>YAML frontmatter with <code>name</code>, <code>description</code>, <code>tools</code></td></tr>
-      <tr><td>Hooks</td><td><code>.claude/hooks.json</code></td><td>Pre/post tool hooks</td></tr>
-      <tr><td>Memory</td><td><code>.claude/memory/</code></td><td>Per-user, not committed</td></tr>
+      <tr><td>Project rules</td><td><code>CLAUDE.md</code> (symlink to <code>AGENTS.md</code> by default)</td></tr>
+      <tr><td>Skills</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td></tr>
+      <tr><td>Slash commands</td><td><code>.claude/commands/&lt;name&gt;.md</code></td></tr>
+      <tr><td>Sub-agents</td><td><code>.claude/agents/&lt;name&gt;.md</code></td></tr>
+      <tr><td>Hooks</td><td><code>.claude/hooks.json</code></td></tr>
+      <tr><td>Auto-loaded rules</td><td><code>.claude/rules/&lt;NN&gt;-&lt;name&gt;.md</code> (optional)</td></tr>
     </tbody>
   </table>
-  <p><code>CLAUDE.md</code> is the single most important file. Keep it under 200 lines.</p>
 
   <h2>Cursor</h2>
-
   <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <thead><tr><th>Purpose</th><th>Location</th></tr></thead>
     <tbody>
-      <tr><td>Project rules</td><td><code>.cursor/rules/&lt;name&gt;.mdc</code></td><td>Modern format. YAML frontmatter for file-scoping.</td></tr>
-      <tr><td>Legacy rules</td><td><code>.cursorrules</code></td><td>Deprecated. Migrate to <code>.cursor/rules/</code></td></tr>
-      <tr><td>Indexing config</td><td>Cursor settings UI</td><td>Not in repo</td></tr>
-      <tr><td>Composer instructions</td><td><code>.cursor/rules/composer.mdc</code></td><td>Optional, scope to <code>**/*</code></td></tr>
+      <tr><td>Pointer to AGENTS.md</td><td><code>.cursor/rules/main.mdc</code> with <code>alwaysApply: true</code></td></tr>
+      <tr><td>Scoped rules</td><td><code>.cursor/rules/&lt;area&gt;.mdc</code> with <code>globs</code></td></tr>
     </tbody>
   </table>
-
-  <p>Cursor <code>.mdc</code> frontmatter:</p>
   <pre><code>---
-description: When this rule should be applied
-globs:
-  - src/components/**/*.tsx
-  - src/components/**/*.jsx
-alwaysApply: false
----
+description: Always-on pointer to /AGENTS.md
+globs: []
+alwaysApply: true
+---</code></pre>
 
-# Rule body in Markdown</code></pre>
-
-  <p><code>alwaysApply: true</code> means the rule loads every time. Use sparingly.</p>
-
-  <h2>Codex / generic agents</h2>
-
-  <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
-    <tbody>
-      <tr><td>Project rules</td><td><code>AGENTS.md</code> at repo root</td><td>The emerging cross-tool standard</td></tr>
-      <tr><td>Skills</td><td><code>.agents/skills/</code> (repo) or <code>~/.agents/skills/</code> (user)</td><td>Codex-compatible</td></tr>
-    </tbody>
-  </table>
-
-  <p><code>AGENTS.md</code> should be a near-duplicate of <code>CLAUDE.md</code>. Same content; both files emitted by <code>init</code> and <code>document</code>.</p>
+  <h2>Codex / generic</h2>
+  <p><code>AGENTS.md</code> at the repo root. The emerging cross-tool standard.</p>
 
   <h2>GitHub Copilot</h2>
-
   <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <thead><tr><th>Purpose</th><th>Location</th></tr></thead>
     <tbody>
-      <tr><td>Repo-wide instructions</td><td><code>.github/copilot-instructions.md</code></td><td>Loaded automatically by Copilot Chat</td></tr>
-      <tr><td>Path-specific</td><td><code>.github/instructions/&lt;name&gt;.instructions.md</code></td><td>YAML frontmatter with <code>applyTo</code> glob</td></tr>
-      <tr><td>Domain-specific agent profiles</td><td><code>.github/agents/&lt;name&gt;.agent.md</code></td><td>YAML frontmatter; invoked via <code>/agent &lt;name&gt;</code></td></tr>
+      <tr><td>Pointer to AGENTS.md</td><td><code>.github/copilot-instructions.md</code></td></tr>
+      <tr><td>Path-specific</td><td><code>.github/instructions/&lt;name&gt;.instructions.md</code> with <code>applyTo</code></td></tr>
+      <tr><td>Domain profiles</td><td><code>.github/agents/&lt;name&gt;.agent.md</code></td></tr>
     </tbody>
   </table>
-
-  <p>Copilot path-specific frontmatter:</p>
-  <pre><code>---
-applyTo: "src/components/**/*.tsx"
----</code></pre>
-
-  <p>Copilot agent-profile frontmatter:</p>
-  <pre><code>---
-name: data-validator
-description: Parses JSON configs and audits schema structures.
-tools: [read, grep]
----</code></pre>
-
-  <p>
-    Agent profiles let you carve out narrow, domain-specific contexts that
-    only load when the user invokes <code>/agent data-validator</code> (or
-    similar). Examples: an <code>error-handler.agent.md</code> that only
-    audits catch blocks; a <code>migration.agent.md</code> that knows your DB
-    migration conventions. Keeps the main completion context lean.
-  </p>
 
   <h2 id="windsurf">Windsurf</h2>
-
   <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
+    <thead><tr><th>Purpose</th><th>Location</th><th>Limit</th></tr></thead>
     <tbody>
-      <tr><td>Workspace rules (single file)</td><td><code>.windsurfrules</code></td><td>Max 6,000 characters; legacy single-file style</td></tr>
-      <tr><td>Workspace rules (directory)</td><td><code>.windsurf/rules/&lt;name&gt;.md</code></td><td>Multiple scoped files; 12,000 character total budget across all rule files</td></tr>
-      <tr><td>Persistent agent memories</td><td><code>.windsurfmemories</code></td><td>Cascade auto-writes cross-session facts here (stack shifts, architectural discoveries). Agent-managed; humans rarely edit.</td></tr>
+      <tr><td>Pointer to AGENTS.md</td><td><code>.windsurf/rules/main.md</code></td><td></td></tr>
+      <tr><td>Workspace rules (legacy)</td><td><code>.windsurfrules</code></td><td>6,000 chars</td></tr>
+      <tr><td>Rule directory</td><td><code>.windsurf/rules/&lt;name&gt;.md</code></td><td>12,000 chars total</td></tr>
+      <tr><td>Cross-session memories</td><td><code>.windsurfmemories</code></td><td>Agent-managed</td></tr>
     </tbody>
   </table>
-
-  <p>
-    Windsurf rules support global workspace scope, file-pattern glob matching,
-    or model-driven activation, depending on how each rule file is structured.
-    The character budgets are hard limits; exceeding them silently truncates
-    content.
-  </p>
+  <p>Character budgets are hard limits; exceeding them silently truncates.</p>
 
   <h2>Cowork</h2>
+  <p>Skills as <code>&lt;skill-name&gt;/SKILL.md</code> in the workspace folder, packageable as <code>.plugin</code>.</p>
 
-  <table>
-    <thead><tr><th>Purpose</th><th>Location</th><th>Notes</th></tr></thead>
-    <tbody>
-      <tr><td>Skills</td><td>Workspace folder, <code>&lt;skill-name&gt;/SKILL.md</code></td><td>Loose files work; can be packaged as <code>.plugin</code></td></tr>
-      <tr><td>Plugins</td><td><code>.plugin</code> files</td><td>Use <code>create-cowork-plugin</code> skill</td></tr>
-    </tbody>
-  </table>
-
-  <h2>What goes in which file</h2>
-
-  <p>
-    When emitting the same rules across multiple harnesses, the body is
-    identical. Only the wrapping changes:
-  </p>
-  <ul>
-    <li><code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>.github/copilot-instructions.md</code>: plain Markdown, frontmatter optional.</li>
-    <li><code>.cursor/rules/*.mdc</code>: YAML frontmatter with <code>description</code>, <code>globs</code>, <code>alwaysApply</code>.</li>
-    <li><code>.github/instructions/*.instructions.md</code>: YAML frontmatter with <code>applyTo</code>.</li>
-  </ul>
-  <p>
-    <a href={url('commands/init/')}><code>init</code></a> takes a single
-    canonical set of rules and emits them in each format. Never write rules
-    five times by hand.
-  </p>
-
-  <h2>Which harnesses to target</h2>
-
+  <h2>Which to target</h2>
   <p>Default reasoning:</p>
   <ul>
-    <li>Claude Code or Cowork mentioned → <code>AGENTS.md</code> with <code>CLAUDE.md</code> as a symlink to it (default; see <a href={url('foundation/good-practices/')}>good practices</a> for the rationale).</li>
-    <li>Cursor mentioned → add <code>.cursor/rules/</code>.</li>
-    <li>Codex mentioned → <code>AGENTS.md</code> already covers it.</li>
-    <li>Copilot mentioned → add <code>.github/copilot-instructions.md</code>; add <code>.github/agents/</code> for domain profiles.</li>
-    <li>Windsurf mentioned → add <code>.windsurf/rules/</code> (preferred) or <code>.windsurfrules</code>.</li>
+    <li>Claude Code or Cowork → <code>AGENTS.md</code> with <code>CLAUDE.md</code> symlink.</li>
+    <li>Cursor → <code>.cursor/rules/main.mdc</code> pointer.</li>
+    <li>Codex → <code>AGENTS.md</code> already covers it.</li>
+    <li>Copilot → <code>.github/copilot-instructions.md</code> pointer.</li>
+    <li>Windsurf → <code>.windsurf/rules/main.md</code> pointer.</li>
     <li>None mentioned → ask. Do not assume.</li>
   </ul>
-  <p>Most teams in 2026 run two or three harnesses. Emit for all of them; the marginal cost is near zero once the canonical rules are written.</p>
 
-  <h2><code>docs/agents/</code> — the harness-agnostic overflow location</h2>
-
+  <h2><code>docs/agents/</code>: harness-agnostic overflow</h2>
   <p>
-    When <code>AGENTS.md</code> grows past its ~80-line budget, per-area
-    conventions split out into <code>docs/agents/&lt;area&gt;.md</code>. This
-    directory is harness-agnostic — no harness auto-loads it, but any agent
-    (Claude Code, Codex, Cursor, Copilot, Windsurf) can be told to read these
-    files. Reference them from <code>AGENTS.md</code>'s "See also" section so
-    the existence of the overflow is discoverable from the canonical file.
-  </p>
-  <p>
-    Plain markdown. No frontmatter. One file per area
-    (<code>frontend.md</code>, <code>backend.md</code>, <code>db.md</code>,
-    <code>infra.md</code>).
+    When <code>AGENTS.md</code> grows past ~80 lines, per-area conventions
+    split into <code>docs/agents/&lt;area&gt;.md</code>. No harness auto-loads
+    this, but any agent can be told to read it. Reference from
+    <code>AGENTS.md</code>'s "See also".
   </p>
 
-  <h2><code>.claude/rules/</code> — optional Claude Code auto-loading layer</h2>
-
+  <h2><code>.claude/rules/</code>: optional Claude-Code-only auto-load</h2>
   <p>
-    <code>.claude/rules/</code> is a Claude Code-specific feature: Claude Code
-    reads every file in that directory on session start, in filename-sort
-    order. Codex, Cursor, Copilot, and Windsurf do <strong>not</strong>
-    auto-load this directory.
+    Claude Code reads every file in this directory in filename-sort order. No
+    other harness does. Use only if you specifically want auto-loading; for
+    harness-agnostic overflow, use <code>docs/agents/</code>.
   </p>
-  <p>
-    Use <code>.claude/rules/</code> only when you specifically want Claude
-    Code's auto-loading behavior. For harness-agnostic overflow, use
-    <code>docs/agents/</code> instead. If you use both, the canonical knowledge
-    lives in <code>docs/agents/</code>; <code>.claude/rules/</code> either
-    mirrors or references it.
-  </p>
-  <p>
-    When emitting <code>.claude/rules/&lt;name&gt;.md</code> files, prefix
-    with two digits to set the load order via filename sort. Suggested ranges:
-  </p>
-
+  <p>Numeric prefix sets load order:</p>
   <ul>
-    <li><code>00-09</code>: orientation</li>
-    <li><code>10-29</code>: global style and naming</li>
-    <li><code>30-49</code>: verification and build</li>
-    <li><code>50-69</code>: per-area conventions (frontend, db, infra)</li>
-    <li><code>70-89</code>: security, MCP, credentials</li>
-    <li><code>90-99</code>: exceptions and overrides</li>
+    <li><code>00-09</code> orientation</li>
+    <li><code>10-29</code> global style</li>
+    <li><code>30-49</code> verification and build</li>
+    <li><code>50-69</code> per-area (frontend, db, infra)</li>
+    <li><code>70-89</code> security, MCP, credentials</li>
+    <li><code>90-99</code> exceptions and overrides</li>
   </ul>
-
-  <p>
-    Leave gaps between numbers so future rules slot in without renumbering.
-  </p>
-
-  <Callout label="Source" tone="mute">
-    <p>
-      Drawn from both source documents at
-      <a href={url('blueprint/#harnesses')}>/blueprint § harnesses</a>, plus
-      first-hand evolution since.
-    </p>
-  </Callout>
+  <p>Leave gaps so future rules slot in without renumbering.</p>
 
   <FoundationPager slug="harness-reference" />
 </Doc>

@@ -1,6 +1,5 @@
 ---
 import Doc from '../../layouts/Doc.astro';
-import Callout from '../../components/Callout.astro';
 import FoundationPager from '../../components/FoundationPager.astro';
 import { url } from '../../lib/url';
 
@@ -152,83 +151,33 @@ const description =
     </details>
   </section>
 
-  <h2>Why mixing layers breaks things</h2>
-
-  <ul>
-    <li>
-      A naming convention written in the <strong>Session</strong> layer is
-      gone the moment the session ends. Put it in <strong>Project</strong> and
-      every future agent inherits it.
-    </li>
-    <li>
-      A timezone assumption baked into <strong>Project</strong> ("the server
-      is UTC") is wrong for the user running locally in CET. Put it in
-      <strong>Session</strong> so the agent asks instead.
-    </li>
-    <li>
-      Product docs in the <strong>System</strong> layer waste tokens on every
-      call and push real instructions out of the model's immediate attention.
-      Reference them from the <strong>Codebase</strong> layer; load on demand.
-    </li>
-    <li>
-      Database credentials in <strong>Project</strong> get committed to git.
-      They belong in <strong>Tooling</strong>, scoped to an MCP server the
-      agent can call but cannot read.
-    </li>
-  </ul>
-
   <h2>The decision tree</h2>
-
-  <p>When you are about to write a rule somewhere, ask:</p>
+  <p>Before writing a rule, ask:</p>
   <ol>
-    <li><strong>Does it apply to every interaction in every repo?</strong> → System.</li>
-    <li><strong>Does it apply to every task in this repo, no matter who is doing it?</strong> → Project.</li>
-    <li><strong>Is it something the agent needs to look up about the actual code?</strong> → Codebase. Do not write it down statically; reference where to find it.</li>
-    <li><strong>Is it only true for the current task or the current user's machine?</strong> → Session.</li>
-    <li><strong>Is it about what the agent is allowed to do or how it talks to other systems?</strong> → Tooling.</li>
+    <li><strong>Every interaction in every repo?</strong> → System.</li>
+    <li><strong>Every task in this repo?</strong> → Project.</li>
+    <li><strong>Something the agent looks up about the code?</strong> → Codebase. Reference, do not inline.</li>
+    <li><strong>True only for this task or this user?</strong> → Session.</li>
+    <li><strong>What the agent is allowed to do?</strong> → Tooling.</li>
   </ol>
-  <p>
-    If a rule fits two layers, it almost always means the rule is too big and
-    should be split.
-  </p>
+  <p>If a rule fits two layers, it is too big. Split it.</p>
 
   <h2>What good looks like</h2>
-
-  <p>
-    A <code>CLAUDE.md</code> (Project layer) that says, in three sentences:
-  </p>
+  <p>A Project-layer file that says, in three sentences:</p>
   <pre><code>We use pnpm, not npm. Tests run with `pnpm test`. Lint with `pnpm lint`.
 For Python tooling see `pyproject.toml`. For deploy steps see `docs/deploy.md`.</code></pre>
-
   <p>
-    That is three sentences. It names the static facts, points to where the
-    dynamic facts live, and names the verification commands. Everything else
-    lives in its own layer.
-  </p>
-  <p>
-    A <code>CLAUDE.md</code> that runs to 800 lines describing the product,
-    customer personas, and every architectural decision ever made has failed.
-    Those belong in dedicated docs that the Codebase layer points to.
+    Static facts named. Dynamic facts pointed to. Verification commands
+    spelled out. Everything else in its own layer.
   </p>
 
-  <Callout label="In practice" tone="ember">
-    <p>
-      <a href={url('commands/init/')}><code>init</code></a> and
-      <a href={url('commands/document/')}><code>document</code></a> set up the
-      Project layer.
-      <a href={url('commands/scope/')}><code>scope</code></a> subdivides it
-      where directories diverge.
-      <a href={url('commands/mcp/')}><code>mcp</code></a> sets up the Tooling
-      layer.
-      <a href={url('commands/audit/')}><code>audit</code></a> scores every
-      layer independently.
-    </p>
-  </Callout>
-
-  <p>
-    Source: <a href={url('blueprint/#five-layer')}>2026 Context Engineering
-    Blueprint: The Five-Layer Context Stack</a>.
-  </p>
+  <h2>What to do with this</h2>
+  <ul>
+    <li><a href={url('commands/init/')}><code>init</code></a> and <a href={url('commands/document/')}><code>document</code></a> set up the Project layer.</li>
+    <li><a href={url('commands/scope/')}><code>scope</code></a> subdivides it where directories diverge.</li>
+    <li><a href={url('commands/mcp/')}><code>mcp</code></a> sets up the Tooling layer.</li>
+    <li><a href={url('commands/audit/')}><code>audit</code></a> scores every layer independently.</li>
+  </ul>
 
   <FoundationPager slug="five-layer-stack" />
 

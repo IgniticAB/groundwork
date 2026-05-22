@@ -6,182 +6,54 @@ import { url } from '../../lib/url';
 
 const title = 'verify';
 const description =
-  'Bake test, lint, and typecheck commands into context so the agent self-corrects. Pre-commit hook keeps the context honest as the code drifts. The single highest-leverage move in this skill.';
+  'Bake test, lint, and typecheck commands into context so the agent self-corrects. The single highest-leverage move in this skill.';
 ---
 
 <Doc title={title} description={description} section="commands">
   <p class="doc-lede">
-    If the agent does not have verification commands, <em>you</em> become the
-    verification step. That is slow, unreliable, and the root cause of "AI is
-    wasting my time". <code>verify</code> makes verification first-class: every
-    context file names the commands, a pre-commit hook keeps them in sync, and
-    the agent stops shipping you broken diffs to review.
+    If the agent does not have verification commands, you become the
+    verification step. That is slow and unreliable. <code>verify</code> moves
+    the commands to the top of every context file, wires a pre-commit hook,
+    and stops the agent from shipping you broken diffs.
   </p>
 
-  <h2>Why this command exists</h2>
-  <p>
-    The single biggest difference between teams who feel productive with AI
-    and teams who feel like AI is wasting their time is whether the agent has
-    rock-solid verification. With it, the agent can iterate locally until
-    tests pass; you only review the design. Without it, you are correcting
-    typos and missing imports for an hour.
-  </p>
-  <p>
-    The trick is not the commands. The trick is making them <em>visible</em> to
-    the agent in the right place. Buried in <code>package.json</code> they are
-    technically discoverable; named at the top of <code>CLAUDE.md</code> they
-    are inevitable. <code>verify</code> moves them to the top, splits them
-    into "fast" (typecheck + lint) and "full" (tests + build), and wires a
-    pre-commit hook that fails the commit if <code>CLAUDE.md</code> drifts
-    from the code it describes.
-  </p>
-
-  <Callout label="Read first" tone="ember">
-    <p>
-      Verification-driven logic is the fourth
-      <a href={url('foundation/cognitive-debt/')}>cognitive debt repayment
-      practice</a> and the
-      <a href={url('foundation/anti-patterns/')}>last anti-pattern</a>
-      Groundwork rejects (#10, verification as an afterthought). The
-      <a href={url('blueprint/#good-practices')}>2026 Blueprint</a> lists it
-      among the practices teams must embrace.
-    </p>
-  </Callout>
-
-  <h2>When to reach for it</h2>
-  <p>
-    Every repo. Every time. This is the single highest-leverage move in this
-    skill. If you only run one command after <code>init</code>, run this one.
-  </p>
-  <p>Specific triggers:</p>
+  <h2>When to use it</h2>
+  <p>Every repo, every time. If you only run one command after <code>init</code>, run this one.</p>
   <ul>
-    <li>You just ran <code>init</code> or <code>document</code>. Run <code>verify</code> next.</li>
+    <li>Right after <code>init</code> or <code>document</code>.</li>
     <li>Test framework changed.</li>
     <li>New CI pipeline.</li>
-    <li>
-      <a href={url('commands/audit/')}><code>audit</code></a> flagged "missing
-      verification".
-    </li>
-    <li>Pre-commit hook drifted (it happens).</li>
+    <li><a href={url('commands/audit/')}><code>audit</code></a> flagged "missing verification".</li>
   </ul>
 
   <h2>What it produces</h2>
   <ul>
-    <li>
-      Updates to <code>AGENTS.md</code> (and any two-file <code>CLAUDE.md</code>)
-      with a Verification section near the top. The per-harness pointer files
-      (<code>.cursor/rules/main.mdc</code>,
-      <code>.github/copilot-instructions.md</code>,
-      <code>.windsurf/rules/main.md</code>) keep the fast command up to date
-      in their non-negotiables block.
-    </li>
-    <li>
-      <code>.context/hooks/check-context.sh</code>, a pre-commit hook script
-      tailored to your stack.
-    </li>
-    <li>
-      Registration with your existing hook runner (husky / pre-commit /
-      lefthook) if one is detected. Otherwise, the one-line install
-      instruction. Suggest, do not install silently.
-    </li>
-    <li>
-      The Groundwork detector wired in as a pre-commit step and as a CI job
-      (<code>.github/workflows/context-check.yml</code> if you use GitHub
-      Actions).
-    </li>
-    <li>
-      A short test run of every verification command so you know the baseline
-      state.
-    </li>
+    <li>Verification section near the top of <code>AGENTS.md</code> (and two-file <code>CLAUDE.md</code>). Fast command in the per-harness pointer files.</li>
+    <li><code>.context/hooks/check-context.sh</code>: pre-commit hook for repo-specific drift.</li>
+    <li>Hook-runner registration (husky / pre-commit / lefthook) if one is detected. Suggested, not silently installed.</li>
+    <li>The detector wired into pre-commit and CI (<code>.github/workflows/context-check.yml</code> if you use Actions).</li>
+    <li>A test run of every verification command, so you know the baseline.</li>
   </ul>
 
   <h2>How it works</h2>
   <ol>
-    <li>
-      <strong>Detect verification commands.</strong> Reads package manifests
-      and build configs to find <code>test</code>, <code>lint</code>,
-      <code>typecheck</code>, <code>build</code>, <code>format</code>.
-    </li>
-    <li>
-      <strong>Ask which commands are part of the loop.</strong> Detected
-      commands are preselected. You adjust. Also asks for the "fast" subset
-      (run after every change) vs the "full" set (run before declaring done).
-    </li>
-    <li>
-      <strong>Run each command once.</strong> Confirms it actually works.
-      Captures pass / fail. If something is failing, you decide: skip, fix
-      now, or include with a "known failing" note.
-    </li>
-    <li>
-      <strong>Update the per-harness files.</strong> The Verification section
-      goes near the top of every file. The agent should not have to scroll.
-    </li>
-    <li>
-      <strong>Wire in the detector.</strong>
-      <code>npx @ignitic/groundwork detect --fail-on P0</code> in the
-      pre-commit hook and in CI. Ten deterministic rules. No LLM.
-    </li>
-    <li>
-      <strong>Install the local drift hook.</strong> Checks repo-specific
-      cross-file invariants: did <code>package.json</code> change but
-      <code>AGENTS.md</code> still name the old package manager? Did a
-      multi-file commit ship without an ADR? Did a staged ADR forget to
-      declare its Status?
-    </li>
-    <li>
-      <strong>Register the hook</strong> with your hook runner if one exists.
-      Otherwise tell you the one-line install command.
-    </li>
+    <li><strong>Detect.</strong> Reads manifests for <code>test</code>, <code>lint</code>, <code>typecheck</code>, <code>build</code>, <code>format</code>.</li>
+    <li><strong>Ask.</strong> Detected commands preselected. You adjust. Pick the fast subset (every change) vs the full set (before done).</li>
+    <li><strong>Run each command once.</strong> Captures pass / fail. If something is failing, you choose: skip, fix now, or include with a "known failing" note.</li>
+    <li><strong>Update the files.</strong> Verification section near the top of each.</li>
+    <li><strong>Wire the detector.</strong> <code>npx @ignitic/groundwork detect --fail-on P0</code> in pre-commit and CI.</li>
+    <li><strong>Install the local drift hook.</strong> Catches package-manager drift against <code>AGENTS.md</code>, missing ADRs on multi-file commits, ADRs without a Status.</li>
+    <li><strong>Register</strong> with your hook runner, or tell you the one-line install.</li>
   </ol>
 
   <Callout label="Fast vs full" tone="mute">
     <p>
       The split matters. If the only option is "run the full suite", agents
-      run it once, then never again. Give them a fast loop they can hit after
-      every meaningful step, and a full loop they hit before declaring done.
-      Most projects: fast = typecheck + lint, full = all four.
+      run it once, then never again. Give them a fast loop after every
+      change, a full loop before done. Most projects: fast = typecheck +
+      lint, full = all four.
     </p>
   </Callout>
-
-  <h2>Failure modes the command guards against</h2>
-  <ul>
-    <li>
-      <strong>Listing commands that do not work.</strong> Run them. If a
-      command does not work in this repo, do not write it into context.
-    </li>
-    <li>
-      <strong>Hook that always passes.</strong> Pointless. Remove or make it
-      actually check something.
-    </li>
-    <li>
-      <strong>Hook that fails on legitimate changes.</strong> Worse than no
-      hook. Test on a sample change before declaring done.
-    </li>
-    <li>
-      <strong>No fast / full split.</strong> Agents will run the full suite
-      once and then never again. Give them a fast loop.
-    </li>
-  </ul>
-
-  <h2>Related ideas</h2>
-  <ul>
-    <li>
-      <a href={url('foundation/cognitive-debt/')}>Cognitive debt</a>.
-      Verification-first is the fourth repayment practice.
-    </li>
-    <li>
-      <a href={url('foundation/anti-patterns/')}>Anti-patterns</a> #10:
-      verification as an afterthought.
-    </li>
-    <li>
-      <a href={url('foundation/contextops-lifecycle/')}>ContextOps lifecycle</a>.
-      Maintain stage. Hooks and CI checks live here.
-    </li>
-    <li>
-      <a href={url('blueprint/#good-practices')}>2026 Blueprint:
-      verification-driven logic</a>
-    </li>
-  </ul>
 
   <CommandPager slug="verify" />
 </Doc>
