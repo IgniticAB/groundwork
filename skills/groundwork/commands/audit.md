@@ -191,16 +191,24 @@ The CLI's `agents-md-duplication` rule catches the common patterns (plan-mode tr
 
 ### Step 6. Recommended next commands
 
-Pick the two or three commands from this skill that, if run, would address the highest-priority findings. Common combos:
+Two passes. First pick the **bootstrap** command, exactly one. Then layer **additive** commands that address remaining findings.
 
-- No context files at all → `init`.
-- Has CLAUDE.md but stale → `document`.
-- CLAUDE.md is good but no verification → `verify`.
-- Multiple stacks in one repo with rules firing everywhere → `scope`.
-- About to expose the agent to production systems → `mcp`.
-- Several recent big decisions undocumented → `adr` for each.
+**Pass 1: bootstrap. Pick exactly one.** The decision is deterministic, based on file presence (using the same signal `init`'s Step 1 safety check uses):
 
-Limit to the top 3. Do not list six.
+- **None** of these files exist: `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.windsurf/rules/`, `.claude/rules/`, `docs/agents/`, `docs/decisions/` → recommend [`init`](init.md).
+- **Any** of those files exists → recommend [`document`](document.md). Never recommend `init` in this case. `init` will refuse to run and tell the user to use `document` instead; recommending it wastes a turn.
+
+`init` and `document` are mutually exclusive. Never recommend both.
+
+**Pass 2: additive. Pick up to two.** These layer on top of whichever bootstrap command Pass 1 picked.
+
+- Verification is missing or stale → [`verify`](verify.md).
+- Multiple stacks in one repo with rules firing in the wrong places → [`scope`](scope.md).
+- About to expose the agent to production systems → [`mcp`](mcp.md).
+- Several recent decision-shaped merges without ADRs → [`adr`](adr.md) for each (cap the ADR recommendations at 3).
+- Fresh agent or teammate joining a noisy area → [`onboard`](onboard.md).
+
+Total cap: 3 commands. One from Pass 1, up to two from Pass 2.
 
 ### Step 7. Report
 
