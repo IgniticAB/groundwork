@@ -60,6 +60,16 @@ For each existing file, the merge rules are:
 
 If the existing file had a rule restated in two sections, delete the lower-priority instance and note the cleanup in the chat summary. The CLI's `agents-md-duplication` rule will catch any that slip through.
 
+**Anchored-rule sweep.** After the anti-duplication pass, walk the Style section. Each rule must be behaviourally anchored: a verb plus a specific technology, command, or pattern. Flag vague rules for the user with a proposed anchored rewrite; do not silently rewrite them. The bar matches the one in `init`:
+
+| Anchored (keep) | Vague (rewrite or drop) |
+| --- | --- |
+| "Wrap external API calls in try/catch; log via `Logger`." | "Write robust error handling." |
+| "Tailwind utilities only; conditional classes via `cn()`." | "Use clean styling patterns." |
+| "Throw `NotFoundError` for missing entities; never return null." | "Handle errors appropriately." |
+
+Three options per flagged rule: **anchor** (the user supplies the verb + tool), **drop** (the rule was aspirational; remove it), or **keep as-is** (the user accepts the vagueness; the CLI will continue to flag it in audits). Surface the choice; do not decide for the user. Note each flagged rule in the chat summary.
+
 Example:
 
 ```markdown

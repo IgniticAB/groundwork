@@ -5,7 +5,7 @@ import { url } from '../lib/url';
 
 const title = 'CLI';
 const description =
-  'A deterministic detector for context engineering anti-patterns. Twelve rules, no LLM, JSON output. The thing you wire into CI so context drift never ships.';
+  'A deterministic detector for context engineering anti-patterns. Fourteen rules, no LLM, JSON output. The thing you wire into CI so context drift never ships.';
 ---
 
 <Base title={title} description={description}>
@@ -13,7 +13,7 @@ const description =
     <h1>The Groundwork CLI</h1>
     <p class="lede">
       A deterministic detector for context-engineering anti-patterns. No LLM.
-      Twelve rules, JSON output, milliseconds. The thing you wire into CI so
+      Fourteen rules, JSON output, milliseconds. The thing you wire into CI so
       drift never ships.
     </p>
 
@@ -47,11 +47,12 @@ npx @ignitic/groundwork list-rules</code></pre>
       </tbody>
     </table>
 
-    <h2>The twelve rules</h2>
+    <h2>The fourteen rules</h2>
     <table>
       <thead><tr><th>Rule</th><th>Severity</th><th>What it catches</th></tr></thead>
       <tbody>
         <tr><td><code>stale-claude-md</code></td><td>P0</td><td><code>CLAUDE.md</code> / <code>AGENTS.md</code> names a package manager or framework not in <code>package.json</code>.</td></tr>
+        <tr><td><code>verification-command-missing</code></td><td>P0</td><td>The Verification section names a command (<code>pnpm test</code>, <code>make build</code>) that does not resolve to a real script in <code>package.json</code> / <code>Makefile</code> / <code>pyproject.toml</code> / <code>Cargo.toml</code> / <code>go.mod</code>.</td></tr>
         <tr><td><code>mcp-literal-credentials</code></td><td>P0</td><td>MCP config contains literal credentials instead of env var references.</td></tr>
         <tr><td><code>placeholder-comments</code></td><td>P0</td><td><code>TODO: implement</code>, <code>[fill this in]</code>, <code>not implemented</code> in source.</td></tr>
         <tr><td><code>secrets-regex</code></td><td>P0</td><td>AWS, GitHub, OpenAI, Anthropic, Slack, PEM, JWT, Google keys in committed files.</td></tr>
@@ -59,6 +60,7 @@ npx @ignitic/groundwork list-rules</code></pre>
         <tr><td><code>missing-verification</code></td><td>P1</td><td>Per-harness file has no Verification section.</td></tr>
         <tr><td><code>agents-claude-sync</code></td><td>P1</td><td><code>AGENTS.md</code> and <code>CLAUDE.md</code> diverge as separate files.</td></tr>
         <tr><td><code>agents-md-duplication</code></td><td>P1</td><td>The same rule restated under two H2 sections. Plan-mode triggers belong only in Boundaries → Ask first; verification belongs only in Non-negotiables.</td></tr>
+        <tr><td><code>agents-md-vague-rules</code></td><td>P1</td><td>A Style rule uses vague phrasing ("write clean code", "use good judgment", "follow best practices") instead of a verb plus a named technology, command, or pattern.</td></tr>
         <tr><td><code>missing-adr-xref</code></td><td>P2</td><td>Decision-shaped statements without an ADR cross-link.</td></tr>
         <tr><td><code>missing-license-header</code></td><td>P2</td><td>Copyleft repo, source files missing SPDX headers.</td></tr>
         <tr><td><code>todo-comments</code></td><td>P2</td><td><code>TODO</code> / <code>FIXME</code> / <code>HACK</code> markers above the noise threshold (25).</td></tr>
@@ -83,7 +85,7 @@ npx @ignitic/groundwork list-rules</code></pre>
     &gt; const token = "ghp_****************dEf"
     fix: Rotate the credential and remove from history (BFG / git-filter-repo).
 
-12 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
+14 rules, 47ms · 2 P0 · 0 P1 · 0 P2</code></pre>
     <p>
       For build gates, pipe with <code>--json</code> into your reporting
       layer. Each finding includes <code>ruleId</code>, <code>severity</code>,

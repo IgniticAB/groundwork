@@ -58,7 +58,18 @@ Read what exists. Do not skip this step; without it the audit is fiction.
 For each of the five layers:
 
 - **System.** Is there a global persona or guardrails file? (For Cowork: user preferences in memory.) Usually nothing in the repo for this; that is fine.
-- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date. Key quality signals for `AGENTS.md`: exists, under 80 lines (soft) / 200 (hard), has Verification + Non-negotiables sections, has three-tier Boundaries, references `docs/agents/` if it's overflowing, **no rule restated across two sections** (plan-mode triggers should only appear under Boundaries → Ask first, not also under Non-negotiables).
+- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date.
+
+  Beyond file structure, score AGENTS.md on **content quality**. Each of the following is a separate signal:
+  - Exists, under 80 lines (soft) / 200 (hard).
+  - Has Verification + Non-negotiables sections; has three-tier Boundaries.
+  - References `docs/agents/` if it is overflowing.
+  - **No rule restated across two sections.** Plan-mode triggers belong only under Boundaries → Ask first; "run fast verification" belongs only under Non-negotiables.
+  - **Every Style rule is behaviourally anchored.** A rule names a verb plus a specific technology, command, or pattern. "Use Vitest; assert on user actions" passes. "Write clean code" fails. The vague-rule failure modes mirror anti-pattern #2 (foundation/anti-patterns.md).
+  - **Every Style rule has a Preferred / Avoid pair or a verification command.** A rule without a concrete example or a way to check it is decorative.
+  - **Every verification command resolves to a real script.** Each command in the Verification section maps to a script in `package.json`, `pyproject.toml`, `Cargo.toml`, or `Makefile`. A command that does not exist is a P0 because the agent will run something that does not work.
+  - **Boundaries → Always and Boundaries → Ask first each have at least one project-specific entry.** The default "plan-mode triggers" bullet under Ask first does not count by itself; if it is the only entry, the team has not done the work to localise.
+  - **`docs/decisions/negative-space.md` exists and has content beyond the template stub.** Empty negative-space is a P2; the file is supposed to capture rejected paths so the agent stops re-suggesting them.
 - **Codebase.** Is there a top-level README that orients an agent? A `docs/architecture.md`? An ADR directory? A glossary? File maps? Are the conventions in the Project layer actually followed in the code?
 - **Session.** Not applicable to a static audit (Session is transient). Note this and move on.
 - **Tooling.** MCP server configuration? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context?
@@ -110,6 +121,17 @@ Walk the anti-patterns from `foundation/anti-patterns.md` and check each one aga
 - **P2**: niceties (negative-space docs are sparse, conventions could be more example-driven).
 
 For each finding, name the specific file or absence. Vague findings ("documentation could be better") are not findings; they are vibes. Reject your own vague findings before they reach the report.
+
+#### Content-quality findings in `AGENTS.md`
+
+Two specific failure modes that the Step 1 content-quality scan surfaces. Each becomes its own finding with quoted evidence; do not collapse them into a generic "Style needs work" line.
+
+- **Vague Style rule.** Any Style entry that lacks a verb plus a named technology, command, or pattern. P1. Quote the offending line verbatim. Propose an anchored rewrite based on the actual code in the repo (e.g. "Write robust error handling" → "Wrap external API calls in try/catch; log via `Logger`; never swallow."). If you cannot infer a rewrite from the repo, ask the user to anchor or drop the rule.
+- **Verification command does not resolve.** The Verification section names `pnpm test` but `package.json` has no `test` script (or `pytest` but `pyproject.toml` has no test config, etc.). P0. Quote the missing command and the file that should have defined it. The fix is either to add the script or to remove the command from AGENTS.md; the agent should not be told to run something that does not exist.
+
+A third, softer signal worth recording:
+
+- **Empty Boundaries tier or stub negative-space.** If Boundaries → Always or Boundaries → Ask first has only the default plan-mode entry, or if `docs/decisions/negative-space.md` is still the template stub, the team has not localised the context to the repo. P2 each. The fix is one round of `document` to populate them.
 
 #### Context Rot check (cross-file consistency)
 

@@ -32,10 +32,11 @@ const description =
   <h2>How it works</h2>
   <ol>
     <li><strong>Map</strong> the repo against each of the five layers. What exists, what is missing.</li>
+    <li><strong>Content-quality scan on <code>AGENTS.md</code>.</strong> Beyond "file exists": every Style rule must be behaviourally anchored (verb plus named technology, command, or pattern); every verification command must resolve to a real script in <code>package.json</code> or equivalent; Boundaries → Always and Ask first must have project-specific entries beyond the default plan-mode triggers; <code>negative-space.md</code> must have content beyond the template stub.</li>
     <li><strong>Score</strong> each layer 0 to 5, with one sentence of evidence per score.</li>
     <li><strong>Conformity check.</strong> Pick a small task, have the agent attempt it in a scratch branch, run verification. If you cannot run it, say so. Never fabricate.</li>
     <li><strong>ADR-coverage scan.</strong> Last 30 days of merges. Decision-shaped commits without an ADR become findings, each linking to <code>groundwork adr from PR</code>.</li>
-    <li><strong>Sort findings.</strong> P0 is "the agent will do the wrong thing right now." Specific filenames only; reject vague findings before they reach the report.</li>
+    <li><strong>Sort findings.</strong> P0 for missing verification commands and stale stack info. P1 for vague Style rules (with quoted line and an anchored rewrite suggested). P2 for empty Boundaries tiers and stub negative-space. Specific filenames only.</li>
     <li><strong>Recommend three commands.</strong> Not six. The highest-leverage moves for the highest-priority findings.</li>
   </ol>
 

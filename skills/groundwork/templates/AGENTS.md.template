@@ -45,8 +45,12 @@ Before declaring a task done:
 
 ## Style
 
-<!-- 3 to 6 critical rules. Each names the exact technology, command, or
-     pattern, with a Preferred / Avoid pair. -->
+<!-- 3 to 6 critical rules. Each names a verb plus a specific technology,
+     command, or pattern, with a Preferred / Avoid pair. Anchored beats
+     vague:
+       ship:  "Throw NotFoundError for missing entities; never return null."
+       drop:  "Handle errors appropriately."
+     If a rule cannot be anchored, drop it rather than ship it. -->
 
 ### <Rule 1>
 ```<lang>

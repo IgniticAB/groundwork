@@ -51,6 +51,7 @@ const description =
     <li><strong>Read the repo deeply.</strong> Last 50 commits and a sample of recent files. Checks whether existing conventions still match the code.</li>
     <li><strong>Ask three questions.</strong> Which detected rules are still correct? Which new patterns should be written in? Anything to mark deprecated?</li>
     <li><strong>Delta-merge.</strong> Correct sections kept verbatim. Drifted sections: new content added with a date, old content moved to a deprecated block with the reason.</li>
+    <li><strong>Anchored-rule sweep.</strong> Walks the Style section. Each rule must name a verb plus a specific technology, command, or pattern. Vague rules ("write robust error handling") get surfaced as anchor / drop / keep choices; the command never silently rewrites them.</li>
     <li><strong>Reconcile across harnesses.</strong> If <code>CLAUDE.md</code> and <code>AGENTS.md</code> disagree, surface the diff. Never pick a winner silently.</li>
     <li><strong>Verify.</strong> Same fail-loudly behaviour as <code>init</code>.</li>
   </ol>

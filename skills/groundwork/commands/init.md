@@ -60,27 +60,66 @@ Use `AskUserQuestion`:
 
 If the user picked `document`, open `commands/document.md` and proceed there. Stop running this command.
 
-### Step 2. Detect stack
+### Step 2. Detect stack and sample the code
 
-Only after Step 1 confirmed this is a fresh init, read the repo for context that frames the upcoming questions:
+Only after Step 1 confirmed this is a fresh init, read the repo for context that frames the upcoming questions.
+
+**Stack detection (manifests and scripts).**
 
 - Look for `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Gemfile`, etc. Identify the primary language(s) and package manager(s).
 - Read scripts (`package.json#scripts`, `Makefile`, `pyproject.toml#tool.poetry.scripts`) to find test, lint, build, run commands.
 - Check for `README.md` and skim it for stack and conventions clues.
 
-Build a short summary of what you found and show it to the user before asking questions. Two or three lines. This proves you read the repo and frames the questions.
+**Code sampling (the missing step in most context tooling).** Pick up to 25 recent source files and read them. Stack-aware:
+
+```
+git log --since="60 days ago" --name-only --diff-filter=AM --pretty=format: \
+  | sort -u | head -100
+```
+
+Filter to source extensions for the detected stack (`.ts`, `.tsx`, `.py`, `.rs`, `.go`, etc.; skip tests, generated files, lockfiles). Read the top 15 to 25. Note the dominant patterns:
+
+- **Component / module shape.** Functional vs class. Default vs named exports. File-per-thing vs barrel.
+- **Error handling.** Throw vs return-null vs Result/Either. Logged or silent.
+- **Import style.** Named vs default vs namespace. Absolute vs relative.
+- **Validation boundaries.** Where Zod / Pydantic / etc. is used.
+- **Test colocation.** Sibling `*.test.ts` vs separate `tests/` directory.
+- **File naming.** kebab-case, camelCase, PascalCase, snake_case.
+- **Comment density and style.** JSDoc, docstrings, none.
+
+For each pattern that is dominant (>70% of sampled files agree), keep a one-line note plus a representative real-file example. These become the candidate style rules in Q3.
+
+If git history is empty or shallow (fresh repo, single commit), skip the sample and tell the user "no source files yet, Style rules will rely on Q3 free text only."
+
+Build a short summary of what you found (stack + 2 to 4 most useful patterns) and show it to the user before asking questions. Four or five lines max. This proves you read the repo and frames the questions.
 
 ### Step 3. Ask
 
-Use AskUserQuestion (or numbered options in prose if unavailable). Five questions, in order:
+Use AskUserQuestion (or numbered options in prose if unavailable). Seven questions, in order. Each is scoped tightly; Q6 and Q7 are skippable in one click.
 
 1. **Which harnesses should I emit files for?** Multi-select. Options: Claude Code, Cursor, Codex / generic, GitHub Copilot, Windsurf. Recommend the ones the user most likely uses given their tooling; do not assume.
 2. **Which verification commands should the agent run?** Show the ones you detected as preselected. Common shapes: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pytest`, `cargo test`, `go test ./...`. Let the user adjust. Separate **fast** (after each change) from **full** (before declaring done).
-3. **What naming / style conventions should I bake in?** Multi-select with sensible defaults: no placeholder comments, plan-mode for >3 file changes, defensive commits before refactors, interface-first for typed languages. Let the user untick what does not apply.
+3. **What style rules should I bake in?** Two parts.
+   - **Part 1: confirm detected patterns.** Show the 3 to 6 candidate Style rules you derived from the Step 2 code sample, each with a real example from a real file. For each, ask: keep / drop / edit. Defaults to "keep." Example presentation:
+
+     > Detected: **functional components only** (15 of 18 components sampled use function-form; class form only in `src/legacy/`).
+     >
+     > Example (`src/components/Card.tsx`):
+     > ```tsx
+     > export function Card({ children }: CardProps) { … }
+     > ```
+     >
+     > Keep / drop / edit?
+
+   - **Part 2: add anything missed.** Free text, short. "Any other rule you want enforced that I did not pick up?" Default empty.
+
+   The four old multi-select defaults (no-placeholder, plan-mode-for->3-files, defensive-commits, interface-first) move to Non-negotiables, not Style; they always apply and do not need confirmation.
 4. **Three-tier boundaries.** Free text, three slots, default empty: **Always** (things the agent does without asking), **Ask first** (things the agent proposes before doing), **Never** (paths the agent must not touch, e.g. `infra/terraform/`, `vendor/`, anything generated).
 5. **Symlink CLAUDE.md to AGENTS.md, or keep two files?** Default symlink (single canonical source; lower drift). Offer the two-file fallback for Windows users or any repo with `git config core.symlinks=false` set. If the user does not know which they want, default to symlink and mention they can switch later.
+6. **Any approaches you have explicitly rejected?** (Skippable.) "Mention 1 to 3 if so. They seed `docs/decisions/negative-space.md` so the agent stops suggesting them. Examples: 'we considered Redux and stayed with Context API', 'we briefly tried tRPC but reverted'." Free text. Default empty (the negative-space file ships as a stub the user can populate later).
+7. **Any code that must not be modified by an agent?** (Skippable.) "Legacy compromises, performance-tuned hot paths, compatibility shims. Naming the path is enough." Free text. If filled, Step 4 adds a Preservation entry to AGENTS.md naming those paths, with a one-line reason if the user provided one. If empty, the standard "Preserved regions" paragraph about CE:PRESERVE markers stays in but no specific paths are listed.
 
-Do not ask more than five. Do not ask things you could have detected from the repo.
+Do not ask more than seven. Do not ask things you could have detected from the repo.
 
 ### Step 4. Emit `AGENTS.md`
 
@@ -91,13 +130,13 @@ Sections to populate (do not deviate from this order):
 - **What this project is** — one paragraph, from the detected stack and README hints.
 - **Stack** — language(s), package manager, runtime/framework, one line each.
 - **Verification** — fast (after every change) and full (before declaring done) commands the user picked.
-- **Non-negotiables** — universal procedural rules, stated **abstractly**, no triggers or path scopes. Default set: "Use plan mode when any Ask-first condition triggers", "No placeholder comments", "Use `<pkg-mgr>` only", "Run the fast verification after every meaningful change". Adjust based on the user's Q3 picks. **Do not list plan-mode triggers here** — those belong in Boundaries → Ask first.
-- **Style** — three to six most critical rules, each with a Preferred / Avoid pair. Pull from Q3 picks; do not invent rules the user did not pick.
+- **Non-negotiables** — universal procedural rules, stated **abstractly**, no triggers or path scopes. Default set (always emitted, no user input needed): "Use plan mode when any Ask-first condition triggers", "No placeholder comments", "Use `<pkg-mgr>` only", "Run the fast verification after every meaningful change". **Do not list plan-mode triggers here** — those belong in Boundaries → Ask first.
+- **Style** — three to six rules drawn from Q3. Each rule built from a Q3 Part 1 confirmed candidate (with the real-file example as the Preferred block) or a Q3 Part 2 free-text answer. Do not invent rules the user did not pick. Each rule must be behaviourally anchored (see contract below); reject vague rules at write time.
 - **Boundaries** — the three-tier slots from Q4, with strict scope per tier:
   - **Always**: path- or area-scoped automatic actions only. **Not** universal rules — those are Non-negotiables.
   - **Ask first**: owns the trigger list. Default first bullet: ">3 files, public APIs, refactors, migrations". Append project-specific triggers from Q4.
   - **Never**: forbidden paths or destructive actions. Default empty if Q4's Never slot was empty.
-- **Preserved regions** — one paragraph explaining the `preserve:start` / `preserve:end` markers.
+- **Preserved regions** — one paragraph explaining the `preserve:start` / `preserve:end` markers. If Q7 named specific paths, add them as a short bulleted list inside this section with the user's reason (or "legacy / do not modernise" as the default reason).
 - **See also** — pointers to `docs/agents/` (the overflow location; mention it even if the directory does not yet exist, so future readers know where to add per-area conventions), `docs/decisions/`, `docs/mcp-policy.md` (only if it exists).
 
 **The non-duplication contract.** Each rule belongs in exactly one section. Before emitting, scan the draft: if the same rule (or near-paraphrase) appears in two sections, delete the one in the lower-priority section. Common offenders:
@@ -110,6 +149,17 @@ Sections to populate (do not deviate from this order):
 | "Forbidden paths" | Boundaries → Never | Non-negotiables |
 
 The CLI rule `agents-md-duplication` will flag the common patterns post-hoc. The init contract is what prevents them at write time.
+
+**The anchored-rule contract.** Every Style rule must be behaviourally anchored: it names a verb plus a specific technology, command, or pattern. Reject vague rules at write time. If the agent cannot anchor a rule, drop it rather than ship it. The bar:
+
+| Anchored (ship) | Vague (drop or rewrite) |
+| --- | --- |
+| "Wrap external API calls in try/catch; log via `Logger`; never swallow." | "Write robust error handling." |
+| "Tailwind utilities only; conditional classes via `cn()`." | "Use clean styling patterns." |
+| "Vitest; assert on user actions; run `pnpm test:coverage` before staging." | "Maintain high test coverage." |
+| "Throw `NotFoundError` for missing entities; never return null." | "Handle errors appropriately." |
+
+Anchored rules carry a verb, a named tool or pattern, and a verification path. Vague rules carry an adjective and hope. Same goes for Boundaries entries: "edit `kubernetes/`" beats "edit infrastructure".
 
 Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, push it into `docs/agents/<area>.md` and reference the new file from `AGENTS.md`'s "See also" instead of inlining. `docs/agents/` is harness-agnostic — any agent can be told to read those files.
 
@@ -154,7 +204,7 @@ If the user declines or did not pick Claude Code, skip. The auto-loading layer i
 Three files, all from templates in `templates/`:
 
 - `docs/decisions/README.md` — copy from `templates/decisions-readme.template.md`. Explains the ADR format and when to write one.
-- `docs/decisions/negative-space.md` — copy from `templates/negative-space.template.md`. Starter file for rejected approaches that do not warrant a full ADR.
+- `docs/decisions/negative-space.md` — copy from `templates/negative-space.template.md`. Starter file for rejected approaches that do not warrant a full ADR. If Q6 named any rejected approaches, append one short bullet per answer to this file before saving so it is not a stub from day one (one to three sentences per bullet; the user can elaborate later).
 - `docs/decisions/0001-record-architecture-decisions.md` — copy from `templates/adr-0001-record-architecture-decisions.md`. The meta-ADR ("we use ADRs"). Substitute the date and the deciders.
 
 Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` command.

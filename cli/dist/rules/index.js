@@ -10,6 +10,8 @@ import { todoComments } from './todo-comments.js';
 import { agentsClaudeSync } from './agents-claude-sync.js';
 import { oversizedCursorRule } from './oversized-cursor-rule.js';
 import { agentsMdDuplication } from './agents-md-duplication.js';
+import { agentsMdVagueRules } from './agents-md-vague-rules.js';
+import { verificationCommandMissing } from './verification-command-missing.js';
 export const rules = [
     staleClaudeMd,
     missingAdrXref,
@@ -23,5 +25,7 @@ export const rules = [
     agentsClaudeSync,
     oversizedCursorRule,
     agentsMdDuplication,
+    agentsMdVagueRules,
+    verificationCommandMissing,
 ];
 //# sourceMappingURL=index.js.map
