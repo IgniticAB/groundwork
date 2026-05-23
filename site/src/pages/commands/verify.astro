@@ -9,7 +9,17 @@ const description =
   'Bake test, lint, and typecheck commands into context so the agent self-corrects. The single highest-leverage move in this skill.';
 ---
 
-<Doc title={title} description={description} section="commands">
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/verify.md"
+  templateFiles={[
+    'skills/groundwork/templates/hook.sh.template',
+    'skills/groundwork/templates/husky-pre-commit.template',
+    'skills/groundwork/templates/context-check.yml.template',
+  ]}
+>
   <p class="doc-lede">
     If the agent does not have verification commands, you become the
     verification step. That is slow and unreliable. <code>verify</code> moves

@@ -8,7 +8,13 @@ const description =
   'A task-specific orientation brief for a fresh agent or engineer. Under 600 words. Only what applies to the task in front of them.';
 ---
 
-<Doc title={title} description={description} section="commands">
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/onboard.md"
+  templateFiles={['skills/groundwork/templates/briefing.template.md']}
+>
   <p class="doc-lede">
     Every other command produces context; this one consumes it and emits a
     task-specific subset. A fresh agent or teammate gets exactly the slice

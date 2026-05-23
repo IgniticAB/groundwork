@@ -8,7 +8,16 @@ const description =
   'Architecture Decision Records with a real "Considered alternatives" section and a "Reconsider if" trigger.';
 ---
 
-<Doc title={title} description={description} section="commands">
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/adr.md"
+  templateFiles={[
+    'skills/groundwork/templates/adr.template.md',
+    'skills/groundwork/templates/negative-space.template.md',
+  ]}
+>
   <p class="doc-lede">
     Capture the why behind a choice so future agents and humans do not
     re-derive it. Every ADR includes the alternatives you rejected and a

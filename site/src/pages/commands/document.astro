@@ -9,7 +9,13 @@ const description =
   'Delta-refresh stale context files without nuking history. Old rules deprecated with a date and reason. Never silently rewrites.';
 ---
 
-<Doc title={title} description={description} section="commands">
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/document.md"
+  templateFiles={['skills/groundwork/templates/']}
+>
   <p class="doc-lede">
     <a href={url('commands/init/')}><code>init</code></a> is for repos with
     nothing. <code>document</code> is for repos with something stale. It

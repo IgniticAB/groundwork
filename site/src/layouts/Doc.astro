@@ -9,10 +9,23 @@ interface Props {
   description: string;
   /** "commands" | "foundation": controls which sidebar list is active. */
   section: 'commands' | 'foundation';
+  /** Repo-relative path to the skill source file. Renders a GitHub link under the H1 when set. */
+  sourceFile?: string;
+  /** Repo-relative paths to related template files or directories (trailing `/` for a dir). */
+  templateFiles?: string[];
 }
 
-const { title, description, section } = Astro.props;
+const { title, description, section, sourceFile, templateFiles } = Astro.props;
 const here = Astro.url.pathname;
+
+const REPO_BASE = 'https://github.com/IgniticAB/groundwork';
+
+function ghHref(path: string): string {
+  // Directory paths end with "/" and use GitHub's tree view; files use blob view.
+  const kind = path.endsWith('/') ? 'tree' : 'blob';
+  const trimmed = path.endsWith('/') ? path.slice(0, -1) : path;
+  return `${REPO_BASE}/${kind}/main/${trimmed}`;
+}
 
 const sidebar =
   section === 'commands'
@@ -63,6 +76,22 @@ const sidebar =
 
     <article class="doc-article">
       <h1 class="doc-title">{title}</h1>
+      {(sourceFile || (templateFiles && templateFiles.length > 0)) && (
+        <div class="doc-source">
+          {sourceFile && (
+            <a class="doc-chip doc-chip--source" href={ghHref(sourceFile)} target="_blank" rel="noopener">
+              <span class="doc-chip-path">{sourceFile}</span>
+              <span class="doc-chip-ext" aria-hidden="true">↗</span>
+            </a>
+          )}
+          {templateFiles?.map((path) => (
+            <a class="doc-chip doc-chip--template" href={ghHref(path)} target="_blank" rel="noopener">
+              <span class="doc-chip-path">{path}</span>
+              <span class="doc-chip-ext" aria-hidden="true">↗</span>
+            </a>
+          ))}
+        </div>
+      )}
       <slot />
     </article>
   </div>
@@ -135,7 +164,48 @@ const sidebar =
       line-height: 1.6;
       color: var(--ink-soft);
     }
-    .doc-title { margin-bottom: 1rem; }
+    .doc-title { margin-bottom: 0.6rem; }
+
+    .doc-source {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0 0 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+    }
+    .doc-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      transition: color 180ms var(--ease-out-quart),
+                  border-color 180ms var(--ease-out-quart),
+                  background 180ms var(--ease-out-quart);
+    }
+    .doc-chip--source .doc-chip-path { font-weight: 600; }
+    .doc-chip--template {
+      background: var(--bg-soft);
+    }
+    .doc-chip:hover {
+      color: var(--ember-ink);
+      border-color: var(--ember);
+      background: var(--ember-soft);
+    }
+    .doc-chip-ext {
+      font-size: 0.85em;
+      opacity: 0.7;
+      transition: transform 180ms var(--ease-out-quart);
+    }
+    .doc-chip:hover .doc-chip-ext {
+      transform: translate(1px, -1px);
+      opacity: 1;
+    }
 
     @media (max-width: 880px) {
       .doc {

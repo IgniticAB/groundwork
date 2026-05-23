@@ -8,7 +8,16 @@ const description =
   'Design an MCP setup with least-privilege, human-in-the-loop, and centralised auditing. The policy an auditor would accept.';
 ---
 
-<Doc title={title} description={description} section="commands">
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/mcp.md"
+  templateFiles={[
+    'skills/groundwork/templates/mcp-config.template.json',
+    'skills/groundwork/templates/mcp-policy.template.md',
+  ]}
+>
   <p class="doc-lede">
     Before an agent gets write access to a real system, design the access
     pattern. The Model Context Protocol is the biggest attack surface in an
