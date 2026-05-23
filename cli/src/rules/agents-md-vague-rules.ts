@@ -115,10 +115,15 @@ export const agentsMdVagueRules: Rule = {
   defaultSeverity: 'P1',
   async run(ctx) {
     const findings: Finding[] = [];
+    const seenBodies = new Set<string>();
 
     for (const target of TARGETS) {
       const body = await ctx.readFile(target);
       if (!body) continue;
+      // Dedupe symlinked CLAUDE.md→AGENTS.md so findings fire once, not twice.
+      if (seenBodies.has(body)) continue;
+      seenBodies.add(body);
+
       const sections = parseSections(body);
       const styleSection = sections.find((s) => isStyle(s.heading));
       if (!styleSection) continue;

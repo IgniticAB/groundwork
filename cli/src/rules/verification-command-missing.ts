@@ -158,9 +158,14 @@ export const verificationCommandMissing: Rule = {
       return exists;
     };
 
+    const seenBodies = new Set<string>();
+
     for (const target of TARGETS) {
       const body = await ctx.readFile(target);
       if (!body) continue;
+      // Dedupe symlinked CLAUDE.md→AGENTS.md so findings fire once, not twice.
+      if (seenBodies.has(body)) continue;
+      seenBodies.add(body);
       const sections = parseSections(body);
       const verification = sections.find((s) => isVerification(s.heading));
       if (!verification) continue;
