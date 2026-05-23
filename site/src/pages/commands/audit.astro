@@ -27,6 +27,7 @@ const description =
   <ul>
     <li><code>docs/context-audit-&lt;YYYY-MM-DD&gt;.md</code>: the full audit file.</li>
     <li>A 10 to 15-line chat summary: overall score, per-layer scores, top three findings, recommended next commands.</li>
+    <li><em>Optionally</em> <code>docs/context-audit-&lt;YYYY-MM-DD&gt;.html</code>: an interactive report (see below).</li>
   </ul>
 
   <h2>How it works</h2>
@@ -38,7 +39,28 @@ const description =
     <li><strong>ADR-coverage scan.</strong> Last 30 days of merges. Decision-shaped commits without an ADR become findings, each linking to <code>groundwork adr from PR</code>.</li>
     <li><strong>Sort findings.</strong> P0 for missing verification commands and stale stack info. P1 for vague Style rules (with quoted line and an anchored rewrite suggested). P2 for empty Boundaries tiers and stub negative-space. Specific filenames only.</li>
     <li><strong>Recommend three commands.</strong> Not six. The highest-leverage moves for the highest-priority findings.</li>
+    <li><strong>Optional HTML report.</strong> The command asks once whether to emit an interactive HTML version. If yes, writes a self-contained file you open in a browser to walk the findings and ship a remediation plan.</li>
   </ol>
+
+  <h2>The interactive HTML report</h2>
+  <p>
+    Opt-in. Same findings, different surface: a self-contained
+    <code>docs/context-audit-&lt;date&gt;.html</code> file you open in any
+    browser. No server, no dependencies, no external assets.
+  </p>
+  <ul>
+    <li>Hero with overall score and per-layer scores (Project weighted 2×).</li>
+    <li>Findings grouped P0 → P2, varied density by severity. Each row has inline <strong>Fix now</strong> / <strong>Defer</strong> / <strong>Dismiss</strong> controls; picking one reveals the right input below (an anchored rewrite for vague rules, a stub for missing scripts, a free-text reason for dismissals).</li>
+    <li>A live remediation panel that accumulates your decisions. Click <strong>Generate remediation plan</strong> and your browser downloads <code>audit-remediation-&lt;date&gt;.md</code>.</li>
+    <li>Light mode by default; dark mode toggle.</li>
+  </ul>
+  <p>
+    The downloaded remediation file is the input to
+    <a href={url('commands/apply/')}><code>apply</code></a>: that command
+    reads the plan, validates the schema, dry-runs the changes, applies on
+    confirmation, runs the fast verification, and offers rollback if it
+    fails. Audit decides, you decide, apply enacts. Closed loop.
+  </p>
 
   <CommandPager slug="audit" />
 </Doc>
