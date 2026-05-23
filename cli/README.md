@@ -36,12 +36,13 @@ This is a thin wrapper around `npx skills update groundwork` from the [vercel-la
 
 ## What it detects
 
-Fourteen rules, covering the highest-value mechanical checks:
+Eighteen rules, covering the highest-value mechanical checks:
 
 | Rule | Severity | What it catches |
 | --- | --- | --- |
 | `stale-claude-md` | P0 | CLAUDE.md / AGENTS.md names a package manager or framework not in package.json |
 | `verification-command-missing` | P0 | Verification section names a command (`pnpm test`, `make build`) that does not resolve to a real script |
+| `skill-missing-frontmatter` | P0 | A SKILL.md is missing YAML frontmatter, or `name` / `description` is missing or empty |
 | `missing-adr-xref` | P2 | Decision-like statements with no ADR cross-link |
 | `mcp-literal-credentials` | P0 | MCP config contains literal credentials instead of env var references |
 | `oversized-claude-md` | P1 | CLAUDE.md / AGENTS.md over 200 lines (prompt bloat) |
@@ -54,6 +55,9 @@ Fourteen rules, covering the highest-value mechanical checks:
 | `oversized-cursor-rule` | P2 | `.cursor/rules/*.mdc` exceeds word budget for its trigger level (P1 for `alwaysApply: true`) |
 | `agents-md-duplication` | P1 | Same rule restated under two H2 sections in AGENTS.md / CLAUDE.md (e.g. plan-mode triggers in both Non-negotiables and Boundaries → Ask first) |
 | `agents-md-vague-rules` | P1 | A Style rule uses vague phrasing ("write clean code", "use good judgment", "follow best practices") instead of a verb plus a named technology, command, or pattern |
+| `skill-oversized` | P1 | A SKILL.md entry point over 200 prose lines (code excluded). Move detail into sub-files referenced from SKILL.md |
+| `skill-broken-link` | P1 | A relative-path link in SKILL.md does not resolve to a real file or directory |
+| `skill-vague-description` | P2 | A skill's frontmatter description uses hedge phrasing ("various", "helps with", "useful for") |
 
 Severity:
 - **P0** — fix before next agent session. The agent will actively do the wrong thing.
@@ -74,7 +78,7 @@ P0 2 findings
     > const token = "ghp_****************dEf"
     fix: Rotate the credential and remove from history (BFG / git-filter-repo).
 
-14 rules, 47ms — 2 P0 · 0 P1 · 0 P2
+18 rules, 47ms — 2 P0 · 0 P1 · 0 P2
 ```
 
 JSON (for CI):
