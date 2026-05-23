@@ -28,7 +28,7 @@ These seven files are the shared vocabulary every command uses. Read them once a
 - `foundation/harness-reference.md` — Where files live for Claude Code, Cursor, Codex, Copilot, Windsurf, Cowork. Naming, scoping, frontmatter formats, numeric-prefix convention for `.claude/rules/`.
 - `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
 
-## The nine commands
+## The ten commands
 
 Each command lives in `commands/<name>.md`. Open the file when invoked; do not try to remember the procedure from this menu.
 
@@ -43,8 +43,9 @@ Each command lives in `commands/<name>.md`. Open the file when invoked; do not t
 | `mcp` | Design an MCP server configuration with least-privilege and HITL boundaries | Connecting an agent to a real system (DB, deploy, API) |
 | `verify` | Bake test / lint / typecheck commands into context so the agent self-corrects | Every repo, every time. The single highest leverage move. |
 | `onboard` | Produce a task-specific orientation brief for a fresh agent or engineer | Starting a new session, handing off work, compacting a noisy session |
+| `apply` | Apply a remediation plan produced by `audit --html` | Right after an interactive audit, to enact the chosen fixes |
 
-If the user just says `groundwork` with no command, list the nine options and ask which one they want, or what they are trying to accomplish if they cannot name it.
+If the user just says `groundwork` with no command, list the ten options and ask which one they want, or what they are trying to accomplish if they cannot name it.
 
 ## How to invoke a command
 

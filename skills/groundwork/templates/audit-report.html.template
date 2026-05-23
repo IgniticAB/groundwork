@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Audit · {{PROJECT_NAME}}</title>
+  <style>
+    /* tokens (OKLCH, warm tint, no #fff or #000) */
+    :root {
+      --bg:          oklch(0.985 0.005 80);
+      --bg-soft:     oklch(0.96 0.006 80);
+      --ink:         oklch(0.20 0.01 70);
+      --ink-soft:    oklch(0.34 0.01 70);
+      --muted:       oklch(0.56 0.01 70);
+      --rule:        oklch(0.88 0.005 80);
+      --rule-soft:   oklch(0.93 0.005 80);
+      --code-bg:     oklch(0.93 0.005 80);
+
+      --ember:       oklch(0.70 0.16 60);
+      --ember-ink:   oklch(0.50 0.15 55);
+      --ember-soft:  oklch(0.93 0.06 75);
+
+      --p0-ink:      oklch(0.45 0.16 25);
+      --p0-soft:     oklch(0.93 0.04 25);
+      --p1-ink:      var(--ember-ink);
+      --p1-soft:     var(--ember-soft);
+      --p2-ink:      var(--muted);
+      --p2-soft:     var(--bg-soft);
+
+      --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+      --display: 'Bricolage Grotesque', 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --sans:    var(--display);
+      --mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+      --gutter: clamp(1rem, 3vw, 2.5rem);
+      --max:    1280px;
+    }
+    [data-theme="dark"] {
+      --bg:          oklch(0.18 0.01 70);
+      --bg-soft:     oklch(0.22 0.01 70);
+      --ink:         oklch(0.95 0.02 70);
+      --ink-soft:    oklch(0.83 0.02 70);
+      --muted:       oklch(0.62 0.02 70);
+      --rule:        oklch(0.30 0.01 70);
+      --rule-soft:   oklch(0.26 0.01 70);
+      --code-bg:     oklch(0.26 0.01 70);
+
+      --ember-soft:  oklch(0.35 0.10 75);
+      --p0-soft:     oklch(0.32 0.10 25);
+      --p1-soft:     var(--ember-soft);
+      --p2-soft:     var(--bg-soft);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* layout */
+    .report {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(2rem, 4vw, 3.5rem) var(--gutter) 5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: clamp(1.5rem, 3vw, 2.75rem);
+      margin-top: clamp(2rem, 4vw, 3rem);
+    }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .remediation { order: 2; position: static !important; }
+    }
+
+    /* hero */
+    .hero { display: grid; gap: 0.5rem; max-width: 56rem; }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+    .hero-meta .kicker {
+      color: var(--ember-ink);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+    .hero-meta .date { font-family: var(--mono); font-size: 0.82rem; }
+    .hero-meta .theme-toggle {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 0.25rem 0.7rem;
+      font: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: color 180ms var(--ease-out-quart), border-color 180ms var(--ease-out-quart);
+    }
+    .hero-meta .theme-toggle:hover { color: var(--ember-ink); border-color: var(--ember); }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      align-items: end;
+      margin-top: 0.5rem;
+    }
+    .score {
+      font-family: var(--display);
+      font-size: clamp(5rem, 13vw, 9rem);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      color: var(--ember);
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .score-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 24ch;
+      margin: 0;
+    }
+    .score-label strong { color: var(--ink); font-weight: 600; }
+
+    .layers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: clamp(1.5rem, 3vw, 2rem);
+      max-width: 60rem;
+    }
+    .layer {
+      padding: 0.85rem 1rem 0.95rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg);
+      display: grid;
+      gap: 0.2rem;
+    }
+    .layer.is-weighted {
+      border-color: var(--ember);
+      background: var(--ember-soft);
+    }
+    .layer-name {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .layer-score {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .layer-evidence {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+    @media (max-width: 720px) {
+      .layers { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* findings */
+    .findings-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+    .findings-header h2 {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: var(--ink);
+    }
+    .findings-header .count {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .severity-group {
+      margin-bottom: 2.25rem;
+    }
+    .severity-group-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.7rem;
+      margin: 1.5rem 0 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    .severity-group-head h3 {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 650;
+      margin: 0;
+      letter-spacing: -0.005em;
+    }
+    .severity-group-head .gloss {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* finding row variation per severity */
+    .finding {
+      padding: 0.9rem 0;
+      border-top: 1px solid var(--rule-soft);
+    }
+    .finding:first-child { border-top: none; }
+
+    .finding[data-severity="P0"] {
+      padding: 1.2rem 1.1rem;
+      border: 1px solid var(--p0-ink);
+      background: var(--p0-soft);
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+    }
+    .finding[data-severity="P1"] {
+      padding: 1rem 0;
+    }
+    .finding[data-severity="P2"] {
+      padding: 0.6rem 0;
+      font-size: 0.94rem;
+    }
+
+    .finding-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: baseline;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      align-self: start;
+      margin-top: 0.18rem;
+    }
+    .tag[data-severity="P0"] { color: var(--p0-ink); background: var(--bg); border: 1px solid var(--p0-ink); }
+    .tag[data-severity="P1"] { color: var(--p1-ink); background: var(--p1-soft); }
+    .tag[data-severity="P2"] { color: var(--p2-ink); background: var(--p2-soft); }
+
+    .finding-title {
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+    .finding[data-severity="P0"] .finding-title { font-size: 1.05rem; }
+    .finding-loc {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .finding-evidence {
+      margin: 0.55rem 0 0;
+      padding: 0;
+    }
+    .finding-evidence summary {
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--muted);
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .finding-evidence summary::-webkit-details-marker { display: none; }
+    .finding-evidence summary::before {
+      content: "▸";
+      font-size: 0.6em;
+      transition: transform 180ms var(--ease-out-quart);
+    }
+    .finding-evidence[open] summary::before { transform: rotate(90deg); }
+    .finding-evidence pre {
+      margin: 0.55rem 0 0;
+      padding: 0.7rem 0.9rem;
+      background: var(--code-bg);
+      color: var(--ink);
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .finding-fix-hint {
+      margin: 0.55rem 0 0;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    /* decision controls */
+    .controls {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .control {
+      font: inherit;
+      font-size: 0.83rem;
+      font-weight: 500;
+      padding: 0.34rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: color 180ms var(--ease-out-quart),
+                  border-color 180ms var(--ease-out-quart),
+                  background 180ms var(--ease-out-quart);
+    }
+    .control:hover { color: var(--ember-ink); border-color: var(--ember); }
+    .control[aria-pressed="true"] {
+      color: var(--ink);
+      background: var(--ember-soft);
+      border-color: var(--ember);
+      font-weight: 600;
+    }
+
+    .finding-detail {
+      margin-top: 0.7rem;
+      display: none;
+      animation: reveal 280ms var(--ease-out-quart);
+    }
+    .finding-detail.is-open { display: block; }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(-3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .finding-detail label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+    .finding-detail input[type="text"],
+    .finding-detail textarea {
+      width: 100%;
+      font: inherit;
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--ink);
+      resize: vertical;
+    }
+    .finding-detail textarea { min-height: 4.5rem; }
+    .finding-detail input[type="text"]:focus,
+    .finding-detail textarea:focus {
+      outline: none;
+      border-color: var(--ember);
+      box-shadow: 0 0 0 3px var(--ember-soft);
+    }
+    .finding-detail .radios {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .finding-detail .radios label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* remediation panel */
+    .remediation {
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+      border: 1px solid var(--rule);
+      background: var(--bg-soft);
+      border-radius: 12px;
+      padding: 1.2rem 1.2rem 1.3rem;
+      display: grid;
+      gap: 1rem;
+      max-height: calc(100vh - 3rem);
+      overflow: hidden;
+    }
+    .remediation-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .remediation-head h2 {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    .remediation-head .counter {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .actions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.5rem;
+      overflow-y: auto;
+      max-height: 45vh;
+    }
+    .actions:empty::before {
+      content: "No decisions yet. Pick Fix, Defer, or Dismiss on a finding.";
+      display: block;
+      font-size: 0.86rem;
+      color: var(--muted);
+      padding: 0.5rem 0;
+      line-height: 1.5;
+    }
+    .action {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem;
+      padding: 0.55rem 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      animation: reveal 280ms var(--ease-out-quart);
+    }
+    .action-kind {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      align-self: start;
+      padding-top: 0.1rem;
+    }
+    .action-body {
+      font-size: 0.86rem;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+    .action-body strong { color: var(--ink); font-weight: 600; }
+    .action-body code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--code-bg);
+      padding: 0.05em 0.35em;
+      border-radius: 3px;
+    }
+
+    .generate {
+      font: inherit;
+      font-family: var(--display);
+      font-size: 0.95rem;
+      font-weight: 650;
+      padding: 0.7rem 1rem;
+      background: var(--ember);
+      color: oklch(0.18 0.01 70);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 120ms var(--ease-out-quart),
+                  box-shadow 220ms var(--ease-out-quart),
+                  opacity 220ms var(--ease-out-quart);
+    }
+    .generate:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .generate:not(:disabled):hover {
+      box-shadow: 0 0 0 4px var(--ember-soft);
+    }
+    .generate:not(:disabled):active {
+      transform: translateY(1px);
+    }
+    .output-hint {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      word-break: break-all;
+    }
+
+    /* accessibility */
+    :focus-visible {
+      outline: 2px solid var(--ember);
+      outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="report">
+    <header class="hero">
+      <div class="hero-meta">
+        <span class="kicker">{{PROJECT_NAME}}</span>
+        <span class="date">{{AUDIT_DATE}}</span>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode">Dark mode</button>
+      </div>
+
+      <div class="score-row">
+        <h1 class="score" aria-label="Overall maturity score">{{OVERALL_SCORE}}</h1>
+        <p class="score-label">
+          <strong>Overall maturity</strong> across the five context layers. Weighted Project 2×.
+        </p>
+      </div>
+
+      <div class="layers" id="layers-row"></div>
+    </header>
+
+    <div class="grid">
+      <section class="findings" aria-label="Findings">
+        <div class="findings-header">
+          <h2>Findings</h2>
+          <span class="count" id="findings-count"></span>
+        </div>
+        <div id="findings-root"></div>
+      </section>
+
+      <aside class="remediation" aria-label="Remediation plan">
+        <div class="remediation-head">
+          <h2>Your plan</h2>
+          <span class="counter" id="decisions-counter">0 of 0 decided</span>
+        </div>
+        <ol class="actions" id="actions-list"></ol>
+        <button class="generate" type="button" id="generate" disabled>Generate remediation plan</button>
+        <p class="output-hint" id="output-hint">audit-remediation-{{AUDIT_DATE}}.md</p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="application/json" id="meta-data">{{META_JSON}}</script>
+  <script type="application/json" id="layers-data">{{LAYERS_JSON}}</script>
+  <script type="application/json" id="findings-data">{{FINDINGS_JSON}}</script>
+
+  <script>
+  (function () {
+    const meta = JSON.parse(document.getElementById('meta-data').textContent || '{}');
+    const layers = JSON.parse(document.getElementById('layers-data').textContent || '[]');
+    const findings = JSON.parse(document.getElementById('findings-data').textContent || '[]');
+
+    // ---- per-rule action-kind dispatch ----
+    function actionKindFor(f) {
+      const r = f.ruleId || '';
+      if (r === 'agents-md-vague-rules' || r === 'agents-md-duplication') return 'anchor';
+      if (r === 'verification-command-missing') return 'add-or-remove-script';
+      if (r === 'oversized-claude-md' || r === 'skill-oversized') return 'split-or-move';
+      if (r === 'skill-broken-link') return 'create-or-fix-link';
+      if (r === 'skill-missing-frontmatter') return 'add-frontmatter';
+      if (r === 'skill-vague-description') return 'rewrite-description';
+      if (r === 'missing-verification') return 'populate-section';
+      if (r === 'missing-adr-xref') return 'review';
+      return 'review';
+    }
+
+    // ---- render layers ----
+    const layersRoot = document.getElementById('layers-row');
+    layers.forEach((layer) => {
+      const el = document.createElement('div');
+      el.className = 'layer' + (layer.weighted ? ' is-weighted' : '');
+      const name = document.createElement('div');
+      name.className = 'layer-name';
+      name.textContent = layer.name;
+      const score = document.createElement('div');
+      score.className = 'layer-score';
+      score.textContent = String(layer.score);
+      const ev = document.createElement('div');
+      ev.className = 'layer-evidence';
+      ev.textContent = layer.evidence || '';
+      el.append(name, score, ev);
+      layersRoot.appendChild(el);
+    });
+
+    // ---- group findings by severity ----
+    const groups = { P0: [], P1: [], P2: [] };
+    findings.forEach((f) => { (groups[f.severity] || groups.P2).push(f); });
+
+    const findingsRoot = document.getElementById('findings-root');
+    const groupGlosses = {
+      P0: 'Fix before next agent session. The agent will actively do the wrong thing.',
+      P1: 'Fix this sprint. Silent drift over weeks.',
+      P2: 'Backlog. Hygiene.',
+    };
+
+    const decisions = new Map(); // findingId -> { choice, payload }
+
+    function renderGroup(severity) {
+      if (!groups[severity].length) return;
+      const sec = document.createElement('section');
+      sec.className = 'severity-group';
+      const head = document.createElement('div');
+      head.className = 'severity-group-head';
+      const h3 = document.createElement('h3');
+      h3.textContent = severity + ' · ' + groups[severity].length + (groups[severity].length === 1 ? ' finding' : ' findings');
+      const gloss = document.createElement('span');
+      gloss.className = 'gloss';
+      gloss.textContent = groupGlosses[severity];
+      head.append(h3, gloss);
+      sec.appendChild(head);
+      groups[severity].forEach((f) => sec.appendChild(renderFinding(f)));
+      findingsRoot.appendChild(sec);
+    }
+
+    function renderFinding(f) {
+      const kind = actionKindFor(f);
+      const wrap = document.createElement('article');
+      wrap.className = 'finding';
+      wrap.dataset.severity = f.severity;
+      wrap.dataset.id = f.id;
+
+      const head = document.createElement('div');
+      head.className = 'finding-head';
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.dataset.severity = f.severity;
+      tag.textContent = f.severity;
+      const title = document.createElement('p');
+      title.className = 'finding-title';
+      title.textContent = f.title;
+      const loc = document.createElement('span');
+      loc.className = 'finding-loc';
+      loc.textContent = f.file + (f.line ? ':' + f.line : '');
+      head.append(tag, title, loc);
+      wrap.appendChild(head);
+
+      if (f.evidence) {
+        const details = document.createElement('details');
+        details.className = 'finding-evidence';
+        const summary = document.createElement('summary');
+        summary.textContent = 'evidence';
+        const pre = document.createElement('pre');
+        pre.textContent = f.evidence;
+        details.append(summary, pre);
+        wrap.appendChild(details);
+      }
+
+      if (f.fixHint) {
+        const hint = document.createElement('p');
+        hint.className = 'finding-fix-hint';
+        hint.textContent = f.fixHint;
+        wrap.appendChild(hint);
+      }
+
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+      ['Fix now', 'Defer', 'Dismiss'].forEach((label) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'control';
+        b.textContent = label;
+        b.dataset.choice = label.toLowerCase().split(' ')[0]; // fix / defer / dismiss
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => onChoose(f, kind, b.dataset.choice, wrap));
+        controls.appendChild(b);
+      });
+      wrap.appendChild(controls);
+
+      const detail = document.createElement('div');
+      detail.className = 'finding-detail';
+      detail.dataset.detail = '';
+      wrap.appendChild(detail);
+
+      return wrap;
+    }
+
+    function onChoose(f, kind, choice, wrap) {
+      // Toggle aria-pressed across the three buttons.
+      wrap.querySelectorAll('.control').forEach((b) => {
+        b.setAttribute('aria-pressed', b.dataset.choice === choice ? 'true' : 'false');
+      });
+      const detail = wrap.querySelector('.finding-detail');
+      detail.innerHTML = '';
+      detail.classList.add('is-open');
+
+      const state = { choice, kind, payload: {} };
+
+      if (choice === 'fix') {
+        renderFixInput(detail, f, kind, state);
+      } else if (choice === 'defer') {
+        renderTextInput(detail, 'Optional note for the deferred section', '', (v) => { state.payload.reason = v; refreshPanel(); });
+      } else if (choice === 'dismiss') {
+        renderTextInput(detail, 'Reason for dismissing (required)', '', (v) => { state.payload.reason = v; refreshPanel(); });
+      }
+
+      decisions.set(f.id, { ...state, finding: f });
+      refreshPanel();
+    }
+
+    function renderTextInput(detail, label, initial, onInput) {
+      const wrap = document.createElement('div');
+      const l = document.createElement('label');
+      l.textContent = label;
+      const i = document.createElement('input');
+      i.type = 'text';
+      i.value = initial;
+      i.addEventListener('input', () => onInput(i.value));
+      l.appendChild(i);
+      wrap.appendChild(l);
+      detail.appendChild(wrap);
+      // Move input out of label and give it its own line.
+      l.removeChild(i);
+      wrap.appendChild(i);
+    }
+
+    function renderFixInput(detail, f, kind, state) {
+      switch (kind) {
+        case 'anchor': {
+          renderTextInput(detail, 'Anchored rewrite', f.suggestedFix || '', (v) => {
+            state.payload.new = v;
+            refreshPanel();
+          });
+          state.payload.new = f.suggestedFix || '';
+          break;
+        }
+        case 'add-or-remove-script': {
+          const radios = document.createElement('div');
+          radios.className = 'radios';
+          const opts = [
+            { v: 'remove', label: 'Remove from AGENTS.md' },
+            { v: 'add-stub', label: 'Add stub script to package.json' },
+          ];
+          opts.forEach((o) => {
+            const l = document.createElement('label');
+            const r = document.createElement('input');
+            r.type = 'radio';
+            r.name = 'action-' + f.id;
+            r.value = o.v;
+            r.addEventListener('change', () => {
+              state.payload.action = o.v;
+              refreshPanel();
+            });
+            l.append(r, ' ', o.label);
+            radios.appendChild(l);
+          });
+          detail.appendChild(radios);
+          state.payload.action = 'remove';
+          break;
+        }
+        case 'populate-section': {
+          renderTextarea(detail, 'Bullet content to add (one per line)', '', (v) => {
+            state.payload.additions = v.split('\n').map((s) => s.trim()).filter(Boolean);
+            refreshPanel();
+          });
+          break;
+        }
+        case 'split-or-move': {
+          renderTextInput(detail, 'Target file for the overflow (e.g. docs/agents/frontend.md)', '', (v) => {
+            state.payload.target = v;
+            refreshPanel();
+          });
+          break;
+        }
+        case 'create-or-fix-link': {
+          renderTextInput(detail, 'New target path (or leave blank to create the file at the original target)', '', (v) => {
+            state.payload.target = v;
+            refreshPanel();
+          });
+          break;
+        }
+        case 'add-frontmatter': {
+          renderTextInput(detail, 'Skill description to set', f.suggestedFix || '', (v) => {
+            state.payload.description = v;
+            refreshPanel();
+          });
+          state.payload.description = f.suggestedFix || '';
+          break;
+        }
+        case 'rewrite-description': {
+          renderTextInput(detail, 'New skill description', f.suggestedFix || '', (v) => {
+            state.payload.description = v;
+            refreshPanel();
+          });
+          state.payload.description = f.suggestedFix || '';
+          break;
+        }
+        case 'review':
+        default: {
+          const note = document.createElement('p');
+          note.className = 'finding-fix-hint';
+          note.textContent = 'Marked for manual review. The remediation plan will list it without a specific edit.';
+          detail.appendChild(note);
+          break;
+        }
+      }
+    }
+
+    function renderTextarea(detail, label, initial, onInput) {
+      const l = document.createElement('label');
+      l.textContent = label;
+      const t = document.createElement('textarea');
+      t.value = initial;
+      t.addEventListener('input', () => onInput(t.value));
+      detail.appendChild(l);
+      detail.appendChild(t);
+    }
+
+    // ---- remediation panel ----
+    const actionsList = document.getElementById('actions-list');
+    const counter = document.getElementById('decisions-counter');
+    const generateBtn = document.getElementById('generate');
+    const total = findings.length;
+
+    function refreshPanel() {
+      counter.textContent = decisions.size + ' of ' + total + ' decided';
+      actionsList.innerHTML = '';
+      decisions.forEach((d) => {
+        const li = document.createElement('li');
+        li.className = 'action';
+        const kind = document.createElement('span');
+        kind.className = 'action-kind';
+        kind.textContent = d.choice;
+        const body = document.createElement('div');
+        body.className = 'action-body';
+        body.appendChild(summariseDecision(d));
+        li.append(kind, body);
+        actionsList.appendChild(li);
+      });
+      generateBtn.disabled = decisions.size === 0;
+    }
+
+    function summariseDecision(d) {
+      const frag = document.createDocumentFragment();
+      const strong = document.createElement('strong');
+      strong.textContent = d.finding.title;
+      frag.appendChild(strong);
+      const file = document.createElement('div');
+      file.style.fontFamily = 'var(--mono)';
+      file.style.fontSize = '0.74rem';
+      file.style.color = 'var(--muted)';
+      file.style.marginTop = '0.2rem';
+      file.textContent = d.finding.file + (d.finding.line ? ':' + d.finding.line : '');
+      frag.appendChild(file);
+      if (d.choice === 'fix' && d.payload.new) {
+        const p = document.createElement('div');
+        p.style.marginTop = '0.3rem';
+        p.textContent = '→ ' + d.payload.new;
+        frag.appendChild(p);
+      } else if (d.choice === 'fix' && d.payload.action) {
+        const p = document.createElement('div');
+        p.style.marginTop = '0.3rem';
+        p.textContent = '→ action: ' + d.payload.action;
+        frag.appendChild(p);
+      } else if ((d.choice === 'defer' || d.choice === 'dismiss') && d.payload.reason) {
+        const p = document.createElement('div');
+        p.style.marginTop = '0.3rem';
+        p.style.fontStyle = 'italic';
+        p.textContent = d.payload.reason;
+        frag.appendChild(p);
+      }
+      return frag;
+    }
+
+    // ---- generate remediation.md ----
+    function buildMarkdown() {
+      const now = new Date().toISOString();
+      const lines = [];
+      lines.push('---');
+      lines.push('generated: ' + now);
+      lines.push('source-audit: ' + (meta.auditFile || ('docs/context-audit-' + meta.date + '.md')));
+      lines.push('project: ' + (meta.project || 'unknown'));
+      lines.push('groundwork-remediation: v1');
+      lines.push('---');
+      lines.push('');
+      lines.push('# Remediation plan');
+      lines.push('');
+
+      const buckets = { fix: [], defer: [], dismiss: [] };
+      decisions.forEach((d) => buckets[d.choice].push(d));
+
+      if (buckets.fix.length) {
+        lines.push('## To apply');
+        lines.push('');
+        buckets.fix.forEach((d) => emitFixBlock(lines, d));
+      }
+      if (buckets.defer.length) {
+        lines.push('## Deferred');
+        lines.push('');
+        buckets.defer.forEach((d) => emitNoteBlock(lines, d, 'deferred'));
+      }
+      if (buckets.dismiss.length) {
+        lines.push('## Dismissed');
+        lines.push('');
+        buckets.dismiss.forEach((d) => emitNoteBlock(lines, d, 'dismissed'));
+      }
+      return lines.join('\n');
+    }
+
+    function emitFixBlock(lines, d) {
+      const f = d.finding;
+      lines.push('### ' + f.title);
+      lines.push('- finding-id: ' + f.ruleId);
+      lines.push('- file: ' + f.file);
+      if (f.line) lines.push('- line: ' + f.line);
+      switch (d.kind) {
+        case 'anchor':
+          if (f.evidence) lines.push('- original: ' + jsonString(f.evidence));
+          if (d.payload.new) lines.push('- new: ' + jsonString(d.payload.new));
+          lines.push('- action: replace-line');
+          break;
+        case 'add-or-remove-script':
+          lines.push('- command: ' + (f.evidence || ''));
+          lines.push('- action: ' + (d.payload.action || 'remove'));
+          break;
+        case 'populate-section':
+          lines.push('- action: append-to-section');
+          if (d.payload.additions && d.payload.additions.length) {
+            lines.push('- additions:');
+            d.payload.additions.forEach((a) => lines.push('  - ' + jsonString(a)));
+          }
+          break;
+        case 'split-or-move':
+          lines.push('- action: split-to-target');
+          if (d.payload.target) lines.push('- target: ' + d.payload.target);
+          break;
+        case 'create-or-fix-link':
+          lines.push('- action: ' + (d.payload.target ? 'rewrite-link' : 'create-target'));
+          if (d.payload.target) lines.push('- new-target: ' + d.payload.target);
+          break;
+        case 'add-frontmatter':
+          lines.push('- action: add-frontmatter');
+          if (d.payload.description) lines.push('- description: ' + jsonString(d.payload.description));
+          break;
+        case 'rewrite-description':
+          lines.push('- action: rewrite-description');
+          if (d.payload.description) lines.push('- description: ' + jsonString(d.payload.description));
+          break;
+        case 'review':
+        default:
+          lines.push('- action: manual-review');
+      }
+      lines.push('');
+    }
+
+    function emitNoteBlock(lines, d, label) {
+      const f = d.finding;
+      lines.push('### ' + f.title);
+      lines.push('- finding-id: ' + f.ruleId);
+      lines.push('- file: ' + f.file);
+      if (f.line) lines.push('- line: ' + f.line);
+      lines.push('- status: ' + label);
+      if (d.payload.reason) lines.push('- reason: ' + jsonString(d.payload.reason));
+      lines.push('');
+    }
+
+    function jsonString(s) {
+      // Quote like a YAML/JSON string so any special chars survive round-trip.
+      return JSON.stringify(s);
+    }
+
+    generateBtn.addEventListener('click', () => {
+      const md = buildMarkdown();
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const filename = 'audit-remediation-' + (meta.date || new Date().toISOString().slice(0, 10)) + '.md';
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    });
+
+    // ---- theme toggle ----
+    const themeBtn = document.querySelector('[data-theme-toggle]');
+    themeBtn.addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      themeBtn.textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
+    });
+
+    // ---- init ----
+    document.getElementById('findings-count').textContent =
+      total + (total === 1 ? ' finding' : ' findings');
+    document.getElementById('output-hint').textContent =
+      'audit-remediation-' + (meta.date || '') + '.md';
+
+    ['P0', 'P1', 'P2'].forEach(renderGroup);
+    refreshPanel();
+  })();
+  </script>
+</body>
+</html>

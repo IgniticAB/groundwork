@@ -212,6 +212,55 @@ Save the file. In chat, show:
 
 Keep the chat output to under 15 lines. The detail lives in the file.
 
+### Step 8. Optional HTML report
+
+After the markdown report is saved, ask the user once:
+
+> Want a delightful HTML version of this report? You can iterate on findings in a browser and download a structured remediation plan that `groundwork apply` will read. (Y/n)
+
+Default no. If the user declines, end the command.
+
+If yes, build `docs/context-audit-<YYYY-MM-DD>.html` from `templates/audit-report.html.template`:
+
+1. **Copy the template.** Read `skills/groundwork/templates/audit-report.html.template`.
+2. **Substitute placeholders.** The template has these tokens (each appears exactly once except where noted):
+   - `{{PROJECT_NAME}}` — from `AGENTS.md` H1 or `package.json#name`. Two occurrences (page title + hero kicker).
+   - `{{AUDIT_DATE}}` — `YYYY-MM-DD`. Three occurrences (hero meta, output-hint, default filename).
+   - `{{OVERALL_SCORE}}` — integer 0-100 from Step 2.
+   - `{{META_JSON}}` — JSON object: `{"project": "<name>", "date": "<YYYY-MM-DD>", "auditFile": "docs/context-audit-<date>.md"}`.
+   - `{{LAYERS_JSON}}` — JSON array, one entry per layer (System / Project / Codebase / Tooling, Session skipped). Each entry: `{"name": "Project", "score": 4, "evidence": "AGENTS.md solid; no docs/agents/ overflow yet.", "weighted": true}`. Mark Project with `weighted: true` (it is 2× in the rubric).
+   - `{{FINDINGS_JSON}}` — JSON array. One entry per finding from Step 5, in the shape below.
+3. **Write the file.** Save to `docs/context-audit-<YYYY-MM-DD>.html`. Tell the user the path and that opening it in a browser (Safari / Chrome / Firefox) gives them the interactive report.
+
+**Findings JSON shape (per entry):**
+
+```json
+{
+  "id": "agents-md-vague-rules-AGENTS.md-23",
+  "ruleId": "agents-md-vague-rules",
+  "severity": "P1",
+  "title": "Vague Style rule in AGENTS.md",
+  "file": "AGENTS.md",
+  "line": 23,
+  "evidence": "Write robust error handling.",
+  "fixHint": "Name the technology, command, or pattern.",
+  "suggestedFix": "Wrap external API calls in try/catch; log via Logger; never swallow."
+}
+```
+
+- `id` is unique within the report (combine `ruleId`, `file`, and `line` if present).
+- `severity` is `P0`, `P1`, or `P2`.
+- `title` is a one-line human-readable description (e.g. "Vague Style rule in AGENTS.md", "Verification command does not resolve", "SKILL.md missing frontmatter").
+- `evidence` is the quoted line or value that triggered the finding. Optional.
+- `fixHint` is the short hint that already appears in the markdown report. Optional.
+- `suggestedFix` pre-fills the inline input when the user picks "Fix now" on rules with a textual rewrite (`agents-md-vague-rules`, `skill-vague-description`, `skill-missing-frontmatter`, etc.). Optional.
+
+The HTML's JS uses `ruleId` to dispatch which inline controls to show. Do not invent new `ruleId` values; use the ones the audit found in Step 5.
+
+**No need to escape inside the JSON tokens.** The template's JSON islands are `<script type="application/json">` blocks; the agent writes valid JSON in directly and the runtime parses it with `JSON.parse`. The HTML renders user strings via `textContent`, not `innerHTML`, so no XSS risk from quoted lines.
+
+The user opens the file, walks through findings, downloads `audit-remediation-<YYYY-MM-DD>.md`, and feeds it to `groundwork apply` to enact the chosen fixes. Both files (markdown audit + HTML report + downloaded remediation) live in `docs/` and stay as the audit trail.
+
 ## Quality bar
 
 - Scores are defensible. You can point at the evidence for each one.

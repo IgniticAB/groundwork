@@ -70,6 +70,13 @@ export const commands: CommandMeta[] = [
     reachFor: 'New chat session, handoff to a teammate, or compacting a noisy session into a clean restart.',
     blurb: 'A 600-word slice of the context. The 3 to 5 ADRs that actually apply, the conventions for this area, the verification commands, the out-of-scope. Nothing else.',
   },
+  {
+    slug: 'apply',
+    name: 'apply',
+    oneLiner: 'Apply a remediation plan produced by `audit --html` to the repo.',
+    reachFor: 'Right after an interactive audit, to enact the chosen fixes without copy-pasting them by hand.',
+    blurb: 'Reads the structured remediation file, validates it, dry-runs the changes, applies them on confirmation, runs the fast verification, offers rollback on failure. Closes the loop between audit and action.',
+  },
 ];
 
 export function getCommand(slug: string): CommandMeta | undefined {

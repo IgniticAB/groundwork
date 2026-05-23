@@ -1,0 +1,54 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import CommandPager from '../../components/CommandPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'apply';
+const description =
+  'Apply a remediation plan produced by `audit --html` to the repo. Closes the loop between audit and action.';
+---
+
+<Doc
+  title={title}
+  description={description}
+  section="commands"
+  sourceFile="skills/groundwork/commands/apply.md"
+  templateFiles={['skills/groundwork/templates/remediation.template.md']}
+>
+  <p class="doc-lede">
+    <a href={url('commands/audit/')}><code>audit</code></a> decides what needs
+    fixing. <code>apply</code> does the fixing. The bridge is a structured
+    markdown file produced by the audit's interactive HTML report.
+  </p>
+
+  <h2>When to use it</h2>
+  <ul>
+    <li>Right after running <code>groundwork audit --html</code>, making decisions in the browser, and downloading the remediation plan.</li>
+    <li>When a teammate hands you a remediation plan and asks you to enact it.</li>
+  </ul>
+
+  <h3>When not to</h3>
+  <ul>
+    <li>On a hand-written <code>.md</code> that lacks the <code>groundwork-remediation: v1</code> frontmatter marker. The command refuses by design.</li>
+    <li>When the underlying repo state has changed since the audit ran. Re-audit first; the plan references the state captured at audit time.</li>
+  </ul>
+
+  <h2>What it produces</h2>
+  <ul>
+    <li>Edits to one or more files (usually <code>AGENTS.md</code>, sometimes <code>package.json</code> or a <code>SKILL.md</code>), each tied to a finding the user already decided on.</li>
+    <li>A short chat summary: what changed, what was skipped, what is deferred.</li>
+    <li>The remediation file stays in place. Suggest committing it alongside the changes.</li>
+  </ul>
+
+  <h2>How it works</h2>
+  <ol>
+    <li><strong>Read and validate.</strong> YAML frontmatter parses, <code>groundwork-remediation: v1</code> marker is present. Files without the marker are refused.</li>
+    <li><strong>Build the action list, dry-run.</strong> Group actions by file. Show the user, ask for confirmation. Never touch files before consent.</li>
+    <li><strong>Pre-flight state check.</strong> For each <code>replace-line</code>, confirm the target line still matches the recorded <code>original</code>. Skip cleanly on mismatch; do not patch the wrong line.</li>
+    <li><strong>Apply each action</strong> by kind: <code>replace-line</code>, <code>remove</code>, <code>append-to-section</code>, <code>add-stub</code>, <code>split-to-target</code>, <code>rewrite-link</code>, <code>create-target</code>, <code>add-frontmatter</code>, <code>rewrite-description</code>, <code>manual-review</code>.</li>
+    <li><strong>Verify.</strong> Run the fast verification command from <code>AGENTS.md</code>. If it fails, offer to roll back via <code>git checkout</code> on the touched files. Default to rolling back.</li>
+    <li><strong>Report.</strong> Files touched, changes per file, skipped actions with reasons, deferred + dismissed counts, verification result, one next move.</li>
+  </ol>
+
+  <CommandPager slug="apply" />
+</Doc>
