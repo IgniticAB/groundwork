@@ -70,6 +70,26 @@ For each of the five layers:
   - **Every verification command resolves to a real script.** Each command in the Verification section maps to a script in `package.json`, `pyproject.toml`, `Cargo.toml`, or `Makefile`. A command that does not exist is a P0 because the agent will run something that does not work.
   - **Boundaries → Always and Boundaries → Ask first each have at least one project-specific entry.** The default "plan-mode triggers" bullet under Ask first does not count by itself; if it is the only entry, the team has not done the work to localise.
   - **`docs/decisions/negative-space.md` exists and has content beyond the template stub.** Empty negative-space is a P2; the file is supposed to capture rejected paths so the agent stops re-suggesting them.
+
+  **Installed skills.** Skills are procedure-as-context: every invocation reads the skill's `SKILL.md` and any sub-files it references. A bloated, vaguely-described, or structurally broken skill misroutes invocations the same way a bloated `CLAUDE.md` does. Audit them as part of the Project layer.
+
+  Glob from the repo root:
+  ```
+  .claude/skills/*/SKILL.md
+  .cursor/skills/*/SKILL.md
+  .agents/skills/*/SKILL.md
+  ```
+
+  For each match, parse the YAML frontmatter and read the body. Record per skill: `name`, `description`, total SKILL.md line count, and the list of relative-link targets found in the body (skip anything starting with `http://`, `https://`, `mailto:`, or `#`).
+
+  Compare each skill's path against the harness target list (the harnesses the repo emitted pointer files for during `init`, or the ones named in `AGENTS.md`). A `.cursor/skills/X/` in a Claude-only repo is dead weight.
+
+  Check each skill on these specific signals (these feed Step 5's findings):
+  - **Structural validity.** SKILL.md exists; YAML frontmatter parses; both `name` and `description` are present and non-empty.
+  - **Description quality.** The description does not contain hedge phrases ("various", "general purpose", "helps with", "useful for", "good at", plus the rest of the `agents-md-vague-rules` hedge-word list). No length threshold; a short concrete description ("Generates Prisma migrations.") passes.
+  - **Entry-point budget.** SKILL.md under 200 lines (same hard ceiling as `oversized-claude-md`). Above that, the entry point is bloated; detail should live in sub-files referenced from it.
+  - **Internal-link resolution.** Every relative-path link in SKILL.md resolves to a real file in the skill directory.
+  - **Path-target match.** The skill is installed under a harness path the repo targets, not a stray one.
 - **Codebase.** Is there a top-level README that orients an agent? A `docs/architecture.md`? An ADR directory? A glossary? File maps? Are the conventions in the Project layer actually followed in the code?
 - **Session.** Not applicable to a static audit (Session is transient). Note this and move on.
 - **Tooling.** MCP server configuration? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context?
@@ -84,6 +104,8 @@ For each layer (skip Session), 0 to 5:
 - **3**: The layer is set up reasonably; minor gaps.
 - **4**: Solid. Follows the patterns in `foundation/`; current with the code.
 - **5**: Exceeds the standard. Includes negative-space docs, scoped rules per area, ADRs that read as production-grade context.
+
+Installed-skill quality feeds the Project-layer score. A repo with a complete `AGENTS.md` and three well-formed skills scores higher on Project than the same `AGENTS.md` paired with a malformed or vague-described skill. Per-layer evidence sentence names skill issues when they exist (e.g. "Project 3/5: AGENTS.md solid, but `.claude/skills/team-helper/` has an empty `description`").
 
 Overall maturity: weighted average, with Project weighted 2x and the others 1x. Convert to a 0-100 scale for readability.
 
@@ -132,6 +154,18 @@ Two specific failure modes that the Step 1 content-quality scan surfaces. Each b
 A third, softer signal worth recording:
 
 - **Empty Boundaries tier or stub negative-space.** If Boundaries → Always or Boundaries → Ask first has only the default plan-mode entry, or if `docs/decisions/negative-space.md` is still the template stub, the team has not localised the context to the repo. P2 each. The fix is one round of `document` to populate them.
+
+#### Installed-skill findings
+
+For each skill globbed in Step 1, surface the following as separate findings. Do not collapse them into a generic "skills need work" line. Each finding names the skill by its full path (e.g. `.claude/skills/data-export/SKILL.md`) so the user can navigate to it directly.
+
+- **Missing or malformed frontmatter** → P0. YAML must parse and contain non-empty `name` and `description`. Without these the host harness cannot route invocations.
+- **Vague description** → P2. Quote the description. Triggers only on hedge phrases ("various", "general purpose", "helps with", "useful for", "good at", plus the hedge-word list shared with `agents-md-vague-rules`). No length threshold; concrete descriptions like "Generates Prisma migrations." pass.
+- **Bloated entry point** → P1. SKILL.md over 200 lines. Move detail into sub-files referenced from SKILL.md so the entry point stays a lean dispatcher.
+- **Broken internal link** → P1. A relative-path link in SKILL.md does not resolve to a real file. Name the unresolved target. The agent reads nothing where it expects content.
+- **Skill at unexpected path** → P2. The skill is installed under a harness path the repo does not target (per `AGENTS.md` Stack / the pointer files `init` emitted). Often dead weight; sometimes an individual contributor's tooling. Surface as observation, not blocker.
+
+A repo with no skills installed gets no findings here. A repo with three well-formed skills also gets none. The findings exist to catch the actual failures, not to demand skills exist.
 
 #### Context Rot check (cross-file consistency)
 
