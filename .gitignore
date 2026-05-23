@@ -25,3 +25,13 @@ dist/
 # Logs
 logs/
 *.log
+
+# Locally-installed agent skills (this repo publishes skills/groundwork/;
+# anything under .agents/skills/, .claude/skills/, .cursor/skills/, or
+# .windsurf/skills/ is the developer's own install of other skills and
+# must not ship with Groundwork).
+.agents/skills/
+.claude/skills/
+.cursor/skills/
+.windsurf/skills/
+skills-lock.json
