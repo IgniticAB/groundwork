@@ -89,6 +89,8 @@ Per action kind:
 - **`rewrite-description`** (replace the description field in a SKILL.md frontmatter). Locate the line in the frontmatter, replace.
 - **`manual-review`**. Log the entry. Do not edit.
 
+**Honoring the `comment` field.** Any to-apply block may carry an optional `comment:` line, free-text guidance the user typed in the HTML report (e.g. "match the wording style we use elsewhere", "leave the surrounding bullets alone"). Treat it as binding instruction for that action: apply the structured change, then check the result against the comment. If the comment can only be honored by deviating from the structured payload (the user typed "actually move this to the Boundaries section instead"), prefer the comment over the literal payload and note the deviation in the summary.
+
 After each successful edit, log it for the summary.
 
 ### Step 5. Verify

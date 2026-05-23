@@ -26,7 +26,10 @@ groundwork-remediation: v1
        split-to-target, rewrite-link, create-target,
        add-frontmatter, rewrite-description, manual-review
      File paths are relative to the repo root.
-     Quoted strings are JSON-encoded so special characters survive the round-trip. -->
+     Quoted strings are JSON-encoded so special characters survive the round-trip.
+     Any block may carry an optional `comment:` field with free-text guidance the
+     user typed in the HTML report. `apply` passes it to the agent as additional
+     instruction alongside the structured action. -->
 
 ### Anchor vague Style rule
 - finding-id: agents-md-vague-rules
@@ -35,6 +38,7 @@ groundwork-remediation: v1
 - original: "Write robust error handling."
 - new: "Wrap external API calls in try/catch; log via Logger; never swallow."
 - action: replace-line
+- comment: "match the wording style we use elsewhere in the Style section"
 
 ### Remove unresolvable verification command
 - finding-id: verification-command-missing
