@@ -16,7 +16,7 @@ Depending on the harnesses the user targets, some subset of:
 - `.cursor/rules/main.mdc` (Cursor) — 5-line pointer to AGENTS.md.
 - `.github/copilot-instructions.md` (Copilot) — 5-line pointer to AGENTS.md.
 - `.windsurf/rules/main.md` (Windsurf) — 5-line pointer to AGENTS.md.
-- `docs/decisions/` directory with a README, ADR-0001, and the negative-space starter.
+- `docs/decisions/` directory with a README and the negative-space starter. A first ADR is **not** auto-created; the user can opt in at the question step or write one later with `groundwork adr`.
 - `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR coverage + ADR status + package-manager drift).
 - `.claude/rules/README.md` — **only** when the user opts in to Claude Code's auto-loading layer (off by default).
 
@@ -118,8 +118,9 @@ Use AskUserQuestion (or numbered options in prose if unavailable). Seven questio
 5. **Symlink CLAUDE.md to AGENTS.md, or keep two files?** Default symlink (single canonical source; lower drift). Offer the two-file fallback for Windows users or any repo with `git config core.symlinks=false` set. If the user does not know which they want, default to symlink and mention they can switch later.
 6. **Any approaches you have explicitly rejected?** (Skippable.) "Mention 1 to 3 if so. They seed `docs/decisions/negative-space.md` so the agent stops suggesting them. Examples: 'we considered Redux and stayed with Context API', 'we briefly tried tRPC but reverted'." Free text. Default empty (the negative-space file ships as a stub the user can populate later).
 7. **Any code that must not be modified by an agent?** (Skippable.) "Legacy compromises, performance-tuned hot paths, compatibility shims. Naming the path is enough." Free text. If filled, Step 4 adds a Preservation entry to AGENTS.md naming those paths, with a one-line reason if the user provided one. If empty, the standard "Preserved regions" paragraph about CE:PRESERVE markers stays in but no specific paths are listed.
+8. **Want me to stub a first ADR for any past decision?** (Skippable.) Most users skip and write their first ADR with `groundwork adr` when a real decision arrives. If you do want one now, give a short title (e.g. "Use pnpm across the monorepo") and one or two sentences of context. Default: skip. If filled, Step 6 generates `docs/decisions/0001-<slug>.md` from `templates/adr.template.md` using the user's title and context.
 
-Do not ask more than seven. Do not ask things you could have detected from the repo.
+Do not ask more than eight. Do not ask things you could have detected from the repo.
 
 ### Step 4. Emit `AGENTS.md`
 
@@ -137,7 +138,7 @@ Sections to populate (do not deviate from this order):
   - **Ask first**: owns the trigger list. Default first bullet: ">3 files, public APIs, refactors, migrations". Append project-specific triggers from Q4.
   - **Never**: forbidden paths or destructive actions. Default empty if Q4's Never slot was empty.
 - **Preserved regions** — one paragraph explaining the `preserve:start` / `preserve:end` markers. If Q7 named specific paths, add them as a short bulleted list inside this section with the user's reason (or "legacy / do not modernise" as the default reason).
-- **See also** — pointers to `docs/agents/` (the overflow location; mention it even if the directory does not yet exist, so future readers know where to add per-area conventions), `docs/decisions/`, `docs/mcp-policy.md` (only if it exists).
+- **See also** — pointers to `docs/agents/` (the overflow location; mention it even if the directory does not yet exist, so future readers know where to add per-area conventions) and `docs/decisions/`. Do not pre-seed a `docs/mcp-policy.md` reference here; the `mcp` command adds it when (and only when) it creates the policy file.
 
 **The non-duplication contract.** Each rule belongs in exactly one section. Before emitting, scan the draft: if the same rule (or near-paraphrase) appears in two sections, delete the one in the lower-priority section. Common offenders:
 
@@ -201,11 +202,16 @@ If the user declines or did not pick Claude Code, skip. The auto-loading layer i
 
 ### Step 6. Set up ADRs
 
-Three files, all from templates in `templates/`:
+Always create these two files from templates in `templates/`:
 
 - `docs/decisions/README.md` — copy from `templates/decisions-readme.template.md`. Explains the ADR format and when to write one.
 - `docs/decisions/negative-space.md` — copy from `templates/negative-space.template.md`. Starter file for rejected approaches that do not warrant a full ADR. If Q6 named any rejected approaches, append one short bullet per answer to this file before saving so it is not a stub from day one (one to three sentences per bullet; the user can elaborate later).
-- `docs/decisions/0001-record-architecture-decisions.md` — copy from `templates/adr-0001-record-architecture-decisions.md`. The meta-ADR ("we use ADRs"). Substitute the date and the deciders.
+
+**Conditional first ADR.** Only if Q8 was answered with a title and context, also create:
+
+- `docs/decisions/0001-<slug>.md` — copy from `templates/adr.template.md`. Slug is a kebab-case shortening of the user's title (e.g. "Use pnpm across the monorepo" → `use-pnpm-across-the-monorepo`). Fill in the title, today's date, `Status: accepted`, `Deciders` (best inference from git or "team"), and the user's one-to-two-sentence context. Leave the Decision, Considered alternatives, and Consequences sections as stub prompts the user will flesh out — say so explicitly in the chat summary ("0001-<slug>.md is stubbed; fill in the Decision, Alternatives, and Consequences sections when you can").
+
+If Q8 was skipped, do not create any ADR file. The user can write their first one any time with `groundwork adr`.
 
 Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` command.
 
@@ -240,7 +246,7 @@ No long postamble.
 
 ## Quality bar
 
-- `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `docs/agents/` (overflow), `docs/decisions/`, and `docs/mcp-policy.md`.
+- `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `docs/agents/` (overflow) and `docs/decisions/`. `docs/mcp-policy.md` is added by the `mcp` command if and when it creates the policy.
 - No rule appears in two sections. Plan-mode triggers live only in Boundaries → Ask first; universal procedural rules live only in Non-negotiables; path-scoped actions live only in Boundaries → Always.
 - Pointer files are exactly the five-line shape, no extra prose, no duplicated rules.
 - `CLAUDE.md` is either a symlink (default) or a hand-mirrored copy with the user warned about drift.

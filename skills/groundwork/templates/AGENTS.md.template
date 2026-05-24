@@ -82,4 +82,3 @@ Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` (or `// pres
 
 - `docs/agents/` — per-area conventions when this file outgrows its budget (any harness can be told to read these)
 - `docs/decisions/` — ADRs; the *why* behind decisions
-- `docs/mcp-policy.md` — agent access policy, if applicable

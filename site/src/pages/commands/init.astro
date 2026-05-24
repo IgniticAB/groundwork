@@ -53,7 +53,7 @@ const description =
     <li><code>.cursor/rules/main.mdc</code>: 5-line pointer (Cursor).</li>
     <li><code>.github/copilot-instructions.md</code>: 5-line pointer (Copilot).</li>
     <li><code>.windsurf/rules/main.md</code>: 5-line pointer (Windsurf).</li>
-    <li><code>docs/decisions/</code>: README, the meta-ADR, and a negative-space stub.</li>
+    <li><code>docs/decisions/</code>: README and a negative-space stub. A first ADR is opt-in (the eighth question); skip it and write one later with <code>adr</code>.</li>
     <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook.</li>
   </ul>
 
@@ -61,7 +61,7 @@ const description =
   <ol>
     <li><strong>Safety check.</strong> If any context files exist, stop and ask whether you meant <code>document</code>.</li>
     <li><strong>Detect stack and sample the code.</strong> Reads manifests, scripts, README, plus up to 25 recent source files. Extracts dominant patterns (component shape, error handling, imports, naming) with real-file examples.</li>
-    <li><strong>Ask seven questions.</strong> Harnesses; verification commands; style rules (confirm detected patterns + add anything missed); three-tier boundaries; symlink-or-two-files; rejected approaches; preservation paths.</li>
+    <li><strong>Ask up to eight questions.</strong> Harnesses; verification commands; style rules (confirm detected patterns + add anything missed); three-tier boundaries; symlink-or-two-files; rejected approaches; preservation paths; an optional first ADR.</li>
     <li><strong>Write <code>AGENTS.md</code></strong> from the answers. Each Style rule must be anchored: verb plus a named technology, command, or pattern. Vague rules are dropped at write time, not shipped. Overflow goes to <code>docs/agents/&lt;area&gt;.md</code>.</li>
     <li><strong>Wire <code>CLAUDE.md</code> and the per-harness pointers.</strong></li>
     <li><strong>Set up ADRs and the pre-commit hook.</strong> Suggests the install command if no hook runner is present. Does not silently install. Rejected approaches from Q6 land in <code>docs/decisions/negative-space.md</code> so the file ships populated.</li>

@@ -126,7 +126,7 @@ If any of those are vague, ask. An ADR with a hand-wavy "Considered alternatives
 
 ### Step 2. Find the next number
 
-Glob `docs/decisions/[0-9]*.md`, take the max, add one. If none exist, start at 0001. (0001 is conventionally the meta-ADR "we use ADRs"; if you are creating that one too, take 0002 for the real first decision.)
+Glob `docs/decisions/[0-9]*.md`, take the max, add one. If none exist, start at 0001. Most teams use 0001 for their first real decision; if you also want a meta-ADR documenting the practice of writing ADRs, write it whenever it feels useful and renumber accordingly.
 
 ### Step 3. Draft
 

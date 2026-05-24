@@ -80,4 +80,3 @@ Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` must not be 
 
 - `docs/agents/` — per-area conventions when this file outgrows its budget
 - `docs/decisions/` — ADRs
-- `docs/mcp-policy.md` — agent access policy, if applicable

@@ -56,4 +56,3 @@
 - `docs/agents/` — per-area conventions when they exist (frontend, backend, infra)
 - `docs/decisions/` — full ADR list
 - `.context/plans/` — recent plan contracts
-- `docs/mcp-policy.md` — agent access policy (if applicable)

@@ -35,7 +35,3 @@ The title is the decision, not the topic. Good: "Use Vitest for unit tests". Bad
 ## Negative space
 
 Rejected approaches that did not warrant a full ADR go in `negative-space.md`. They are short paragraphs that prevent future agents (and humans) from re-suggesting paths the team already considered and rejected.
-
-## Reading order
-
-ADR-0001 is the meta-decision: "We use ADRs". Read it first.
