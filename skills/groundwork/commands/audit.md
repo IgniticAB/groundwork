@@ -57,7 +57,7 @@ Read what exists. Do not skip this step; without it the audit is fiction.
 
 For each of the five layers:
 
-- **System.** Is there a global persona or guardrails file? (For Cowork: user preferences in memory.) Usually nothing in the repo for this; that is fine.
+- **System.** Is there a global persona or guardrails file? Usually nothing in the repo for this; that is fine — user-level config and agent memory live outside it.
 - **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date.
 
   Beyond file structure, score AGENTS.md on **content quality**. Each of the following is a separate signal:

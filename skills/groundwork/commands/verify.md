@@ -18,6 +18,14 @@ This command makes verification first-class. After running it, every context fil
 - The `groundwork` detector wired in: as a pre-commit step and as a CI job.
 - A short test of each verification command (and the detector) to confirm they work.
 
+## Before you emit files
+
+Read `reference/harness-detail.md` once you know which harnesses you are
+targeting. It carries the per-harness paths, frontmatter schemas and limits that
+`foundation/harness-reference.md` deliberately leaves out. Do not emit a file at
+a path you have not checked there — the cost of a wrong path is a context file
+no harness ever reads, which looks like the agent ignoring the rules.
+
 ## Procedure
 
 ### Step 1. Detect verification commands

@@ -17,6 +17,14 @@ Per-harness, in priority order:
 
 For each area the user identifies, emit one file per targeted harness.
 
+## Before you emit files
+
+Read `reference/harness-detail.md` once you know which harnesses you are
+targeting. It carries the per-harness paths, frontmatter schemas and limits that
+`foundation/harness-reference.md` deliberately leaves out. Do not emit a file at
+a path you have not checked there — the cost of a wrong path is a context file
+no harness ever reads, which looks like the agent ignoring the rules.
+
 ## Procedure
 
 ### Step 1. Map the repo
@@ -54,16 +62,18 @@ b) **Ask**. Show what you detected and let the user confirm/edit/add. Three or f
 
 For each (area × harness), emit one file.
 
-**Cursor rule trigger levels and word budgets.** Cursor activates `.mdc` files via four mechanisms. The body length must match the trigger; the agent pays a token cost on every match. Use the smallest level that works.
+**Cursor rule types.** Cursor activates `.mdc` files four ways. Use the narrowest one that works: a rule costs tokens on every request it matches.
 
-| Trigger | Frontmatter | Body budget | Typical use |
-| --- | --- | --- | --- |
-| Always Apply | `alwaysApply: true`, `globs: []` | under 200 words | Core stack metadata, global lint targets, framework pins |
-| Auto-Attached | `alwaysApply: false`, `globs: [...]` | 200–500 words | Component libraries, DB ORM patterns, test files |
-| Agent-Requested | `alwaysApply: false`, `description: <when>` | 500–800 words | Stripe/SendGrid integration rules, auth flows |
-| Manual | `alwaysApply: false`, referenced via `@rule-name` | no strict cap | Rare migration targets, complex onboarding |
+| Type | Frontmatter | Typical use |
+| --- | --- | --- |
+| Always Apply | `alwaysApply: true` | Core stack metadata, framework pins |
+| Apply to Specific Files | `alwaysApply: false` + `globs` | Component libraries, ORM patterns, test files |
+| Apply Intelligently | `alwaysApply: false` + `description`, no `globs` | Integration rules, auth flows |
+| Apply Manually | neither `globs` nor `description` | Referenced with `@rule-name`. Rare migrations, onboarding |
 
-Pick the level based on how often the rule needs to be in the agent's active window. If a rule's body exceeds its budget, split it across narrower-globbed `.mdc` files or move long examples into `docs/agents/<area>.md` and reference them.
+Names are Cursor's own, from its rule-type dropdown. A plain `.md` file in `.cursor/rules/` is ignored; the `.mdc` extension is required.
+
+**On body length.** Cursor documents one limit: keep a rule under 500 lines, and split larger ones into composable rules. It publishes **no** per-trigger word or token budget. Do not quote one as if it were a product limit. The useful discipline is narrower globs, not shorter prose: a 300-line rule scoped to `db/migrations/**` costs nothing when editing React. If a rule is long *and* broad, split it by path, or move long examples into `docs/agents/<area>.md` and reference them.
 
 Templates:
 

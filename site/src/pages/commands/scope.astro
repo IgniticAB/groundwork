@@ -47,18 +47,31 @@ const description =
     <li><strong>Verify.</strong> Pick one file per scoped area and confirm the right rules apply.</li>
   </ol>
 
-  <h2>Cursor trigger levels and word budgets</h2>
-  <p>Pick the smallest level that works. Body size must match the trigger; the agent pays a token cost on every match.</p>
+  <h2>Cursor rule types</h2>
+  <p>Use the narrowest one that works: a rule costs tokens on every request it matches. Names are Cursor's own, from its rule-type dropdown.</p>
   <table>
-    <thead><tr><th>Trigger</th><th>Frontmatter</th><th>Body budget</th></tr></thead>
+    <thead><tr><th>Type</th><th>Frontmatter</th><th>Fires when</th></tr></thead>
     <tbody>
-      <tr><td>Always Apply</td><td><code>alwaysApply: true</code>, <code>globs: []</code></td><td>under 200 words</td></tr>
-      <tr><td>Auto-Attached</td><td><code>alwaysApply: false</code>, <code>globs: [...]</code></td><td>200 to 500</td></tr>
-      <tr><td>Agent-Requested</td><td><code>alwaysApply: false</code>, <code>description</code> set</td><td>500 to 800</td></tr>
-      <tr><td>Manual</td><td>referenced via <code>@rule-name</code></td><td>no strict cap</td></tr>
+      <tr><td>Always Apply</td><td><code>alwaysApply: true</code></td><td>Every request</td></tr>
+      <tr><td>Apply to Specific Files</td><td><code>alwaysApply: false</code> + <code>globs</code></td><td>A matching file is in play</td></tr>
+      <tr><td>Apply Intelligently</td><td><code>alwaysApply: false</code> + <code>description</code>, no <code>globs</code></td><td>The agent judges it relevant</td></tr>
+      <tr><td>Apply Manually</td><td>neither <code>globs</code> nor <code>description</code></td><td>Only when <code>@</code>-mentioned</td></tr>
     </tbody>
   </table>
-  <p>If the body overflows, split into narrower-glob files or move long examples into <code>docs/agents/&lt;area&gt;.md</code>.</p>
+  <p>
+    A plain <code>.md</code> file in <code>.cursor/rules/</code> is ignored; the
+    <code>.mdc</code> extension is required.
+  </p>
+  <p>
+    <strong>On body length.</strong> Cursor documents one limit: keep a rule
+    under 500 lines, and split larger ones into composable rules. It publishes
+    <strong>no</strong> per-type word or token budget, so Groundwork does not
+    quote one as if it were a product constraint. The useful discipline is
+    narrower globs, not shorter prose — a 300-line rule scoped to
+    <code>db/migrations/**</code> costs nothing when editing React. If a rule is
+    long <em>and</em> broad, split it by path, or move long examples into
+    <code>docs/agents/&lt;area&gt;.md</code>.
+  </p>
 
   <CommandPager slug="scope" />
 </Doc>

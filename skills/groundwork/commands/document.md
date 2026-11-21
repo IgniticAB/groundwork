@@ -17,6 +17,14 @@ The same set of files as `init` (`AGENTS.md`, the `CLAUDE.md` symlink or two-fil
 - The agent reads recent git history to understand which conventions have shifted recently.
 - The output names "what changed" explicitly in the chat summary.
 
+## Before you emit files
+
+Read `reference/harness-detail.md` once you know which harnesses you are
+targeting. It carries the per-harness paths, frontmatter schemas and limits that
+`foundation/harness-reference.md` deliberately leaves out. Do not emit a file at
+a path you have not checked there — the cost of a wrong path is a context file
+no harness ever reads, which looks like the agent ignoring the rules.
+
 ## Procedure
 
 ### Step 1. Detect what exists

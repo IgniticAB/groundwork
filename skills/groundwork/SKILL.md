@@ -27,8 +27,19 @@ These seven files are the shared vocabulary every command uses. Read them once a
 - `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, the Context Rot taxonomy (Poisoning / Distraction / Confusion / Clash), and the four repayment practices.
 - `foundation/anti-patterns.md` — The things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure.
 - `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, split-file architecture (AGENTS.md canonical + CLAUDE.md symlink + `docs/agents/` neutral overflow + optional `.claude/rules/` for Claude Code auto-loading), three-tier boundaries, HTML preservation tags.
-- `foundation/harness-reference.md` — Where files live for Claude Code, Cursor, Codex, Copilot, Windsurf, Cowork. Naming, scoping, frontmatter formats, numeric-prefix convention for `.claude/rules/`.
+- `foundation/harness-reference.md` — Which harnesses read `AGENTS.md`, and the short list of cases where a harness needs a file of its own. Carries a `Last verified` date; re-verify before each release.
 - `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
+
+## Reference (load on demand, not at session start)
+
+`reference/` holds detail that only some commands need. Do **not** read these up
+front; the foundation is what every command assumes, and anything you load stays
+in context for the rest of the session.
+
+- `reference/harness-detail.md` — Per-harness file locations, frontmatter
+  schemas, skill-portability limits, plugins and marketplaces, validation
+  commands. Load it in `init`, `document`, `scope` and `verify`, once you know
+  which harnesses you are emitting for.
 
 ## The ten commands
 
@@ -77,7 +88,7 @@ Across every command, hold the line on these:
 
 ## A note on harness choice
 
-This skill is harness-agnostic. The `init`, `document`, `scope`, and `verify` commands all ask the user which harnesses they want to target (Claude Code, Cursor, Codex, Copilot, Windsurf, or several) and emit the right files for each. `foundation/harness-reference.md` is the source of truth for where each harness expects files.
+This skill is harness-agnostic. The `init`, `document` and `scope` commands ask which harnesses to target (Claude Code, Cursor, Codex, Copilot, Windsurf, or several); `verify` updates whichever context files already exist. `foundation/harness-reference.md` carries the decision, `reference/harness-detail.md` the per-harness specifics.
 
 Default to asking. Do not assume Claude Code just because this skill ships with Claude Code conventions internally.
 

@@ -67,7 +67,7 @@ npx @ignitic/groundwork list-rules</code></pre>
         <tr><td><code>missing-adr-xref</code></td><td>P2</td><td>Decision-shaped statements without an ADR cross-link.</td></tr>
         <tr><td><code>missing-license-header</code></td><td>P2</td><td>Copyleft repo, source files missing SPDX headers.</td></tr>
         <tr><td><code>todo-comments</code></td><td>P2</td><td><code>TODO</code> / <code>FIXME</code> / <code>HACK</code> markers above the noise threshold (25).</td></tr>
-        <tr><td><code>oversized-cursor-rule</code></td><td>P2</td><td><code>.cursor/rules/*.mdc</code> exceeds the word budget for its trigger level (P1 if <code>alwaysApply: true</code>).</td></tr>
+        <tr><td><code>oversized-cursor-rule</code></td><td>P2</td><td><code>.cursor/rules/*.mdc</code> is long relative to how often it loads — Groundwork guidance, not a Cursor limit (P1 if <code>alwaysApply: true</code>).</td></tr>
         <tr><td><code>skill-vague-description</code></td><td>P2</td><td>A skill's frontmatter <code>description</code> uses hedge phrasing ("various", "helps with", "useful for"). The host cannot route by intent.</td></tr>
       </tbody>
     </table>

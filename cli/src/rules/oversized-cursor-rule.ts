@@ -1,21 +1,31 @@
-// Detects Cursor .mdc rule files that exceed the word budget for their trigger level.
-// Cursor loads rules in four ways, each with a different attention cost:
-//   - Always (alwaysApply: true): loads every prompt. Budget: ~200 words.
-//   - Auto-Attached (globs set): loads when a matching file is in context. Budget: ~500 words.
-//   - Agent-Requested (description only, no globs/alwaysApply): loaded on demand. Budget: ~800 words.
-//   - Manual (no description, no globs, no alwaysApply): only when invoked. Unbounded.
+// Flags Cursor .mdc rule files that are long relative to how often they load.
+//
+// Cursor activates rules four ways, each with a different attention cost
+// (names are Cursor's own, from its rule-type dropdown):
+//   - Always Apply (alwaysApply: true): loads on every request.
+//   - Apply to Specific Files (globs set): loads when a matching file is in play.
+//   - Apply Intelligently (description, no globs): the agent decides.
+//   - Apply Manually (neither): only when @-mentioned. Unbounded.
+//
+// IMPORTANT: the thresholds below are GROUNDWORK'S HEURISTIC, not a Cursor
+// limit. Cursor documents exactly one size rule — keep a rule under 500 lines —
+// and publishes no per-type word budget. The messages below must say so, or we
+// are inventing a product constraint and asserting it to users. The ratio is
+// what matters: a rule that loads on every request should be short; one that
+// loads only when invoked can be long.
 import type { Rule, Finding } from '../types.js';
 
-const ALWAYS_BUDGET = 200;
-const AUTO_BUDGET = 500;
-const AGENT_BUDGET = 800;
+// Groundwork's own guidance, not Cursor's. See the note above.
+const ALWAYS_SOFT_LIMIT = 200;
+const SPECIFIC_FILES_SOFT_LIMIT = 500;
+const INTELLIGENT_SOFT_LIMIT = 800;
 
 type Trigger = 'always' | 'auto' | 'agent' | 'manual';
 
 export const oversizedCursorRule: Rule = {
   id: 'oversized-cursor-rule',
   description:
-    'A .cursor/rules/*.mdc file exceeds the word budget for its trigger level. Always-applied rules pay attention cost on every prompt.',
+    'A .cursor/rules/*.mdc file is long relative to how often it loads. Groundwork guidance, not a Cursor limit: always-applied rules pay attention cost on every request.',
   defaultSeverity: 'P2',
   async run(ctx) {
     const findings: Finding[] = [];
@@ -31,29 +41,29 @@ export const oversizedCursorRule: Rule = {
       const trigger = classifyTrigger(parsed.fm);
       const wordCount = countWords(parsed.body);
 
-      if (trigger === 'always' && wordCount > ALWAYS_BUDGET) {
+      if (trigger === 'always' && wordCount > ALWAYS_SOFT_LIMIT) {
         findings.push({
           ruleId: 'oversized-cursor-rule',
           severity: 'P1',
           file,
-          message: `${file} is ${wordCount} words but uses alwaysApply: true (loads every prompt; budget ${ALWAYS_BUDGET}).`,
-          fix: 'Trim the body, or split into a smaller always-rule plus a Manual or Agent-Requested companion that holds the detail.',
+          message: `${file} is ${wordCount} words and uses alwaysApply: true, so it loads on every request. Groundwork suggests under ${ALWAYS_SOFT_LIMIT} words for an always-applied rule; Cursor itself sets no such limit.`,
+          fix: 'Trim the body, or split into a short always-rule plus an Apply-Manually companion holding the detail.',
         });
-      } else if (trigger === 'auto' && wordCount > AUTO_BUDGET) {
+      } else if (trigger === 'auto' && wordCount > SPECIFIC_FILES_SOFT_LIMIT) {
         findings.push({
           ruleId: 'oversized-cursor-rule',
           severity: 'P2',
           file,
-          message: `${file} is ${wordCount} words for an Auto-Attached rule (budget ${AUTO_BUDGET}). The rule fires whenever its globs match; large bodies dilute the contextual signal.`,
-          fix: 'Narrow the globs, or split detail into an Agent-Requested companion.',
+          message: `${file} is ${wordCount} words for an Apply-to-Specific-Files rule (Groundwork suggests under ${SPECIFIC_FILES_SOFT_LIMIT}; not a Cursor limit). It fires whenever its globs match, so a broad glob makes a long body expensive.`,
+          fix: 'Narrow the globs first — scoping beats trimming. Otherwise split the detail into an Apply-Intelligently companion.',
         });
-      } else if (trigger === 'agent' && wordCount > AGENT_BUDGET) {
+      } else if (trigger === 'agent' && wordCount > INTELLIGENT_SOFT_LIMIT) {
         findings.push({
           ruleId: 'oversized-cursor-rule',
           severity: 'P2',
           file,
-          message: `${file} is ${wordCount} words for an Agent-Requested rule (budget ${AGENT_BUDGET}).`,
-          fix: 'Consider whether the rule should be Manual instead, so it only loads on explicit invocation.',
+          message: `${file} is ${wordCount} words for an Apply-Intelligently rule (Groundwork suggests under ${INTELLIGENT_SOFT_LIMIT}; not a Cursor limit).`,
+          fix: 'Consider Apply Manually instead, so it loads only when @-mentioned.',
         });
       }
     }

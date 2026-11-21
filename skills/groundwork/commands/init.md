@@ -24,6 +24,14 @@ Depending on the harnesses the user targets, some subset of:
 
 It does **not** create skills, MCP configs, or scoped rules. Those have their own commands.
 
+## Before you emit files
+
+Read `reference/harness-detail.md` once you know which harnesses you are
+targeting. It carries the per-harness paths, frontmatter schemas and limits that
+`foundation/harness-reference.md` deliberately leaves out. Do not emit a file at
+a path you have not checked there — the cost of a wrong path is a context file
+no harness ever reads, which looks like the agent ignoring the rules.
+
 ## Procedure
 
 ### Step 1. Check whether this repo is already set up (BEFORE anything else)

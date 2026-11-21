@@ -11,7 +11,7 @@ Generate the initial context files by scanning the repo, not by guessing.
 - Detect the tech stack from package manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.).
 - Detect test and lint commands from scripts and config files, not from convention.
 - Detect the dominant style (TypeScript strict mode? Tabs vs spaces? Conventional commits?) by reading a sample of recent files and recent commits.
-- Output one file per harness, not one mega-file. See `foundation/harness-reference.md`.
+- Output `AGENTS.md` first; add a harness-specific file only where one is needed. See `foundation/harness-reference.md`.
 
 Commands: `init`, `document`.
 

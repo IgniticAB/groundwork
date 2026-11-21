@@ -38,7 +38,7 @@ export const foundation: FoundationMeta[] = [
   {
     slug: 'harness-reference',
     title: 'Harness reference',
-    oneLiner: 'Where each AI coding harness expects to find its context files. Claude Code, Cursor, Codex, Copilot, Cowork: locations and formats.',
+    oneLiner: 'Which harnesses read AGENTS.md, and the short list of cases where one still needs a file of its own.',
   },
 ];
 
