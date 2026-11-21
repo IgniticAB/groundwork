@@ -2,16 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { agentsClaudeSync } from '../rules/agents-claude-sync.js';
-import type { RuleContext } from '../types.js';
-
-function contextWith(files: Record<string, string>): RuleContext {
-  return {
-    repoRoot: '/fixture',
-    hasGit: false,
-    readFile: async (p) => (p in files ? files[p] : null),
-    glob: async () => [],
-  };
-}
+import { contextWith } from './helpers.js';
 
 const AGENTS = `# Demo — agent context
 

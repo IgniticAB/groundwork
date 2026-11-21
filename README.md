@@ -202,7 +202,7 @@ The site at `/blueprint` synthesizes both into a single navigable summary.
 
 ## Status and scope
 
-Skill v1.1. Ten commands. Detector CLI (`@ignitic/groundwork`) with eighteen rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
+Skill v1.1. Ten commands. Detector CLI (`@ignitic/groundwork`) with twenty rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
 
 If you want to extend it: add a new command file in `skills/groundwork/commands/` and a row in the table in `skills/groundwork/SKILL.md`. Add new detector rules in `cli/src/rules/` and register them in `cli/src/rules/index.ts`. Commands are independent; rules are independent; they share the foundation files but do not depend on each other.
 

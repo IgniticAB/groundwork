@@ -11,6 +11,7 @@ function parseArgs(argv: string[]): {
   failOn: 'P0' | 'P1' | 'P2';
   only: string[];
   skip: string[];
+  includeInstalled: boolean;
   watchMode: boolean;
   help: boolean;
   version: boolean;
@@ -21,6 +22,7 @@ function parseArgs(argv: string[]): {
   let failOn: 'P0' | 'P1' | 'P2' = 'P0';
   let only: string[] = [];
   let skip: string[] = [];
+  let includeInstalled = false;
   let watchMode = false;
   let help = false;
   let version = false;
@@ -41,6 +43,7 @@ function parseArgs(argv: string[]): {
     else if (a === '--fail-on') failOn = (args[++i] as 'P0' | 'P1' | 'P2') ?? 'P0';
     else if (a === '--only') only = (args[++i] ?? '').split(',').filter(Boolean);
     else if (a === '--skip') skip = (args[++i] ?? '').split(',').filter(Boolean);
+    else if (a === '--include-installed') includeInstalled = true;
     else if (!a.startsWith('-')) repoRoot = a;
     else {
       console.error(`Unknown flag: ${a}`);
@@ -48,7 +51,7 @@ function parseArgs(argv: string[]): {
     }
   }
 
-  return { command, repoRoot: path.resolve(repoRoot), format, failOn, only, skip, watchMode, help, version };
+  return { command, repoRoot: path.resolve(repoRoot), format, failOn, only, skip, includeInstalled, watchMode, help, version };
 }
 
 function printHelp(): void {
@@ -74,6 +77,9 @@ Options:
   --fail-on <sev>     Exit code 1 if any finding at or above this severity. P0 (default) | P1 | P2.
   --only <ids>        Comma-separated list of rule IDs to run.
   --skip <ids>        Comma-separated list of rule IDs to skip.
+  --include-installed Also scan what this repo did not author: skills under a
+                      harness install path, vendored copies, gitignored files.
+                      Off by default.
   -w, --watch         Watch mode: re-run on changes.
   -h, --help          Show this help.
   -v, --version       Show version.
@@ -137,7 +143,12 @@ async function main(): Promise<void> {
 
   if (opts.command === 'watch' || (opts.command === 'detect' && opts.watchMode)) {
     const { watch } = await import('./watch.js');
-    await watch({ repoRoot: opts.repoRoot, only: opts.only, skip: opts.skip });
+    await watch({
+      repoRoot: opts.repoRoot,
+      only: opts.only,
+      skip: opts.skip,
+      includeInstalled: opts.includeInstalled,
+    });
     return;
   }
 
@@ -152,6 +163,7 @@ async function main(): Promise<void> {
     rules,
     only: opts.only,
     skip: opts.skip,
+    includeInstalled: opts.includeInstalled,
   });
 
   if (opts.format === 'json') {

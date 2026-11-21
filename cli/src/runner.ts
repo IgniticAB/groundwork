@@ -7,9 +7,12 @@ export async function run(opts: {
   rules: Rule[];
   only?: string[];
   skip?: string[];
+  includeInstalled?: boolean;
 }): Promise<RunResult> {
   const start = Date.now();
-  const ctx = await buildContext(opts.repoRoot);
+  const ctx = await buildContext(opts.repoRoot, {
+    includeInstalled: opts.includeInstalled,
+  });
 
   const filtered = opts.rules.filter((r) => {
     if (opts.only && opts.only.length > 0 && !opts.only.includes(r.id)) return false;

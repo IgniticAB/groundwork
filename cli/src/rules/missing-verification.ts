@@ -27,7 +27,9 @@ export const missingVerification: Rule = {
           message: hasSection
             ? `${target} has a Verification section but no recognizable verification command in it.`
             : `${target} has no Verification section.`,
-          fix: 'Run: groundwork verify',
+          fix: hasSection
+            ? 'Name the real command the agent should run, e.g. `npm test`. Each command must resolve to a script in the project.'
+            : 'Add a "## Verification" section naming the fast command to run after every change and the full command to run before declaring a task done. The groundwork skill\'s `verify` command does this.',
         });
       }
     }

@@ -4,31 +4,58 @@
 // the body separately so per-rule scans operate on prose only.
 import type { RuleContext } from '../types.js';
 
-export const SKILL_GLOBS = [
+/**
+ * Skills this repo authors and ships. A finding here names a file the developer
+ * owns and can fix, so these are always scanned. The detector used to miss them
+ * entirely, which is why it reported clean on its own repository.
+ */
+export const AUTHORED_SKILL_GLOBS = [
+  'skills/*/SKILL.md',
+  'skills/*/*/SKILL.md',
+  '.claude-plugin/skills/*/SKILL.md',
+  'plugins/*/skills/*/SKILL.md',
+];
+
+/**
+ * Harness install paths. `npx skills add` and the equivalents put *other
+ * people's* skills here, and plenty of teams commit them. Telling a developer
+ * their vendored copy of someone else's skill is oversized is noise they cannot
+ * act on, so these are skipped unless --include-installed is passed.
+ */
+export const INSTALLED_SKILL_GLOBS = [
   '.claude/skills/*/SKILL.md',
   '.cursor/skills/*/SKILL.md',
   '.agents/skills/*/SKILL.md',
+  '.windsurf/skills/*/SKILL.md',
 ];
+
+export const SKILL_GLOBS = [...AUTHORED_SKILL_GLOBS, ...INSTALLED_SKILL_GLOBS];
 
 export interface SkillFile {
   /** Repo-relative path to SKILL.md. */
   path: string;
   /** Raw file content. */
   raw: string;
-  /** Parsed frontmatter (only `name` and `description` are extracted). */
+  /** Parsed frontmatter. Values are extracted for `name` and `description` only. */
   frontmatter: {
     /** True if the file opens with `---` and a closing `---` line. */
     present: boolean;
     name: string | null;
     description: string | null;
+    /** Every top-level key, in file order, with the 1-indexed line it sits on. */
+    keys: { key: string; line: number }[];
   };
   /** Body content after the frontmatter, with leading blank lines trimmed. */
   body: string;
 }
 
-/** Glob and read every SKILL.md under the standard harness skill paths. */
+/**
+ * Every SKILL.md worth reporting on: the ones this repo authors, plus — when
+ * --include-installed is passed — the ones installed under a harness path.
+ */
 export async function findSkillFiles(ctx: RuleContext): Promise<SkillFile[]> {
-  const paths = await ctx.glob(SKILL_GLOBS);
+  const globs = ctx.includeInstalled ? SKILL_GLOBS : AUTHORED_SKILL_GLOBS;
+  const paths = await ctx.glob(globs);
   const out: SkillFile[] = [];
   for (const p of paths) {
     const raw = await ctx.readFile(p);
@@ -48,7 +75,7 @@ function splitFrontmatter(raw: string): SplitResult {
   const lines = raw.split('\n');
   if (lines[0]?.trim() !== '---') {
     return {
-      frontmatter: { present: false, name: null, description: null },
+      frontmatter: { present: false, name: null, description: null, keys: [] },
       body: raw,
     };
   }
@@ -61,7 +88,7 @@ function splitFrontmatter(raw: string): SplitResult {
   }
   if (closeIdx === -1) {
     return {
-      frontmatter: { present: false, name: null, description: null },
+      frontmatter: { present: false, name: null, description: null, keys: [] },
       body: raw,
     };
   }
@@ -69,10 +96,11 @@ function splitFrontmatter(raw: string): SplitResult {
   const fmLines = lines.slice(1, closeIdx);
   const name = extractField(fmLines, 'name');
   const description = extractField(fmLines, 'description');
+  const keys = extractTopLevelKeys(fmLines);
   const body = lines.slice(closeIdx + 1).join('\n').replace(/^\n+/, '');
 
   return {
-    frontmatter: { present: true, name, description },
+    frontmatter: { present: true, name, description, keys },
     body,
   };
 }
@@ -101,6 +129,21 @@ function extractField(fmLines: string[], key: string): string | null {
     return stripQuotes(inline);
   }
   return null;
+}
+
+/**
+ * Top-level keys only: a line that starts in column zero and carries a colon.
+ * Nested keys under `metadata:` are indented and are deliberately not returned,
+ * because the host validates the top level.
+ */
+function extractTopLevelKeys(fmLines: string[]): { key: string; line: number }[] {
+  const out: { key: string; line: number }[] = [];
+  for (let i = 0; i < fmLines.length; i++) {
+    const m = /^([A-Za-z_][A-Za-z0-9_-]*)\s*:/.exec(fmLines[i]);
+    // +2: one for the opening `---`, one to make the index 1-based.
+    if (m) out.push({ key: m[1], line: i + 2 });
+  }
+  return out;
 }
 
 function stripQuotes(s: string): string {

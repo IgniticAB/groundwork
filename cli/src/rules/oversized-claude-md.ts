@@ -65,7 +65,7 @@ export const oversizedClaudeMd: Rule = {
           severity: 'P1',
           file: path,
           message: `${path} is ${lines} prose lines (hard ceiling ${HARD_LIMIT}; code examples already excluded). Attention bloat. Move stable rules into docs/agents/<area>.md and reference them from "See also".`,
-          fix: 'Adopt the split-file architecture: lean canonical AGENTS.md + docs/agents/ overflow. See foundation/good-practices.md § split-file.',
+          fix: 'Move per-area detail into docs/agents/<area>.md and reference it from the "See also" section. Keep AGENTS.md to the rules that apply everywhere.',
         });
       } else if (lines > SOFT_LIMIT) {
         findings.push({
@@ -73,7 +73,7 @@ export const oversizedClaudeMd: Rule = {
           severity: 'P2',
           file: path,
           message: `${path} is ${lines} prose lines (soft target ${SOFT_LIMIT}, ~400 tokens; code examples already excluded). The canonical file should be a lean entry point; move stable conventions to docs/agents/<area>.md.`,
-          fix: 'Consider splitting per the lean-canonical architecture. See foundation/good-practices.md § split-file.',
+          fix: 'Consider moving per-area detail into docs/agents/<area>.md, referenced from "See also".',
         });
       }
     }

@@ -73,12 +73,26 @@ For each of the five layers:
 
   **Installed skills.** Skills are procedure-as-context: every invocation reads the skill's `SKILL.md` and any sub-files it references. A bloated, vaguely-described, or structurally broken skill misroutes invocations the same way a bloated `CLAUDE.md` does. Audit them as part of the Project layer.
 
-  Glob from the repo root:
+  Glob from the repo root. Skills the repo **authors** come first — these are
+  the ones a finding can be acted on:
+  ```
+  skills/*/SKILL.md
+  .claude-plugin/skills/*/SKILL.md
+  plugins/*/skills/*/SKILL.md
+  ```
+  Then the harness **install** paths, where `npx skills add` and its
+  equivalents put other people's skills:
   ```
   .claude/skills/*/SKILL.md
   .cursor/skills/*/SKILL.md
   .agents/skills/*/SKILL.md
+  .windsurf/skills/*/SKILL.md
   ```
+  Audit the authored ones. For the installed ones, say how many there are and
+  move on unless the user asks — a finding about a vendored copy of someone
+  else's skill is something the team cannot fix, and a report full of those is
+  a report nobody finishes reading. The CLI makes the same split, behind
+  `--include-installed`.
 
   For each match, parse the YAML frontmatter and read the body. Record per skill: `name`, `description`, total SKILL.md line count, and the list of relative-link targets found in the body (skip anything starting with `http://`, `https://`, `mailto:`, or `#`).
 

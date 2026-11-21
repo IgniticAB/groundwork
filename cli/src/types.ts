@@ -27,6 +27,13 @@ export interface RuleContext {
   glob: (patterns: string | string[], options?: { ignore?: string[] }) => Promise<string[]>;
   /** True if .git exists and we can shell out for git commands. */
   hasGit: boolean;
+  /**
+   * True when the user passed --include-installed: also scan what this repo did
+   * not author (skills under a harness install path, vendored copies,
+   * gitignored files). Rules that reach for a path directly with readFile,
+   * rather than through glob, check this themselves.
+   */
+  includeInstalled: boolean;
 }
 
 export interface Rule {

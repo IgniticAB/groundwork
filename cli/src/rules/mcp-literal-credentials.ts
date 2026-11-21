@@ -26,11 +26,21 @@ export const mcpLiteralCredentials: Rule = {
   async run(ctx) {
     const findings: Finding[] = [];
 
+    // The paths hosts actually read come first: a credential leaking from
+    // .mcp.json is the case this rule exists for, and until now it was the one
+    // path the globs missed.
     const candidates = await ctx.glob([
+      '.mcp.json',
+      '.cursor/mcp.json',
+      '.vscode/mcp.json',
+      'claude_desktop_config.json',
+      '**/claude_desktop_config.json',
+      '.mcp/*.json',
+      'mcp.config.json',
+      // Legacy Groundwork output, kept so repos scaffolded by older versions
+      // are still scanned.
       '.context/mcp-config*.json',
       '.context/mcp-server-*.json',
-      'mcp.config.json',
-      '.mcp/*.json',
     ]);
 
     for (const file of candidates) {

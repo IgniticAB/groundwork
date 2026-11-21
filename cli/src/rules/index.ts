@@ -18,8 +18,11 @@ import { skillMissingFrontmatter } from './skill-missing-frontmatter.js';
 import { skillVagueDescription } from './skill-vague-description.js';
 import { skillOversized } from './skill-oversized.js';
 import { skillBrokenLink } from './skill-broken-link.js';
+import { skillFrontmatterPortability } from './skill-frontmatter-portability.js';
+import { noAgentContext } from './no-agent-context.js';
 
 export const rules: Rule[] = [
+  noAgentContext,
   staleClaudeMd,
   missingAdrXref,
   mcpLiteralCredentials,
@@ -38,4 +41,5 @@ export const rules: Rule[] = [
   skillVagueDescription,
   skillOversized,
   skillBrokenLink,
+  skillFrontmatterPortability,
 ];

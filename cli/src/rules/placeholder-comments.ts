@@ -25,6 +25,22 @@ const PATTERNS: { pattern: RegExp; severity: 'P0' | 'P1' | 'P2' }[] = [
   { pattern: /\bnot\s+implemented\b/i, severity: 'P1' },
 ];
 
+/**
+ * `throw new Error('Not implemented')` is correct, finished code in an abstract
+ * base class, an interface stub or a deliberately unsupported branch — the
+ * author is signalling at runtime, not leaving a note to themselves. Flagging
+ * it is the most common false positive this rule can produce, so a thrown
+ * "not implemented" only counts when the line also carries a placeholder
+ * marker that is unambiguously a note.
+ */
+const THROWN_NOT_IMPLEMENTED =
+  /\b(?:throw|raise)\b[^\n]*\bnot[\s_]?implemented\b|\bNotImplementedError\b/i;
+const EXPLICIT_PLACEHOLDER = /\b(TODO|FIXME|XXX|HACK)\b/i;
+
+function isDeliberateThrow(line: string): boolean {
+  return THROWN_NOT_IMPLEMENTED.test(line) && !EXPLICIT_PLACEHOLDER.test(line);
+}
+
 export const placeholderComments: Rule = {
   id: 'placeholder-comments',
   description: 'Source files contain placeholder comments (TODO: implement, [fill this in], not implemented).',
@@ -40,6 +56,7 @@ export const placeholderComments: Rule = {
       const lines = body.split('\n');
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        if (isDeliberateThrow(line)) continue;
         for (const { pattern, severity } of PATTERNS) {
           if (pattern.test(line)) {
             if (isIgnored(body, i + 1)) break;

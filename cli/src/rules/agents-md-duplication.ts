@@ -9,6 +9,16 @@
 //   - Boundaries → Always: path/area-scoped automatic actions.
 //   - Boundaries → Ask first: owns the trigger list (>N files, public APIs, migrations).
 //   - Boundaries → Never: forbidden paths or destructive actions.
+//
+// KNOWN LIMIT, stated rather than hidden: this rule only fires on a document
+// that has both a "Non-negotiables" heading and a "Boundaries" heading — the
+// shape `groundwork init` emits. On any other AGENTS.md it finds no sections to
+// compare and returns nothing, so it validates conformance to this skill's own
+// template rather than detecting duplication in general. A hand-written file
+// with the same problem under different headings passes silently. Generalising
+// it would mean guessing which headings are meant to own which rules, and a
+// rule that cannot tell a real hit from a plausible one is skipped, not
+// softened.
 import type { Rule, Finding } from '../types.js';
 
 const TARGETS = ['AGENTS.md', 'CLAUDE.md'];
@@ -91,6 +101,8 @@ export const agentsMdDuplication: Rule = {
       const nonNegotiables = sections.find((s) => isNonNegotiables(s.heading));
       const boundaries = sections.find((s) => isBoundaries(s.heading));
 
+      // No-op by design on documents that do not use these headings. See the
+      // KNOWN LIMIT note at the top of this file.
       if (!nonNegotiables || !boundaries) continue;
 
       for (const { regex, label, ownedBy } of PATTERNS) {
