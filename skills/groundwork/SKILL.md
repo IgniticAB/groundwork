@@ -26,7 +26,7 @@ These seven files are the shared vocabulary every command uses. Read them once a
 - `foundation/contextops-lifecycle.md` — Build, Distribute, Maintain, Update, Measure. The DevOps-style discipline that keeps context from rotting.
 - `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, the Context Rot taxonomy (Poisoning / Distraction / Confusion / Clash), and the four repayment practices.
 - `foundation/anti-patterns.md` — The things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure.
-- `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, split-file architecture (AGENTS.md canonical + CLAUDE.md symlink + `docs/agents/` neutral overflow + optional `.claude/rules/` for Claude Code auto-loading), three-tier boundaries, HTML preservation tags.
+- `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, one-canonical-file architecture (AGENTS.md alone by default, `docs/agents/` neutral overflow, and the named reasons to add a second file), three-tier boundaries, HTML preservation tags.
 - `foundation/harness-reference.md` — Which harnesses read `AGENTS.md`, and the short list of cases where a harness needs a file of its own. Carries a `Last verified` date; re-verify before each release.
 - `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
 

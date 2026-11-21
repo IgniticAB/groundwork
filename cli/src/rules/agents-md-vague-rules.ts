@@ -120,7 +120,8 @@ export const agentsMdVagueRules: Rule = {
     for (const target of TARGETS) {
       const body = await ctx.readFile(target);
       if (!body) continue;
-      // Dedupe symlinked CLAUDE.md→AGENTS.md so findings fire once, not twice.
+      // Dedupe a CLAUDE.md that mirrors AGENTS.md (symlink or copy) so
+      // findings fire once, not twice.
       if (seenBodies.has(body)) continue;
       seenBodies.add(body);
 

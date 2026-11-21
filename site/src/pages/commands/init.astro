@@ -48,11 +48,7 @@ const description =
 
   <h2>What it produces</h2>
   <ul>
-    <li><code>AGENTS.md</code>: canonical, hand-edited, under ~80 lines.</li>
-    <li><code>CLAUDE.md</code> → <code>AGENTS.md</code>: symlink (default) or two-file mirror.</li>
-    <li><code>.cursor/rules/main.mdc</code>: 5-line pointer (Cursor).</li>
-    <li><code>.github/copilot-instructions.md</code>: 5-line pointer (Copilot).</li>
-    <li><code>.windsurf/rules/main.md</code>: 5-line pointer (Windsurf).</li>
+    <li><code>AGENTS.md</code>: canonical, hand-edited, under ~80 lines. Every harness <code>init</code> targets reads it, so by default this is the only context file emitted.</li>
     <li><code>docs/decisions/</code>: README and a negative-space stub. A first ADR is opt-in (the eighth question); skip it and write one later with <code>adr</code>.</li>
     <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook.</li>
   </ul>
@@ -61,9 +57,9 @@ const description =
   <ol>
     <li><strong>Safety check.</strong> If any context files exist, stop and ask whether you meant <code>document</code>.</li>
     <li><strong>Detect stack and sample the code.</strong> Reads manifests, scripts, README, plus up to 25 recent source files. Extracts dominant patterns (component shape, error handling, imports, naming) with real-file examples.</li>
-    <li><strong>Ask up to eight questions.</strong> Harnesses; verification commands; style rules (confirm detected patterns + add anything missed); three-tier boundaries; symlink-or-two-files; rejected approaches; preservation paths; an optional first ADR.</li>
+    <li><strong>Ask up to eight questions.</strong> Harnesses; verification commands; style rules (confirm detected patterns + add anything missed); three-tier boundaries; whether anything needs a context file beyond <code>AGENTS.md</code>; rejected approaches; preservation paths; an optional first ADR.</li>
     <li><strong>Write <code>AGENTS.md</code></strong> from the answers. Each Style rule must be anchored: verb plus a named technology, command, or pattern. Vague rules are dropped at write time, not shipped. Overflow goes to <code>docs/agents/&lt;area&gt;.md</code>.</li>
-    <li><strong>Wire <code>CLAUDE.md</code> and the per-harness pointers.</strong></li>
+    <li><strong>Emit harness-specific files</strong> — only for the reasons picked in the fifth question. A <code>CLAUDE.md</code> is written as a one-line <code>@AGENTS.md</code> import, never a symlink or a second copy. Usually this step writes nothing.</li>
     <li><strong>Set up ADRs and the pre-commit hook.</strong> Suggests the install command if no hook runner is present. Does not silently install. Rejected approaches from Q6 land in <code>docs/decisions/negative-space.md</code> so the file ships populated.</li>
     <li><strong>Run verification.</strong> The commands you picked actually execute. Failures are surfaced, not hidden.</li>
   </ol>

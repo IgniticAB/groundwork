@@ -1,3 +1,9 @@
+<!-- GitHub.com Chat is the one Copilot surface that does not read AGENTS.md.
+     Emit this file when that surface matters to the team; the Copilot cloud
+     agent, code review, CLI and VS Code Chat all read AGENTS.md directly. For
+     rules that should fire on specific paths, write
+     .github/instructions/<area>.instructions.md with `applyTo` instead. -->
+
 # <Project> agent rules
 
 Read `/AGENTS.md` and follow it for all project conventions.

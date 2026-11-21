@@ -11,8 +11,8 @@ This command makes verification first-class. After running it, every context fil
 
 ## What this command produces
 
-- Updates to `AGENTS.md` (and to `CLAUDE.md` if it is a hand-mirrored copy rather than a symlink) to include or refresh the "Verification" section.
-- Updates to the per-harness pointer files (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) so the fast verification command in the non-negotiables block stays current. These are short and hand-maintained — no generator.
+- Updates to `AGENTS.md` to include or refresh the "Verification" section. This is the canonical file; in most repos it is the only one that needs editing.
+- Updates to any per-harness file the repo actually carries (`CLAUDE.md` as a full copy, `.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) so the fast verification command stays current. These are hand-maintained — no generator.
 - A pre-commit hook script at `.context/hooks/check-context.sh` (if not already present). The hook catches package-manager drift against `AGENTS.md`, missing ADRs on multi-file commits, and ADRs with no Status.
 - A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected.
 - The `groundwork` detector wired in: as a pre-commit step and as a CI job.
@@ -89,9 +89,17 @@ Known-failing checks (do not fix unless asked):
 
 Place this section near the top of `AGENTS.md`. The agent should not have to scroll to find it.
 
-`AGENTS.md` is canonical — `CLAUDE.md` either inherits via symlink (no edit needed) or is a hand-mirrored copy (edit it too, the `agents-claude-sync` rule will flag drift).
+`AGENTS.md` is canonical. A `CLAUDE.md` that is a symlink or an `@AGENTS.md`
+import inherits the change and needs no edit; a `CLAUDE.md` that is a full copy
+needs the same edit, and the `agents-claude-sync` rule will flag it if you
+forget.
 
-For each per-harness pointer file (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`), update the `Verification:` line in the non-negotiables block to the fast command only. The pointer files do not list the full verification — they point at `AGENTS.md` for that.
+For each per-harness pointer file the repo carries (`.cursor/rules/main.mdc`,
+`.github/copilot-instructions.md`, `.windsurf/rules/main.md`), update the
+`Verification:` line in the non-negotiables block to the fast command only. The
+pointer files do not list the full verification — they point at `AGENTS.md` for
+that. If a pointer file exists for a harness that now reads `AGENTS.md`
+natively, say so once: deleting it is less work than keeping it current.
 
 ### Step 5. Wire in the detector
 

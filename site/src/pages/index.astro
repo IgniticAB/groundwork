@@ -20,10 +20,6 @@ const heroFeature = foundation[0];
 const tree = [
   { line: 'your-repo/', note: '' },
   { line: '├── AGENTS.md', note: 'canonical, ~70 lines' },
-  { line: '├── CLAUDE.md → AGENTS.md', note: 'symlink' },
-  { line: '├── .cursor/rules/main.mdc', note: '5-line pointer' },
-  { line: '├── .github/copilot-instructions.md', note: '5-line pointer' },
-  { line: '├── .windsurf/rules/main.md', note: '5-line pointer' },
   { line: '├── .context/hooks/check-context.sh', note: 'pre-commit drift' },
   { line: '└── docs/decisions/', note: '' },
   { line: '    ├── README.md', note: '' },
@@ -80,13 +76,15 @@ const tree = [
           <span class="kicker">What you get</span>
           <h2>One command. Real files.</h2>
           <p class="lede">
-            <code>groundwork init</code> reads your repo, asks five questions,
+            <code>groundwork init</code> reads your repo, asks eight questions,
             and writes the files every other command assumes exist.
           </p>
           <p>
-            One canonical <code>AGENTS.md</code>. A 5-line pointer per harness.
-            ADR scaffolding. A pre-commit hook that fails when context drifts
-            from the code. No <em>TODO: implement</em>. No 800-line CLAUDE.md.
+            One canonical <code>AGENTS.md</code> — read by Claude Code, Cursor,
+            Codex, Copilot and Windsurf, so in most repos it is the only context
+            file you get. ADR scaffolding. A pre-commit hook that fails when
+            context drifts from the code. No <em>TODO: implement</em>. No
+            800-line CLAUDE.md.
           </p>
           <a class="link-arrow" href={url('commands/init/')}>
             How <code>init</code> works<span aria-hidden="true">→</span>

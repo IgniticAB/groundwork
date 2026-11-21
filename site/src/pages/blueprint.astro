@@ -86,7 +86,7 @@ const description =
         <tr>
           <td><strong>Distraction</strong></td>
           <td>Irrelevant rules fire in an unrelated area.</td>
-          <td>Scoped rules. Token budgets. Split-file architecture.</td>
+          <td>Scoped rules. Token budgets. One canonical file.</td>
         </tr>
         <tr>
           <td><strong>Confusion</strong></td>
@@ -110,7 +110,7 @@ const description =
     </p>
     <ul>
       <li><strong>Build</strong> the context on day one. <a href={url('commands/init/')}><code>init</code></a>.</li>
-      <li><strong>Distribute</strong> it across harnesses with thin pointer files. Handled by <code>init</code>.</li>
+      <li><strong>Distribute</strong> it: one <code>AGENTS.md</code> every harness reads, plus a second file only where one is genuinely needed. Handled by <code>init</code>.</li>
       <li><strong>Maintain</strong> it with verification baked into every harness file. <a href={url('commands/verify/')}><code>verify</code></a>.</li>
       <li><strong>Update</strong> it as deltas, never rewrites. <a href={url('commands/document/')}><code>document</code></a>.</li>
       <li><strong>Measure</strong> it quarterly. <a href={url('commands/audit/')}><code>audit</code></a>.</li>

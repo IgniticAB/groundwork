@@ -52,9 +52,9 @@ if (!user) return null;
 
 ## Relationship to other files
 
-- **`AGENTS.md`** (and its `CLAUDE.md` symlink) — the lean, canonical root. Names the non-negotiables and the most critical rules inline.
+- **`AGENTS.md`** — the lean, canonical root, read by every harness. Names the non-negotiables and the most critical rules inline.
 - **`docs/agents/`** — harness-agnostic overflow. Any harness can be told to read these. If you maintain content here in `.claude/rules/`, consider whether it should also live in `docs/agents/` so non-Claude harnesses see it.
-- **`.cursor/rules/`, `.github/copilot-instructions.md`, `.windsurf/rules/`** — short pointer files that say "read `AGENTS.md`". They do not duplicate this directory.
+- **`.cursor/rules/`, `.github/copilot-instructions.md`, `.windsurf/rules/`** — optional per-harness files, present only where the team named a reason for one. They point at `AGENTS.md`; they do not duplicate this directory.
 
 ## When to edit
 

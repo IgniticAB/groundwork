@@ -11,14 +11,18 @@ The single most leveraged move in this skill. Run once per repo. Sets up every a
 
 Depending on the harnesses the user targets, some subset of:
 
-- `AGENTS.md` — the canonical, hand-edited source of agent rules. Self-sufficient; aim under ~80 lines.
-- `CLAUDE.md` — symlink to `AGENTS.md` (default). Two-file fallback for Windows or `core.symlinks=false` repos.
-- `.cursor/rules/main.mdc` (Cursor) — 5-line pointer to AGENTS.md.
-- `.github/copilot-instructions.md` (Copilot) — 5-line pointer to AGENTS.md.
-- `.windsurf/rules/main.md` (Windsurf) — 5-line pointer to AGENTS.md.
+- `AGENTS.md` — the canonical, hand-edited source of agent rules. Self-sufficient; aim under ~80 lines. **This is the default output and in most repos it is the only context file emitted**: Claude Code, Cursor, Codex, Copilot and Windsurf all read it.
 - `docs/decisions/` directory with a README and the negative-space starter. A first ADR is **not** auto-created; the user can opt in at the question step or write one later with `groundwork adr`.
 - `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR coverage + ADR status + package-manager drift).
 - `.claude/rules/README.md` — **only** when the user opts in to Claude Code's auto-loading layer (off by default).
+
+Harness-specific files are emitted **only** when Q5 names a reason for one — a pointer file nothing reads is maintenance for nothing:
+
+- `CLAUDE.md` — a one-line `@AGENTS.md` import, when the repo already has a `CLAUDE.md` or the team's Claude Code is configured to prefer it.
+- `.github/copilot-instructions.md` — when GitHub.com Chat matters; it is the one Copilot surface that does not read `AGENTS.md`.
+- `.cursor/rules/main.mdc`, `.windsurf/rules/main.md` — only if the team explicitly wants the non-negotiables restated inside that tool's own rule surface.
+
+Path-scoped rules are not `init`'s job; `scope` owns them.
 
 `docs/agents/` (the harness-agnostic overflow directory) is **not** created. `AGENTS.md` references it in "See also" so future readers know where overflow goes; the directory and its README are created on the first split.
 
@@ -123,7 +127,11 @@ Use AskUserQuestion (or numbered options in prose if unavailable). Eight questio
 
    The four old multi-select defaults (no-placeholder, plan-mode-for->3-files, defensive-commits, interface-first) move to Non-negotiables, not Style; they always apply and do not need confirmation.
 4. **Three-tier boundaries.** Free text, three slots, default empty: **Always** (things the agent does without asking), **Ask first** (things the agent proposes before doing), **Never** (paths the agent must not touch, e.g. `infra/terraform/`, `vendor/`, anything generated).
-5. **Symlink CLAUDE.md to AGENTS.md, or keep two files?** Default symlink (single canonical source; lower drift). Offer the two-file fallback for Windows users or any repo with `git config core.symlinks=false` set. If the user does not know which they want, default to symlink and mention they can switch later.
+5. **Does anything need a context file beyond `AGENTS.md`?** Multi-select, default **none**. Frame it that way: every harness from Q1 reads `AGENTS.md`, so the honest default is one file. Offer exactly four reasons, and pre-tick the first if you found a `CLAUDE.md` in Step 1.
+   - *This repo already has a `CLAUDE.md`* → emit it as a one-line `@AGENTS.md` import.
+   - *The team uses GitHub.com Chat* → emit `.github/copilot-instructions.md`, the one Copilot surface that does not read `AGENTS.md`.
+   - *We want the non-negotiables restated inside Cursor / Windsurf's own rule surface* → emit the matching pointer file.
+   - *Rules need to fire only on matching paths* → do not emit anything here; tell the user `scope` is the command for that and move on.
 6. **Any approaches you have explicitly rejected?** (Skippable.) "Mention 1 to 3 if so. They seed `docs/decisions/negative-space.md` so the agent stops suggesting them. Examples: 'we considered Redux and stayed with Context API', 'we briefly tried tRPC but reverted'." Free text. Default empty (the negative-space file ships as a stub the user can populate later).
 7. **Any code that must not be modified by an agent?** (Skippable.) "Legacy compromises, performance-tuned hot paths, compatibility shims. Naming the path is enough." Free text. If filled, Step 4 adds a Preservation entry to AGENTS.md naming those paths, with a one-line reason if the user provided one. If empty, the standard "Preserved regions" paragraph about CE:PRESERVE markers stays in but no specific paths are listed.
 8. **Want me to stub a first ADR for any past decision?** (Skippable.) Most users skip and write their first ADR with `groundwork adr` when a real decision arrives. If you do want one now, give a short title (e.g. "Use pnpm across the monorepo") and one or two sentences of context. Default: skip. If filled, Step 6 generates `docs/decisions/0001-<slug>.md` from `templates/adr.template.md` using the user's title and context.
@@ -172,14 +180,22 @@ Anchored rules carry a verb, a named tool or pattern, and a verification path. V
 
 Keep `AGENTS.md` under ~80 lines / ~400 tokens. If a section is heading over, push it into `docs/agents/<area>.md` and reference the new file from `AGENTS.md`'s "See also" instead of inlining. `docs/agents/` is harness-agnostic — any agent can be told to read those files.
 
-### Step 5. Wire up CLAUDE.md and the per-harness pointers
+### Step 5. Emit harness-specific files (only if Q5 asked for them)
 
-**CLAUDE.md.** Per the user's answer to Q5:
+If Q5 came back empty — the common case — skip this step entirely and say so in
+the Step 9 report: *"one file, `AGENTS.md`; every harness you named reads it."*
+That sentence is the point of the step, not an apology for a short run.
 
-- **Symlink** (default): from the repo root, run `ln -sf AGENTS.md CLAUDE.md`. Verify with `readlink CLAUDE.md`.
-- **Two files**: write `CLAUDE.md` from `templates/CLAUDE.md.template`, mirroring the content of `AGENTS.md`. Tell the user explicitly: there is no generator and no parity hook; if `AGENTS.md` changes, `CLAUDE.md` must be hand-mirrored (or regenerated via `groundwork document`). The `agents-claude-sync` CLI rule will flag drift.
+**`CLAUDE.md`.** Claude Code reads `AGENTS.md` natively, but only when no
+`CLAUDE.md` sits above the working directory — so a `CLAUDE.md` that exists
+wins. Where one does, write `templates/CLAUDE.md.template`: a header comment and
+a single `@AGENTS.md` import line. Do not copy `AGENTS.md`'s content into it and
+do not symlink it. Two full files drift, which is what the `agents-claude-sync`
+detector rule is for; a symlink adds a Windows failure mode for no gain now that
+the import works everywhere.
 
-**Per-harness pointer files.** For every non-Codex harness the user picked, emit the corresponding pointer file. Pointer shape is identical across harnesses (five lines + a header), only the path and Cursor's `.mdc` frontmatter differ:
+**Pointer files.** Same shape across harnesses, only the path and Cursor's
+`.mdc` frontmatter differ:
 
 ```
 # <Project> agent rules
@@ -194,11 +210,13 @@ Non-negotiables (always apply):
 
 Paths:
 
-- **Cursor** → `.cursor/rules/main.mdc`. Use `templates/cursor-rule.mdc.template` — the `.mdc` frontmatter (`alwaysApply: true`, `globs: []`) is the only format-specific bit, preserve it.
 - **Copilot** → `.github/copilot-instructions.md`. Use `templates/copilot-instructions.md.template`. Plain markdown, no frontmatter.
+- **Cursor** → `.cursor/rules/main.mdc`. Use `templates/cursor-rule.mdc.template` — the `.mdc` frontmatter (`alwaysApply: true`, `globs: []`) is the only format-specific bit, preserve it.
 - **Windsurf** → `.windsurf/rules/main.md`. Use `templates/windsurf-rule.template.md`. Plain markdown.
 
-Tell the user these pointer files are hand-maintained. They are short and stable enough that hand maintenance is fine; if the three non-negotiables drift it's worth a human noticing.
+Tell the user these files are hand-maintained and duplicate three lines on
+purpose. If the three non-negotiables drift from `AGENTS.md`, that is worth a
+human noticing.
 
 **Overflow location.** Do not create a `docs/agents/` directory by default; `AGENTS.md` already names it in "See also" so future readers know where overflow goes. When the user (or a future `document` run) actually splits a section out, copy `templates/docs-agents-readme.template.md` to `docs/agents/README.md` at that point.
 
@@ -256,8 +274,9 @@ No long postamble.
 
 - `AGENTS.md` is under ~80 lines and self-sufficient. It does not delegate to a separate canonical-conventions file; the only legitimate "see also" targets are `docs/agents/` (overflow) and `docs/decisions/`. `docs/mcp-policy.md` is added by the `mcp` command if and when it creates the policy.
 - No rule appears in two sections. Plan-mode triggers live only in Boundaries → Ask first; universal procedural rules live only in Non-negotiables; path-scoped actions live only in Boundaries → Always.
-- Pointer files are exactly the five-line shape, no extra prose, no duplicated rules.
-- `CLAUDE.md` is either a symlink (default) or a hand-mirrored copy with the user warned about drift.
+- The default run emits exactly one context file. Every harness-specific file that was emitted traces back to a reason the user picked in Q5.
+- `CLAUDE.md`, if emitted, is the `@AGENTS.md` import — not a symlink, not a copy.
+- Pointer files are exactly the shape above, no extra prose, no duplicated rules.
 - No placeholder text in any emitted file. Either it has real content or it is not in the file.
 - Verification commands are real and run in this repo.
 - If the repo already had partial context files, they are not overwritten; the user gets a diff and decides.
@@ -265,6 +284,7 @@ No long postamble.
 ## Failure modes to watch for
 
 - **You assume Claude Code is the only harness.** Do not. Ask.
+- **You emit a pointer file per harness out of habit.** That pattern predates native `AGENTS.md` support. Four files nobody edits is drift waiting to happen; emit the second file only for a reason the user named.
 - **You write rules that contradict what the user is already doing.** Read the recent commits and a sample of files first.
 - **You include rules with no examples.** Every style rule has a Preferred/Avoid pair.
 - **You forget to make the hook script executable.** `chmod +x` it.

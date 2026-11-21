@@ -1,82 +1,14 @@
 # <Project name> — Claude Code context
 
-<!-- This file only exists when symlinks aren't available (Windows +
-     core.symlinks=false, or `groundwork init` was answered "two files").
-     AGENTS.md is the canonical source — keep this in parity by hand or via
-     `groundwork document`. If your environment supports symlinks, prefer:
-       rm CLAUDE.md && ln -sf AGENTS.md CLAUDE.md
-     Aim under ~80 lines / ~400 tokens; when this file outgrows the budget,
-     split per-area conventions into docs/agents/<area>.md and reference them
-     from the "See also" section.
+<!-- AGENTS.md is the canonical, hand-edited source of agent rules for this
+     repo. Claude Code reads AGENTS.md natively (v2.1.277+) — but only when no
+     CLAUDE.md sits above the working directory. This file exists so that a
+     repo which already had a CLAUDE.md, or a team whose Claude Code is
+     configured to prefer it, still lands on the same rules.
 
-     Each section below has a distinct scope. Do NOT restate the same rule
-     in two sections — the agent is reading the union, and duplication
-     wastes attention. -->
+     It is one import line on purpose. Do not copy AGENTS.md's content here:
+     two full files drift, and the `agents-claude-sync` detector rule will say
+     so. If you have nothing CLAUDE-specific to add, you can delete this file
+     entirely and let Claude Code read AGENTS.md directly. -->
 
-## What this project is
-
-<!-- One paragraph. Audience, problem, stack at a glance. -->
-
-## Stack
-
-- Language(s): <e.g. TypeScript 5.x>
-- Package manager: <pkg-mgr>
-- Runtime / framework: <e.g. Node 20, Astro 5>
-
-## Verification
-
-After any change:
-```bash
-<fast verification command(s)>
-```
-
-Before declaring a task done:
-```bash
-<full verification command(s)>
-```
-
-## Non-negotiables
-
-<!-- Universal procedural rules that apply to every change. State each rule
-     once, abstractly. Triggers and path-scoped actions belong in Boundaries. -->
-
-- Use plan mode when any Ask-first condition triggers (see Boundaries).
-- No placeholder comments. If you do not have enough context, ask.
-- Use `<pkg-mgr>` only. Lockfiles are committed.
-- Run the fast verification after every meaningful change.
-
-## Style
-
-<!-- 3 to 6 critical rules. Each with a Preferred / Avoid pair. Add more
-     sections as needed. -->
-
-### <Rule 1>
-```<lang>
-// Preferred
-<code>
-// Avoid
-<code>
-```
-
-## Boundaries
-
-<!-- Three tiers, each with strict scope. A rule belongs in exactly one. -->
-
-**Always** — path- or area-scoped automatic actions (NOT universal rules; those are Non-negotiables).
-- <path-scoped behavior>
-
-**Ask first** — owns the trigger list for plan mode and other "stop and propose" gates.
-- Changes touching >3 files, public APIs, refactors, or migrations.
-- <project-specific trigger>
-
-**Never** — forbidden paths or destructive actions.
-- <path>: <reason>
-
-## Preserved regions
-
-Code wrapped in `<!-- preserve:start -->` / `<!-- preserve:end -->` must not be edited without explicit instruction.
-
-## See also
-
-- `docs/agents/` — per-area conventions when this file outgrows its budget
-- `docs/decisions/` — ADRs
+@AGENTS.md

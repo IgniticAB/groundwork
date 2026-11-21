@@ -11,9 +11,10 @@
 //   - 200 lines: hard ceiling (P1). The file is large enough to materially
 //     dilute attention and probably contains rules that should be split.
 //
-// When CLAUDE.md is a symlink to AGENTS.md (the default layout), readFile
-// returns identical bodies for both. We dedupe by content so the finding
-// fires once, not twice.
+// A CLAUDE.md that mirrors AGENTS.md — symlink, or a copy that has not yet
+// drifted — gives readFile identical bodies for both. We dedupe by content so
+// the finding fires once, not twice. The recommended shape, a one-line
+// `@AGENTS.md` import, is far under the threshold and never fires.
 import type { Rule, Finding } from '../types.js';
 
 const SOFT_LIMIT = 80;

@@ -1,11 +1,14 @@
 # <Project name> — agent context
 
 <!-- AGENTS.md is the canonical, hand-edited source of agent rules for this
-     repo. Every harness either reads this file directly or reads a 5-line
-     pointer file at its hardcoded path. CLAUDE.md is a symlink to this file
-     by default. Aim under ~80 lines / ~400 tokens; when this file outgrows
-     the budget, split per-area conventions into docs/agents/<area>.md and
-     reference them from the "See also" section.
+     repo, and in most repos it is the only context file you need: Claude
+     Code, Cursor, Codex, Copilot and Windsurf all read it. Add a
+     harness-specific file only for path-scoped rules, GitHub.com Chat, or an
+     existing CLAUDE.md you are reducing to an @AGENTS.md import.
+
+     Aim under ~80 lines / ~400 tokens; when this file outgrows the budget,
+     split per-area conventions into docs/agents/<area>.md and reference them
+     from the "See also" section.
 
      Each section below has a distinct scope. Do NOT restate the same rule
      in two sections — the agent is reading the union, and duplication

@@ -58,7 +58,7 @@ Read what exists. Do not skip this step; without it the audit is fiction.
 For each of the five layers:
 
 - **System.** Is there a global persona or guardrails file? Usually nothing in the repo for this; that is fine — user-level config and agent memory live outside it.
-- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink or hand-mirrored)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date.
+- **Project.** `AGENTS.md` (canonical)? `CLAUDE.md` (symlink, `@AGENTS.md` import, or a full second copy)? `.cursor/rules/`? `.github/copilot-instructions.md`? `.windsurf/rules/`? `docs/agents/` (harness-agnostic overflow)? `.claude/rules/` (optional Claude Code auto-loading layer)? Read them; note their length and last-modified date.
 
   Beyond file structure, score AGENTS.md on **content quality**. Each of the following is a separate signal:
   - Exists, under 80 lines (soft) / 200 (hard).
@@ -82,7 +82,7 @@ For each of the five layers:
 
   For each match, parse the YAML frontmatter and read the body. Record per skill: `name`, `description`, total SKILL.md line count, and the list of relative-link targets found in the body (skip anything starting with `http://`, `https://`, `mailto:`, or `#`).
 
-  Compare each skill's path against the harness target list (the harnesses the repo emitted pointer files for during `init`, or the ones named in `AGENTS.md`). A `.cursor/skills/X/` in a Claude-only repo is dead weight.
+  Compare each skill's path against the harness target list (the harnesses named in `AGENTS.md`, or inferred from whichever harness-specific files the repo carries). A `.cursor/skills/X/` in a Claude-only repo is dead weight.
 
   Check each skill on these specific signals (these feed Step 5's findings):
   - **Structural validity.** SKILL.md exists; YAML frontmatter parses; both `name` and `description` are present and non-empty.
@@ -163,7 +163,7 @@ For each skill globbed in Step 1, surface the following as separate findings. Do
 - **Vague description** → P2. Quote the description. Triggers only on hedge phrases ("various", "general purpose", "helps with", "useful for", "good at", plus the hedge-word list shared with `agents-md-vague-rules`). No length threshold; concrete descriptions like "Generates Prisma migrations." pass.
 - **Bloated entry point** → P1. SKILL.md over 200 lines. Move detail into sub-files referenced from SKILL.md so the entry point stays a lean dispatcher.
 - **Broken internal link** → P1. A relative-path link in SKILL.md does not resolve to a real file. Name the unresolved target. The agent reads nothing where it expects content.
-- **Skill at unexpected path** → P2. The skill is installed under a harness path the repo does not target (per `AGENTS.md` Stack / the pointer files `init` emitted). Often dead weight; sometimes an individual contributor's tooling. Surface as observation, not blocker.
+- **Skill at unexpected path** → P2. The skill is installed under a harness path the repo does not target (per `AGENTS.md` Stack, or the harness-specific files the repo carries). Often dead weight; sometimes an individual contributor's tooling. Surface as observation, not blocker.
 
 A repo with no skills installed gets no findings here. A repo with three well-formed skills also gets none. The findings exist to catch the actual failures, not to demand skills exist.
 

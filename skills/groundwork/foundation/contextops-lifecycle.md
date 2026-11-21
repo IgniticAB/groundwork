@@ -17,14 +17,15 @@ Commands: `init`, `document`.
 
 ## 2. Distribute
 
-The same rules, in the format each harness expects. A single source of truth, multiple emitted files.
+One source of truth, reaching every harness. This step used to mean emitting a
+file per tool; it now mostly means *not* doing that.
 
-- Claude Code reads `CLAUDE.md` and `.claude/skills/*`.
-- Cursor reads `.cursor/rules/*.mdc` with YAML frontmatter for file-scoping.
-- Codex / generic agents read `AGENTS.md`.
-- GitHub Copilot reads `.github/copilot-instructions.md`.
+- `AGENTS.md` at the repo root is read by Claude Code, Cursor, Codex, Copilot and Windsurf. Write the rules there, once.
+- Add a harness-specific file only for something `AGENTS.md` cannot express: path-scoped rules (`.cursor/rules/*.mdc` with `globs`, `.github/instructions/*.instructions.md` with `applyTo`, `.claude/rules/*.md` with `paths:`), or GitHub.com Chat, the one surface that does not read `AGENTS.md`.
+- Where a `CLAUDE.md` already exists, reduce it to a one-line `@AGENTS.md` import. Claude Code prefers `CLAUDE.md` when both are present, so the import is what keeps the single source single.
 
-Do not write the same rules five times. Write them once, transform them into each format.
+Do not write the same rules five times. The duplication you avoid here is the
+drift you do not have to detect in step 3.
 
 Commands: `init`, `document`, `scope`.
 

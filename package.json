@@ -10,7 +10,7 @@
     "build": "npm run build --prefix cli && npm run build --prefix site",
     "build:cli": "npm run build --prefix cli",
     "build:site": "npm run build --prefix site",
-    "typecheck": "npm --prefix cli exec -- tsc --noEmit",
+    "typecheck": "npm run typecheck --prefix cli",
     "test": "npm test --prefix cli",
     "detect": "npm run build --prefix cli && node cli/bin/groundwork.mjs detect .",
     "install:all": "npm ci --prefix cli && npm ci --prefix site"

@@ -29,8 +29,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "prepublishOnly": "npm run build",
-    "test": "node --test dist/test"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/test",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

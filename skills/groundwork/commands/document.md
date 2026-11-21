@@ -11,7 +11,7 @@ The difference matters: `document` does delta updates that preserve history, ins
 
 ## What this command produces
 
-The same set of files as `init` (`AGENTS.md`, the `CLAUDE.md` symlink or two-file mirror, the per-harness pointer files, ADR scaffolding, `docs/agents/` if it exists, `.claude/rules/` if the team opted into it) — but:
+Whatever set of context files the repo already has — `AGENTS.md`, a `CLAUDE.md`, per-harness pointer files, ADR scaffolding, `docs/agents/`, `.claude/rules/` — but:
 
 - Existing files are not overwritten. They are extended with new sections, and stale sections are marked deprecated with a date and reason.
 - The agent reads recent git history to understand which conventions have shifted recently.
@@ -96,9 +96,24 @@ Why this matters: a future agent reading the file knows both the current rule *a
 
 ### Step 5. Reconcile across harnesses
 
-`AGENTS.md` is canonical. `CLAUDE.md` is either a symlink to it (no drift possible) or a hand-mirrored copy. If `CLAUDE.md` is a regular file and diverges from `AGENTS.md`, flag it; do not silently pick a winner. Show the user the diff and ask which side is correct, then mirror that decision back into `AGENTS.md`. Suggest converting `CLAUDE.md` to a symlink if the environment supports it.
+`AGENTS.md` is canonical. Every harness this skill targets reads it, so the
+reconciliation job is mostly deletion.
 
-The per-harness pointer files (`.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) are short and hand-maintained. If a non-negotiable in `AGENTS.md` changed (a new fast-verification command, a new package manager), update each pointer file by hand. There is no generator.
+**`CLAUDE.md`.** If it is a symlink, or already a one-line `@AGENTS.md` import,
+there is nothing to do. If it is a full second copy that diverges from
+`AGENTS.md`, do **not** silently pick a winner: show the user the diff, ask
+which side is correct, fold that decision into `AGENTS.md`, and then offer to
+replace `CLAUDE.md`'s body with `@AGENTS.md` so the question cannot come back.
+That offer is the point of the step — mirroring the two files by hand only
+resets the clock on the same drift.
+
+**Per-harness pointer files.** If the repo carries
+`.cursor/rules/main.mdc`, `.github/copilot-instructions.md` or
+`.windsurf/rules/main.md`, first ask whether they are still needed: Cursor,
+Windsurf and every Copilot surface except GitHub.com Chat now read `AGENTS.md`
+directly. For the ones the user keeps, update the `Verification:` line and the
+non-negotiables block by hand when they change in `AGENTS.md`. There is no
+generator, which is exactly why fewer files is the better answer.
 
 ### Step 6. Emit and verify
 

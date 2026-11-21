@@ -53,29 +53,38 @@ const description =
   <p>The metric worth tracking: percentage of generated code passing the project's own checks without modification. Below 80% means the context is not communicating.</p>
   <p>→ <a href={url('commands/audit/')}><code>audit</code></a></p>
 
-  <h2 id="split-file">11. Split-file architecture</h2>
+  <h2 id="split-file">11. One canonical file, scoped additions only</h2>
   <p>
-    A single <code>CLAUDE.md</code> that grows becomes a dumping ground.
+    A single context file that grows becomes a dumping ground.
     <code>AGENTS.md</code> stays canonical, hand-edited, capped around 80
-    lines. <code>CLAUDE.md</code> is a symlink. Per-harness pointer files for
-    Cursor, Copilot, Windsurf are five lines each. Overflow goes to
+    lines — and it is now read natively by Claude Code, Cursor, Codex, Copilot
+    and Windsurf, so emit it and stop. Overflow goes to
     <code>docs/agents/&lt;area&gt;.md</code>.
   </p>
   <pre><code>AGENTS.md                          ← canonical, lean (~80 lines)
-CLAUDE.md -&gt; AGENTS.md             ← symlink
-.cursor/rules/main.mdc             ← 5-line pointer
-.github/copilot-instructions.md    ← 5-line pointer
-.windsurf/rules/main.md            ← 5-line pointer
 
 docs/agents/                       ← neutral overflow
   frontend.md
   backend.md
 
 .claude/rules/                     ← optional Claude-Code-only auto-load</code></pre>
+  <p>Add a second file only for a reason you can name:</p>
+  <ul>
+    <li>Rules must fire only on matching paths → <code>.cursor/rules/*.mdc</code> (<code>globs</code>), <code>.github/instructions/*.instructions.md</code> (<code>applyTo</code>), <code>.claude/rules/*.md</code> (<code>paths:</code>).</li>
+    <li>A <code>CLAUDE.md</code> already exists → reduce it to one line, <code>@AGENTS.md</code>. Claude Code prefers <code>CLAUDE.md</code> over <code>AGENTS.md</code> when both are present, so the import is what keeps one source of truth.</li>
+    <li>The team uses GitHub.com Chat → <code>.github/copilot-instructions.md</code>, the one Copilot surface that does not read <code>AGENTS.md</code>.</li>
+    <li>The repo is multi-package → a nested <code>AGENTS.md</code> per package.</li>
+  </ul>
   <p>
-    <code>.claude/rules/</code> is a Claude Code-specific feature: auto-loads
-    every file in filename-sort order. Use it only when you want that
-    behaviour; for harness-agnostic overflow use <code>docs/agents/</code>.
+    Earlier versions of this skill recommended symlinking <code>CLAUDE.md</code>
+    to <code>AGENTS.md</code>. That was right when Claude Code read only
+    <code>CLAUDE.md</code>; it is not any more. A symlink is a Windows liability
+    and a second path to maintain for a file nothing needs.
+  </p>
+  <p>
+    <code>.claude/rules/</code> is a Claude Code-specific feature: it auto-loads
+    those files at launch, scoped by <code>paths:</code> frontmatter where
+    present. For harness-agnostic overflow use <code>docs/agents/</code>.
   </p>
 
   <h2 id="boundary-tiers">12. Three-tier boundary layout</h2>

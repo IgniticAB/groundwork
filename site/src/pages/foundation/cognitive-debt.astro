@@ -42,7 +42,7 @@ const description =
     <thead><tr><th>Rot</th><th>What it looks like</th><th>Mitigation</th></tr></thead>
     <tbody>
       <tr><td><strong>Poisoning</strong></td><td>Uses deprecated APIs.</td><td>Stale-context checks; explicit "use X, not Y" rules.</td></tr>
-      <tr><td><strong>Distraction</strong></td><td>Irrelevant rules fire.</td><td>Scoped rules. Split-file architecture.</td></tr>
+      <tr><td><strong>Distraction</strong></td><td>Irrelevant rules fire.</td><td>Scoped rules. Per-area overflow.</td></tr>
       <tr><td><strong>Confusion</strong></td><td>Similar objects conflated (<code>User</code> vs <code>UserAccount</code>).</td><td>Namespace mapping. Before/after examples.</td></tr>
       <tr><td><strong>Clash</strong></td><td>Two rules contradict; last seen wins.</td><td>One canonical source. Consistency checks.</td></tr>
     </tbody>

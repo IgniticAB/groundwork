@@ -94,15 +94,14 @@ Ask 8 questions (Q6-Q8 skippable):
   2. Verification, fast vs full? → pnpm test / pnpm test && lint && typecheck
   3. Style rules? → confirms the 4 it detected from a 25-file code sample
   4. Three-tier boundaries? → Always / Ask first / Never
-  5. Symlink CLAUDE.md to AGENTS.md? → yes
+  5. Anything need a file beyond AGENTS.md? → no
   6. Approaches you have rejected? → (skipped)
   7. Code an agent must not touch? → (skipped)
   8. Stub a first ADR? → (skipped)
 
 Emit:
-  - AGENTS.md (canonical, ~70 lines)
-  - CLAUDE.md → AGENTS.md (symlink)
-  - .cursor/rules/main.mdc (5-line pointer to AGENTS.md)
+  - AGENTS.md (canonical, ~70 lines — Claude Code, Cursor, Codex,
+      Copilot and Windsurf all read it, so that is the whole of it)
   - docs/decisions/README.md
   - docs/decisions/negative-space.md
   - .context/hooks/check-context.sh (ADR coverage + pkg-manager drift)
@@ -146,12 +145,12 @@ groundwork/
         apply.md
       templates/                         files the commands emit
         AGENTS.md.template                canonical cross-tool source
-        CLAUDE.md.template                two-file fallback; CLAUDE.md is a symlink to AGENTS.md by default
+        CLAUDE.md.template                one-line @AGENTS.md import, for repos that already have a CLAUDE.md
         docs-agents-readme.template.md    README for docs/agents/ (harness-agnostic overflow)
         claude-rules-readme.md            README for .claude/rules/ (optional Claude Code auto-load layer)
-        cursor-rule.mdc.template          5-line pointer for Cursor
-        copilot-instructions.md.template  5-line pointer for Copilot
-        windsurf-rule.template.md         5-line pointer for Windsurf
+        cursor-rule.mdc.template          optional pointer for Cursor
+        copilot-instructions.md.template  pointer for GitHub.com Chat, the one surface that ignores AGENTS.md
+        windsurf-rule.template.md         optional pointer for Windsurf
         adr.template.md
         decisions-readme.template.md
         negative-space.template.md
