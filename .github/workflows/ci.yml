@@ -11,8 +11,16 @@ permissions:
 
 jobs:
   cli:
-    name: CLI build, typecheck, self-scan
+    # Matrix because the first real CI run failed on exactly this: `node --test
+    # <dir>` resolves differently across Node majors, and the maintainer's local
+    # Node is newer than the one CI pinned. Testing the declared support floor,
+    # the CI version and current is cheap and catches that class of drift.
+    name: CLI on Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24, 26]
     defaults:
       run:
         working-directory: cli
@@ -23,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: ${{ matrix.node }}
           cache: npm
           cache-dependency-path: cli/package-lock.json
 

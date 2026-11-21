@@ -17,7 +17,7 @@ The repo is its own worked example, and that is load-bearing.
 
 - Language: TypeScript 5.x, ES2022 modules, no bundler
 - Package manager: npm (one lockfile per sub-project; the root delegates)
-- Runtime: Node 22+ (CI runs 24)
+- Runtime: Node 22+ (CI matrix: 22, 24, 26)
 - Site: Astro 5, no integrations
 
 ## Verification
