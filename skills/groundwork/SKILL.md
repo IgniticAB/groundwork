@@ -1,11 +1,13 @@
 ---
 name: groundwork
-description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
+metadata:
+  version: "1.1.0"
+description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Also trigger when the user wants to brief or orient a fresh agent or teammate on a task ("onboard", "handoff", "what context does this task need"), or to apply a remediation plan produced by an earlier audit ("apply the fixes", "/gw apply"). Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
 ---
 
 # Groundwork
 
-A single skill that teaches an AI agent how to set up and govern the information environment around a codebase, then exposes eight commands for the highest-leverage ContextOps moves.
+A single skill that teaches an AI agent how to set up and govern the information environment around a codebase, then exposes ten commands for the highest-leverage ContextOps moves.
 
 The premise: in 2026, the bottleneck on AI-assisted engineering is no longer model capability, it is the quality of the context the model sees. Code that ships fast but nobody understands accumulates *cognitive debt*: the gap between a system's structure and the team's shared theory of how it works. The job of this skill is to make that context an engineered artifact, not a vibe.
 

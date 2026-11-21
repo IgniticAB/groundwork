@@ -18,21 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Need history for the ADR-coverage scan (uses recent commits).
           fetch-depth: 50
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Run groundwork detect
         run: npx --yes @ignitic/groundwork@latest detect . --fail-on P0 --json | tee findings.json
 
       - name: Upload findings
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: groundwork-findings
           path: findings.json

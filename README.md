@@ -2,7 +2,7 @@
 
 ![Groundwork](docs/hero.png)
 
-A skill (and 9 commands) for setting up and maintaining state of the art context engineering on a project or repo.
+A skill (and 10 commands) for setting up and maintaining state of the art context engineering on a project or repo.
 
 Built from the practices in *The 2026 Context Engineering Blueprint*, structured after the model in [impeccable.style](https://impeccable.style): one umbrella skill, with shared foundation files that always load, plus focused commands for the highest-leverage moves.
 
@@ -10,7 +10,7 @@ Built from the practices in *The 2026 Context Engineering Blueprint*, structured
 
 When the user wants to bootstrap a repo for AI-first development, audit how AI-ready their repo is, write or refresh a `CLAUDE.md` / `AGENTS.md` / `.cursor/rules/`, plan a non-trivial change before coding, capture a decision as an ADR, scope rules to file patterns, design an MCP server with least-privilege, or bake verification loops into the agent's context, they invoke this skill and pick a command.
 
-## The nine commands
+## The ten commands
 
 | Command | Purpose |
 | --- | --- |
@@ -23,12 +23,13 @@ When the user wants to bootstrap a repo for AI-first development, audit how AI-r
 | `mcp` | MCP configuration with least-privilege, HITL, audit policy |
 | `verify` | Bake test/lint/typecheck commands into context; install drift hook |
 | `onboard` | Produce a task-specific orientation brief for a fresh agent or engineer |
+| `apply` | Enact a remediation plan produced by an interactive `audit` report |
 
 ## Get started
 
 ### 1. Install the skill
 
-One agent skill with 9 commands. Works in [50+ AI coding harnesses](https://github.com/vercel-labs/skills#supported-agents) including Claude Code, Cursor, Codex, Gemini CLI, and OpenCode.
+One agent skill with 10 commands. Works in [50+ AI coding harnesses](https://github.com/vercel-labs/skills#supported-agents) including Claude Code, Cursor, Codex, Gemini CLI, and OpenCode.
 
 ```bash
 npx skills add IgniticAB/groundwork
@@ -69,7 +70,7 @@ For CI and pre-commit anti-pattern scans outside the skill:
 npm i -g @ignitic/groundwork
 ```
 
-Then run `groundwork detect` to scan a project, or `npx @ignitic/groundwork detect` without installing. Ten deterministic rules, no LLM required, JSON output for build gates.
+Then run `groundwork detect` to scan a project, or `npx @ignitic/groundwork detect` without installing. Eighteen deterministic rules, no LLM required, JSON output for build gates.
 
 The skill is for authoring context. The CLI is for guarding it. They complement each other.
 
@@ -88,20 +89,25 @@ You: groundwork init
 
 Skill: Read your repo. Saw: Node 22, pnpm, Next.js 15, Vitest, Biome.
 
-Ask 4 questions:
+Ask 8 questions (Q6-Q8 skippable):
   1. Harnesses? → Claude Code, Cursor
-  2. Verification? → pnpm test, pnpm lint, pnpm typecheck
-  3. Conventions? → no-placeholder, plan-mode-for->3-files, interface-first
-  4. Out-of-bounds? → infra/terraform/, .next/, node_modules/
+  2. Verification, fast vs full? → pnpm test / pnpm test && lint && typecheck
+  3. Style rules? → confirms the 4 it detected from a 25-file code sample
+  4. Three-tier boundaries? → Always / Ask first / Never
+  5. Symlink CLAUDE.md to AGENTS.md? → yes
+  6. Approaches you have rejected? → (skipped)
+  7. Code an agent must not touch? → (skipped)
+  8. Stub a first ADR? → (skipped)
 
 Emit:
   - AGENTS.md (canonical, ~70 lines)
   - CLAUDE.md → AGENTS.md (symlink)
   - .cursor/rules/main.mdc (5-line pointer to AGENTS.md)
   - docs/decisions/README.md
-  - docs/decisions/0001-record-architecture-decisions.md
   - docs/decisions/negative-space.md
   - .context/hooks/check-context.sh (ADR coverage + pkg-manager drift)
+
+No first ADR: Q8 was skipped, and `init` never invents one.
 
 Run pnpm test, pnpm lint, pnpm typecheck. All pass.
 
@@ -137,6 +143,7 @@ groundwork/
         mcp.md
         verify.md
         onboard.md
+        apply.md
       templates/                         files the commands emit
         AGENTS.md.template                canonical cross-tool source
         CLAUDE.md.template                two-file fallback; CLAUDE.md is a symlink to AGENTS.md by default
@@ -146,7 +153,6 @@ groundwork/
         copilot-instructions.md.template  5-line pointer for Copilot
         windsurf-rule.template.md         5-line pointer for Windsurf
         adr.template.md
-        adr-0001-record-architecture-decisions.md
         decisions-readme.template.md
         negative-space.template.md
         plan.template.md
@@ -156,12 +162,17 @@ groundwork/
         hook.sh.template
         husky-pre-commit.template
         context-check.yml.template
+        audit-report.html.template        interactive HTML audit report
+        remediation.template.md           remediation plan consumed by `apply`
       slash-commands/                    optional Claude Code slash shim
         gw.md
   cli/                                   the detector CLI, published as @ignitic/groundwork
     src/
     bin/
     package.json
+  site/                                  the docs site (Astro), deployed to GitHub Pages
+  AGENTS.md                              this repo's own agent context — see "Dogfooding"
+  docs/decisions/                        this repo's own ADRs
 ```
 
 ## Design principles
@@ -187,7 +198,7 @@ The site at `/blueprint` synthesizes both into a single navigable summary.
 
 ## Status and scope
 
-Version 1.1. Nine commands. Detector CLI with twelve rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
+Skill v1.1. Ten commands. Detector CLI (`@ignitic/groundwork`) with eighteen rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
 
 If you want to extend it: add a new command file in `skills/groundwork/commands/` and a row in the table in `skills/groundwork/SKILL.md`. Add new detector rules in `cli/src/rules/` and register them in `cli/src/rules/index.ts`. Commands are independent; rules are independent; they share the foundation files but do not depend on each other.
 

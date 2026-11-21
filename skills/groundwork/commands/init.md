@@ -95,7 +95,7 @@ Build a short summary of what you found (stack + 2 to 4 most useful patterns) an
 
 ### Step 3. Ask
 
-Use AskUserQuestion (or numbered options in prose if unavailable). Seven questions, in order. Each is scoped tightly; Q6 and Q7 are skippable in one click.
+Use AskUserQuestion (or numbered options in prose if unavailable). Eight questions, in order. Each is scoped tightly; Q6, Q7 and Q8 are skippable in one click.
 
 1. **Which harnesses should I emit files for?** Multi-select. Options: Claude Code, Cursor, Codex / generic, GitHub Copilot, Windsurf. Recommend the ones the user most likely uses given their tooling; do not assume.
 2. **Which verification commands should the agent run?** Show the ones you detected as preselected. Common shapes: `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pytest`, `cargo test`, `go test ./...`. Let the user adjust. Separate **fast** (after each change) from **full** (before declaring done).

@@ -1,0 +1,18 @@
+{
+  "name": "groundwork-monorepo",
+  "private": true,
+  "description": "Repo-level scripts for the Groundwork skill, detector CLI, and docs site.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm run build --prefix cli && npm run build --prefix site",
+    "build:cli": "npm run build --prefix cli",
+    "build:site": "npm run build --prefix site",
+    "typecheck": "npm --prefix cli exec -- tsc --noEmit",
+    "test": "npm test --prefix cli",
+    "detect": "npm run build --prefix cli && node cli/bin/groundwork.mjs detect .",
+    "install:all": "npm ci --prefix cli && npm ci --prefix site"
+  }
+}
