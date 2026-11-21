@@ -1,6 +1,6 @@
 # MCP policy — <project name>
 
-This document is the human-readable policy for agent access to real systems. It is paired with `.context/mcp-config.json`, which is the machine-readable configuration. When the two diverge, this policy is the intent and the config is the implementation.
+This document is the human-readable policy for agent access to real systems. It is paired with the host configuration (`.mcp.json`, `.cursor/mcp.json` or `.vscode/mcp.json`), which is what the host actually reads. When the two diverge, this policy is the intent and the config is the implementation.
 
 Last reviewed: <YYYY-MM-DD>
 Next review: <YYYY-MM-DD>
@@ -71,7 +71,7 @@ This policy is reviewed:
 ## Incident response
 
 If an agent does something destructive that should have been blocked:
-1. Disable the relevant server in `.context/mcp-config.json` immediately.
+1. Disable the relevant server in the host configuration (`.mcp.json` / `.cursor/mcp.json` / `.vscode/mcp.json`) immediately.
 2. Audit the past <window> of invocations against the affected systems.
 3. File a post-incident ADR (see `docs/decisions/`).
 4. Adjust this policy based on the ADR's findings.

@@ -35,7 +35,7 @@ const description =
 
   <h2>What it produces</h2>
   <ul>
-    <li><code>.context/mcp-config.json</code>: starter configuration, scoped into four tiers.</li>
+    <li>A starter configuration at the path the host actually reads — <code>.mcp.json</code> (Claude Code), <code>.cursor/mcp.json</code>, <code>.vscode/mcp.json</code> — scoped into four tiers.</li>
     <li><code>docs/mcp-policy.md</code>: human-readable policy. Tiers, HITL rules, audit destinations.</li>
     <li>Optional per-server <code>mcp-server-&lt;name&gt;.config.json</code> stubs.</li>
   </ul>
@@ -45,7 +45,7 @@ const description =
     <li><strong>Inventory the systems.</strong> Read or write? Service account or user impersonation? "Hook it up to everything" is refused.</li>
     <li><strong>Sort into four tiers.</strong> Tier 1 read-only context. Tier 2 internal write. Tier 3 production read. Tier 4 production write. Placement shown before generation.</li>
     <li><strong>Name the tools.</strong> Verb plus qualifier (<code>read_payment_by_id</code>, <code>refund_payment_to_customer</code>). Blast radius visible in the name.</li>
-    <li><strong>HITL in the config, not the prompt.</strong> Every Tier 4 tool gets <code>requiresConfirmation: true</code>. The policy names the modal, the approvers, the audit trail.</li>
+    <li><strong>HITL in the server, not the config and not the prompt.</strong> Every tool is annotated with the four MCP hints, and the output says in writing that hints are not enforcement. The approval gate for a Tier 4 action lives inside the server, the only component that can refuse. The policy names the approvers and the audit trail.</li>
     <li><strong>Auditing.</strong> Every server has a named log destination. Alerting on off-hours invocations, sensitive parameters, failure spikes, new tool combinations.</li>
     <li><strong>Credentials.</strong> One per tier, smallest possible role, stored in a named secret manager. Config references env var names, never literal secrets.</li>
     <li><strong>Cross-link.</strong> <code>AGENTS.md</code> gets a pointer to the policy so the agent finds it when it asks "can I do X?"</li>

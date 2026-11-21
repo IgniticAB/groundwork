@@ -136,6 +136,7 @@ groundwork/
       reference/                         loaded on demand, not at session start
         harness-detail.md
         runtime-detail.md
+        mcp-detail.md
       commands/                          one file per command
         init.md
         audit.md

@@ -275,7 +275,7 @@ If yes, build `docs/context-audit-<YYYY-MM-DD>.html` from `templates/audit-repor
 1. **Copy the template.** Read `skills/groundwork/templates/audit-report.html.template`.
 2. **Substitute placeholders.** The template has these tokens (each appears exactly once except where noted):
    - `{{PROJECT_NAME}}` — from `AGENTS.md` H1 or `package.json#name`. Two occurrences (page title + hero kicker).
-   - `{{AUDIT_DATE}}` — `YYYY-MM-DD`. Three occurrences (hero meta, output-hint, default filename).
+   - `{{AUDIT_DATE}}` — `YYYY-MM-DD`. Two occurrences in the template.
    - `{{OVERALL_SCORE}}` — integer 0-100 from Step 2.
    - `{{META_JSON}}` — JSON object: `{"project": "<name>", "date": "<YYYY-MM-DD>", "auditFile": "docs/context-audit-<date>.md"}`.
    - `{{LAYERS_JSON}}` — JSON array, one entry per layer (System / Project / Codebase / Tooling, Session skipped). Each entry: `{"name": "Project", "score": 4, "evidence": "AGENTS.md solid; no docs/agents/ overflow yet.", "weighted": true}`. Mark Project with `weighted: true` (it is 2× in the rubric).

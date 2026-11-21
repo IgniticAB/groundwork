@@ -7,13 +7,28 @@ description: Design a Model Context Protocol (MCP) configuration with least-priv
 
 Before any agent is given write access to a real system, the access pattern needs to be designed. This command does not implement the MCP servers — it produces the *configuration* and *policy* that tells the team how to implement them safely.
 
-Read `foundation/mcp-principles.md` first. This command is the operationalization of those three non-negotiables: least-privilege, HITL, auditing.
+Read `foundation/mcp-principles.md` first. This command is the
+operationalization of those three non-negotiables: least-privilege, HITL,
+auditing.
+
+## Before you emit files
+
+Read `reference/mcp-detail.md`. It carries the host config paths, the four
+annotation fields and their defaults, the tier definitions, and the list of keys
+that every host silently ignores. Two of those matter more than the rest: there
+is no `requiresConfirmation` field in MCP, and a configuration emitted to a path
+no host reads is inert while looking finished.
 
 ## What this command produces
 
 Two files:
 
-1. `.context/mcp-config.json` — a starter configuration in standard MCP host format, scoped to the four tiers from the principles doc.
+1. A starter configuration at the path the user's host actually reads —
+   `.mcp.json` at the repo root for Claude Code, `.cursor/mcp.json` for Cursor,
+   `.vscode/mcp.json` for VS Code — scoped to the four tiers from the principles
+   doc. Ask which host(s); emit one file per host in use. **Never
+   `.context/mcp-config.json`**: earlier versions of this skill emitted that
+   path and no host has ever read it.
 2. `docs/mcp-policy.md` — the human-readable policy: which tiers exist, which actions require HITL, who can attach which servers, where audit logs live.
 
 Plus, optionally, individual `mcp-server-<name>.config.json` stubs for each server tier.
@@ -52,13 +67,29 @@ Show the proposed names. Let the user adjust.
 
 ### Step 4. Configure HITL
 
-For every Tier 4 tool, mark `requiresConfirmation: true` in the config. For Tier 2 and Tier 3 tools that are particularly sensitive (PII reads, anything sending external messages even from a "staging" context), also mark them.
+Annotate every tool with the four MCP hints — `readOnlyHint`,
+`destructiveHint`, `idempotentHint`, `openWorldHint`. Tier 4 tools are
+`readOnlyHint: false, destructiveHint: true`; so are Tier 2 and Tier 3 tools
+that are particularly sensitive (PII reads, anything sending external messages
+even from a "staging" context).
+
+Then say the part that matters, in the policy file and to the user: **these are
+hints.** A host may use them to decide what to auto-approve; nothing obliges it
+to, and nothing stops a server from mislabelling itself. The approval gate for a
+Tier 4 action has to live inside the server, which is the only component that
+can refuse. If the user's plan is "the annotation will make it ask", say plainly
+that it will not.
 
 State the HITL UX in `mcp-policy.md`: who approves, on what surface, with what audit trail. "The host shows a confirmation modal" is not a policy. Name the modal and the people who can click it.
 
 ### Step 5. Configure auditing
 
-In `.context/mcp-config.json`, set up a log destination for every server. In `docs/mcp-policy.md`, name:
+Name a log destination for every server. Note explicitly that the `_audit` and
+`_alertOn` keys in the template are **documentation, not wiring**: no host reads
+them, and the logging has to be implemented in the server. A team that thinks
+those keys configure alerting has a policy file it mistakes for a control.
+
+In `docs/mcp-policy.md`, name:
 - Where the logs go (a specific system, not "we'll figure it out").
 - Who has access to them.
 - The alerting rules from the principles doc, with thresholds:
@@ -122,7 +153,9 @@ Files emitted, tier summary, the two or three highest-risk actions (which are no
 ## Quality bar
 
 - Every server is in exactly one tier.
-- Every Tier 4 tool has `requiresConfirmation: true`.
+- The config is emitted at a path the user's host actually reads.
+- Every tool carries all four annotations, and the output says in writing that they are hints rather than enforcement.
+- Every Tier 4 action has a named enforcement point inside its server, not just an annotation.
 - Every server has an audit destination named.
 - No credentials in the config file (only env var references).
 - The policy file is something an auditor would accept, not a vibe.

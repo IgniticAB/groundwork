@@ -23,9 +23,9 @@ Intent debt is the most subtle. It looks like nothing went wrong. The code works
 
 ## Context Rot: four failure modes in long sessions
 
-Even with good context files in place, long-running agent sessions degrade. The session's conversation history accumulates, the agent runtime compacts it, and the original rules get summarized into vague generalizations. The same agent that wrote pristine, type-safe code in hour one starts writing unannotated functions in hour four.
+Even with good context files in place, long-running agent sessions degrade. The session's conversation history accumulates, the agent runtime compacts it, and the original rules get summarized into vague generalizations. The agent that wrote pristine, type-safe code early in a session starts writing unannotated functions late in it.
 
-The 2026 playbook taxonomy names four distinct rot patterns. Each has a different mitigation.
+Four distinct rot patterns, each with a different mitigation.
 
 | Rot | What it looks like | Mitigation |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ The 2026 playbook taxonomy names four distinct rot patterns. Each has a differen
 | **Confusion** | The agent conflates two similar-but-distinct objects. `User` and `UserAccount`, `Order` and `Invoice`. | Precise namespace mapping in conventions; before/after code examples; ADRs for the distinction. |
 | **Clash** | Two rules in active memory contradict. Output paralysis or whichever rule the agent saw last "wins" silently. | Cross-file consistency check in `audit`; one canonical source (`AGENTS.md`), read by every harness; centralized governance. |
 
-The most common rot at hour two of a session is Distraction; at hour four it's Poisoning (the original rules have been summarized away). The `verify` hook plus the `audit` command catch most cases. Frequent session clears (`/clear` in Claude Code, equivalent elsewhere) force the agent to reload fresh configurations from disk rather than relying on compacted history.
+Distraction tends to show first, because every irrelevant rule is competing for attention from the start; Poisoning tends to show late, once the original rules have been summarized away. Treat that ordering as a rule of thumb rather than a measurement — this skill has no data behind it, and the point is the mitigations, not the timeline. Frequent session clears (`/clear` in Claude Code, equivalent elsewhere) force the agent to reload fresh configurations from disk rather than relying on compacted history.
 
 ## The four repayment practices
 
@@ -55,7 +55,7 @@ Capture the *why* in files the agent will read on future runs. Two flavors:
 
 Without negative-space docs, the agent will eventually suggest W again, because W is in its training data and your "we don't do W here" never made it into the repo.
 
-How this skill helps: `adr` writes ADRs. `init` scaffolds a `docs/decisions/` directory. The `negative-space.md` section of every ADR template prompts the rejection rationale explicitly.
+How this skill helps: `adr` writes ADRs, whose `## Considered alternatives` section prompts the rejection rationale explicitly. `init` scaffolds a `docs/decisions/` directory with a `negative-space.md` for rejections that do not warrant a full ADR.
 
 ### 3. Plan Mode discipline
 
@@ -75,7 +75,7 @@ A team has repaid cognitive debt when:
 
 - A new engineer joins, reads the context files, and is productive in hours not weeks.
 - An incident happens and the on-call can pinpoint the relevant ADR within five minutes.
-- The agent's first-pass output matches the team's conventions without correction more than 80% of the time.
+- The agent's first-pass output usually matches the team's conventions without correction. Pick your own threshold and hold it steady — the number matters far less than measuring the same thing each time, so the trend means something.
 - Refactors do not require a synchronous meeting to explain the original intent.
 
 If any of those is not true, there is debt to repay. Run `audit` to find which kind.

@@ -22,7 +22,7 @@
 
 - Language(s): <e.g. TypeScript 5.x>
 - Package manager: <pkg-mgr>
-- Runtime / framework: <e.g. Node 20, Astro 5>
+- Runtime / framework: <e.g. Node 22, Astro 5>
 
 ## Verification
 

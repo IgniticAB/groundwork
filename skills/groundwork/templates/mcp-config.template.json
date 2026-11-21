@@ -1,5 +1,5 @@
 {
-  "_comment": "Starter MCP host configuration. Servers are sorted by tier (1 = read-only context, 4 = production write). All Tier 4 tools must have requiresConfirmation: true. Credentials are env-var references; literal secrets never appear in this file.",
+  "_comment": "Starter MCP host configuration. Save as .mcp.json at the repo root (Claude Code), .cursor/mcp.json, or .vscode/mcp.json. Credentials are env-var references; literal secrets never appear in this file. IMPORTANT: every key below beginning with an underscore, plus audit and alertOn, is IGNORED BY EVERY HOST. They document the policy for humans and reviewers; they enforce nothing. Confirmation before a high-risk call is host behaviour informed by a tool annotation (readOnlyHint / destructiveHint / idempotentHint / openWorldHint), and the only place a Tier 4 action can actually be refused is inside the server itself. There is no requiresConfirmation field in MCP.",
   "mcpServers": {
     "repo-search": {
       "_tier": 1,
@@ -7,8 +7,8 @@
       "command": "<command to start server>",
       "args": [],
       "env": {},
-      "requiresConfirmation": false,
-      "audit": {
+      "_riskAnnotations": { "readOnlyHint": true, "destructiveHint": false, "openWorldHint": false },
+      "_audit": {
         "destination": "<log destination, e.g. stdout-json or specific service>",
         "level": "info"
       }
@@ -19,8 +19,8 @@
       "command": "<command>",
       "args": [],
       "env": {},
-      "requiresConfirmation": false,
-      "audit": {
+      "_riskAnnotations": { "readOnlyHint": true, "destructiveHint": false, "openWorldHint": false },
+      "_audit": {
         "destination": "<log destination>",
         "level": "info"
       }
@@ -33,8 +33,8 @@
       "env": {
         "API_TOKEN_ENV": "TICKETS_API_TOKEN"
       },
-      "requiresConfirmation": false,
-      "audit": {
+      "_riskAnnotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "_audit": {
         "destination": "<log destination>",
         "level": "info"
       }
@@ -47,8 +47,8 @@
       "env": {
         "DATABASE_URL_ENV": "PROD_DB_READONLY_URL"
       },
-      "requiresConfirmation": false,
-      "audit": {
+      "_riskAnnotations": { "readOnlyHint": true, "destructiveHint": false, "openWorldHint": false },
+      "_audit": {
         "destination": "<log destination>",
         "level": "info",
         "alertOn": [
@@ -66,8 +66,9 @@
       "env": {
         "DEPLOY_CREDENTIAL_ENV": "DEPLOY_ROLE_TOKEN"
       },
-      "requiresConfirmation": true,
-      "audit": {
+      "_riskAnnotations": { "readOnlyHint": false, "destructiveHint": true, "idempotentHint": false, "openWorldHint": true },
+      "_approval": "Enforced inside the server: every invocation blocks on human approval. Not enforced by this file.",
+      "_audit": {
         "destination": "<log destination>",
         "level": "warn",
         "alertOn": [

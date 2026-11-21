@@ -75,7 +75,7 @@ Command: `plan`.
 
 ## 6. Standardized initialization
 
-Every new repo starts with the same scaffolding: `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/`, `docs/decisions/`, a pre-commit hook, and the verification commands.
+Every new repo starts with the same scaffolding: `AGENTS.md`, `docs/decisions/`, a pre-commit hook, and the verification commands.
 
 A single command does this so it is not skipped. The skipping is what kills teams: one repo without context files becomes the one where the agent always misbehaves, and then "AI is unreliable" becomes the team's narrative.
 
@@ -98,7 +98,7 @@ Command: `document` does the delta merge.
 
 ## 8. Scoped rules
 
-Rules apply where they make sense. Frontend rules in frontend files; database rules in migrations; nothing applies "globally" unless it really is global (like "no placeholder comments").
+Rules apply where they make sense. Frontend rules in frontend files; database rules in migrations; nothing applies "globally" unless it really is global (like "no placeholder comments"). The mechanisms — Cursor's `globs`, Copilot's `applyTo`, Claude Code's `paths:` — are in `foundation/harness-reference.md`.
 
 Command: `scope`.
 
@@ -106,61 +106,46 @@ Command: `scope`.
 
 Agent access to live systems is partitioned. Read-only context is one server; write actions are another. Destructive actions require human approval.
 
-This is operational, not just security: it also makes the agent's mental model cleaner. "I am in read mode" produces better suggestions than "I have all the tools".
+This is operational, not just security: it also makes the agent's mental model cleaner. "I am in read mode" produces better suggestions than "I have all the tools". Enforcement belongs in the server, not in an annotation or a prompt — `foundation/mcp-principles.md`.
 
 Command: `mcp`.
 
 ## 10. Measure conformity
 
-The single metric worth tracking: percentage of generated code that passes the project's own checks (tests, lint, types) without human modification. Anything below 80% means the context is not communicating.
+The single metric worth tracking: the share of generated code that passes the
+project's own checks (tests, lint, types) without human modification. This skill
+publishes no threshold — pick one, write it down, and hold it steady, because
+the trend is what tells you anything and a number that moves with the
+measurement tells you nothing.
+
+The honest version of this measurement runs each case with *and without* the
+context, so you can see what the context actually added
+(`foundation/runtime-controls.md` §5).
 
 Command: `audit` reports this as part of the maturity score.
 
 ## 11. One canonical file, scoped additions only
 
 A single context file that grows over time becomes a dumping ground. The agent
-treats it as mutable and appends narrow, session-specific rules. Over weeks the
+treats it as mutable and appends narrow, session-specific rules; over weeks the
 file is unreadable and the model's attention is diluted.
 
-The fix is structural, and it got simpler. `AGENTS.md` at the repo root is now
-read natively by every harness this skill targets, so **emit `AGENTS.md` and
-stop.** It is hand-edited, self-sufficient, and capped around 400 tokens
-(~80 lines).
+The fix is structural, and it got simpler. `AGENTS.md` at the repo root is read
+natively by every harness this skill targets, so **emit `AGENTS.md` and stop.**
+Hand-edited, self-sufficient, capped around 400 tokens (~80 lines). Overflow
+goes to `docs/agents/<area>.md`, plain markdown, one area per file, referenced
+from "See also" so it is discoverable from the canonical file.
 
-```
-AGENTS.md                          ← canonical, lean (~80 lines)
+Add a second file only for a reason you can name — path-scoped rules, an
+existing `CLAUDE.md`, GitHub.com Chat, or a multi-package repo. The four cases
+and what each one takes are in `foundation/harness-reference.md`; they are not
+restated here, because a rule in two places is the thing this section is about.
 
-docs/agents/                       ← neutral overflow (harness-agnostic)
-  frontend.md
-  backend.md
-  infra.md
-```
-
-Add a second file only for a reason you can name:
-
-| Reason | What to add |
-| --- | --- |
-| Rules must fire only on matching paths | `.cursor/rules/*.mdc` (`globs`), `.github/instructions/*.instructions.md` (`applyTo`), `.claude/rules/*.md` (`paths:`) |
-| A `CLAUDE.md` already exists | Reduce it to one line: `@AGENTS.md` |
-| The team uses GitHub.com Chat | `.github/copilot-instructions.md` — the one surface that does not read `AGENTS.md` |
-| The repo is multi-package | A nested `AGENTS.md` per package |
-
-When `AGENTS.md` overflows, the overflow goes into `docs/agents/<area>.md`,
-referenced from the "See also" section. Plain markdown, no frontmatter, one area
-per file. Any harness can be told to read them.
-
-`.claude/rules/` is a separate, optional layer specific to Claude Code: it
-auto-loads those files at launch, scoped by `paths:` frontmatter where present.
-No other harness reads `.claude/`.
-
-**On `CLAUDE.md`.** Earlier versions of this skill recommended symlinking
-`CLAUDE.md` to `AGENTS.md`. That was the right answer when Claude Code read only
-`CLAUDE.md`; it is not any more. A symlink is a Windows liability and a second
-path to maintain for a file nothing needs. Where a `CLAUDE.md` already exists —
-and Claude Code prefers it over `AGENTS.md` when both are present — reduce it to
-a single `@AGENTS.md` import line. One canonical file, one reader, no drift to
-detect. The `agents-claude-sync` CLI rule exists for the repos that still carry
-two full copies.
+Earlier versions of this skill recommended symlinking `CLAUDE.md` to
+`AGENTS.md`. That was right when Claude Code read only `CLAUDE.md`. It is not
+any more: a symlink is a Windows liability and a second path to maintain for a
+file nothing needs. Where a `CLAUDE.md` already exists — and Claude Code prefers
+it when both are present — reduce it to a single `@AGENTS.md` import.
 
 Command: `init` sets up this layout. `audit` flags `AGENTS.md` if it has crept
 past the threshold.
@@ -171,25 +156,29 @@ The older "out-of-bounds" framing is a single bucket. Real projects have three:
 
 - **Always.** Things the agent does without asking (run fast verification, follow the non-negotiables in `AGENTS.md`).
 - **Ask first.** Things the agent proposes before doing (multi-file changes, dependency additions, CI changes, public-API edits).
-- **Never.** Hard forbids (generated paths, vendored upstream, anything inside `<!-- CE:PRESERVE -->` tags).
+- **Never.** Hard forbids (generated paths, vendored upstream, anything inside `preserve:start` / `preserve:end` markers). Back each one with a `deny` permission rule where the harness supports it — see `foundation/runtime-controls.md` §4.
 
 State all three explicitly in `AGENTS.md`. The "ask first" tier is the most often missing one; it's also the one that prevents the most scope creep.
 
-## 13. HTML preservation tags
+## 13. Preservation markers
 
-When a piece of code must not be edited by an agent (legacy compromises, performance-tuned hot paths, compatibility shims whose subtleties an agent will miss), wrap it in HTML preservation markers:
+When a piece of code must not be edited by an agent (legacy compromises,
+performance-tuned hot paths, compatibility shims whose subtleties an agent will
+miss), wrap it in **`preserve:start` / `preserve:end`** markers, in whatever
+comment syntax the file already uses. Every template this skill emits uses that
+pair; nothing emits the older `CE:PRESERVE` form.
 
 ```ts
-<!-- CE:PRESERVE: legacy auth flow, removed in v3. Do not modernize. -->
+// preserve:start — legacy auth flow, removed in v3. Do not modernize.
 function legacyHash(input: string): string {
   // ...
 }
-<!-- /CE:PRESERVE -->
+// preserve:end
 ```
 
-Rules:
-- Always include a one-line reason in the opening tag.
-- Use sparingly. A growing pile of CE:PRESERVE pairs is a smell.
-- Audit the count in code review.
+Always give a one-line reason. Use sparingly; a growing pile is a smell.
 
-The `audit` command counts preservation tags as a soft signal; the `verify` hook does not currently enforce non-editing inside them (that's an agent-policy concern, not a build-time check).
+Nothing enforces this. The markers are a message to a reader, and an agent that
+has not been told to respect them will edit straight through. Where it genuinely
+must not happen, a `deny` permission rule on the path is the control and the
+marker is the explanation (`foundation/runtime-controls.md` §4).

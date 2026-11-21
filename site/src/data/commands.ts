@@ -73,7 +73,7 @@ export const commands: CommandMeta[] = [
   {
     slug: 'apply',
     name: 'apply',
-    oneLiner: 'Apply a remediation plan produced by `audit --html` to the repo.',
+    oneLiner: "Apply a remediation plan produced by `audit`'s HTML report to the repo.",
     reachFor: 'Right after an interactive audit, to enact the chosen fixes without copy-pasting them by hand.',
     blurb: 'Reads the structured remediation file, validates it, dry-runs the changes, applies them on confirmation, runs the fast verification, offers rollback on failure. Closes the loop between audit and action.',
   },

@@ -117,7 +117,7 @@ generator, which is exactly why fewer files is the better answer.
 
 ### Step 6. Emit and verify
 
-Same as `init` step 7 and 8: write files, run verification, show a short summary.
+Same as `init` steps 7 through 9: write files, run verification, show a short summary.
 
 ## Quality bar
 

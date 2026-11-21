@@ -42,7 +42,23 @@ const description =
     <li>External communication (email, SMS, non-internal Slack).</li>
     <li>PII column access.</li>
   </ul>
-  <p>The MCP server encodes this with <code>requiresConfirmation: true</code>. Never rely on the prompt to remember to ask.</p>
+  <p>
+    <strong>There is no <code>requiresConfirmation</code> field in MCP.</strong>
+    Earlier versions of this page said there was. What the protocol gives you is
+    four optional annotations — <code>readOnlyHint</code>,
+    <code>destructiveHint</code>, <code>idempotentHint</code>,
+    <code>openWorldHint</code> — and the spec states plainly that they are
+    <strong>hints, not guarantees</strong>, and not certain to describe what a
+    tool really does. A host may use them to decide what to auto-approve.
+    Nothing makes it, and nothing stops a server from annotating a destructive
+    tool as read-only.
+  </p>
+  <p>
+    So annotate every tool, because a host that honours hints cannot help you if
+    you never set them — then enforce the real control inside the server, the
+    only place that can refuse. HITL in an annotation is the same mistake as
+    HITL in a prompt, one layer down.
+  </p>
 
   <h2>3. Centralised auditing</h2>
   <p>Every invocation logged: identity, parameters, response, timestamp, duration. Real-time queryable by security. Alert on:</p>

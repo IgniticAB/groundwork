@@ -50,7 +50,17 @@ const description =
   <p>→ <a href={url('commands/mcp/')}><code>mcp</code></a></p>
 
   <h2>10. Measure conformity</h2>
-  <p>The metric worth tracking: percentage of generated code passing the project's own checks without modification. Below 80% means the context is not communicating.</p>
+  <p>
+    The metric worth tracking: the share of generated code passing the project's
+    own checks without modification. This skill publishes no threshold — pick
+    one, write it down, and hold it steady, because the trend is what tells you
+    anything and a number that moves with the measurement tells you nothing.
+  </p>
+  <p>
+    The honest version runs each case with <em>and without</em> the context, so
+    you can see what the context actually added.
+    → <a href={url('foundation/runtime-controls/')}>Runtime controls</a>
+  </p>
   <p>→ <a href={url('commands/audit/')}><code>audit</code></a></p>
 
   <h2 id="split-file">11. One canonical file, scoped additions only</h2>
@@ -92,18 +102,34 @@ docs/agents/                       ← neutral overflow
   <ul>
     <li><strong>Always.</strong> Things the agent does without asking (run fast verification, follow Non-negotiables).</li>
     <li><strong>Ask first.</strong> Things the agent proposes (multi-file changes, dependency additions, public-API edits).</li>
-    <li><strong>Never.</strong> Forbidden paths or destructive actions.</li>
+    <li><strong>Never.</strong> Forbidden paths or destructive actions. Back each with a <code>deny</code> permission rule where the harness supports it.</li>
   </ul>
   <p>State all three explicitly in <code>AGENTS.md</code>. "Ask first" is the tier most often missing, and the one that prevents the most scope creep.</p>
 
-  <h2>13. HTML preservation tags</h2>
-  <p>For code that must not be edited (legacy compromises, hot paths, compatibility shims), wrap with markers:</p>
-  <pre><code>{`<!-- CE:PRESERVE: legacy auth flow, removed in v3. Do not modernize. -->
+  <h2>13. Preservation markers</h2>
+  <p>
+    For code that must not be edited (legacy compromises, hot paths,
+    compatibility shims), wrap it in <code>preserve:start</code> /
+    <code>preserve:end</code> markers, written in whatever comment syntax the
+    file already uses:
+  </p>
+  <pre><code>{`// preserve:start — legacy auth flow, removed in v3. Do not modernize.
 function legacyHash(input: string): string {
   // ...
 }
-<!-- /CE:PRESERVE -->`}</code></pre>
+// preserve:end`}</code></pre>
+  <p>
+    In Markdown and HTML, the same pair as <code>{'<!-- preserve:start -->'}</code>
+    and <code>{'<!-- preserve:end -->'}</code>.
+  </p>
   <p>Always include a one-line reason. Use sparingly; a growing pile is a smell. Audit the count in code review.</p>
+  <p>
+    Nothing enforces this. The markers are a message to a reader — human or
+    agent — and an agent that has not been told to respect them will edit
+    straight through. Where it genuinely must not happen, a <code>deny</code>
+    permission rule on the path is the control and the marker is the
+    explanation. → <a href={url('foundation/runtime-controls/')}>Runtime controls</a>
+  </p>
 
   <FoundationPager slug="good-practices" />
 </Doc>

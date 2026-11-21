@@ -1,6 +1,6 @@
 ---
 name: groundwork-apply
-description: Read a remediation plan produced by `groundwork audit --html` and apply the chosen fixes to the repo. Closes the loop between audit and action. Triggers on phrases like "apply this remediation", "run the audit fixes", "`/gw apply <file>`".
+description: Read a remediation plan produced by the `audit` command's interactive HTML report and apply the chosen fixes to the repo. Closes the loop between audit and action. Triggers on phrases like "apply this remediation", "run the audit fixes", "`/gw apply <file>`".
 ---
 
 # `apply` — Run a remediation plan
@@ -15,7 +15,7 @@ description: Read a remediation plan produced by `groundwork audit --html` and a
 
 ## When to reach for it
 
-- Right after running `groundwork audit --html`, picking decisions in the browser, and downloading the remediation plan.
+- Right after running `groundwork audit` and asking for the HTML report, picking decisions in the browser, and downloading the remediation plan.
 - When a teammate hands you a remediation plan they generated and asks you to enact it.
 - Never on a hand-written `.md` that lacks the `groundwork-remediation: v1` frontmatter marker. `apply` refuses those by design (the format is the contract; freeform prose risks unsafe edits).
 

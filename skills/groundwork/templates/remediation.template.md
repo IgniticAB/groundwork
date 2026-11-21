@@ -1,4 +1,4 @@
-<!-- This file documents the contract between `groundwork audit --html` (which
+<!-- This file documents the contract between the `audit` command's HTML report (which
      emits a remediation plan) and `groundwork apply` (which reads one).
      The HTML report's "Generate remediation plan" button produces files in
      exactly this shape. `apply` refuses files that lack the `groundwork-remediation`

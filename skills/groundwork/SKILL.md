@@ -9,7 +9,7 @@ description: Set up and maintain state of the art context engineering for a new 
 
 A single skill that teaches an AI agent how to set up and govern the information environment around a codebase, then exposes ten commands for the highest-leverage ContextOps moves.
 
-The premise: in 2026, the bottleneck on AI-assisted engineering is no longer model capability, it is the quality of the context the model sees. Code that ships fast but nobody understands accumulates *cognitive debt*: the gap between a system's structure and the team's shared theory of how it works. The job of this skill is to make that context an engineered artifact, not a vibe.
+The premise: the bottleneck on AI-assisted engineering is no longer model capability, it is the quality of the context the model sees. Code that ships fast but nobody understands accumulates *cognitive debt*: the gap between a system's structure and the team's shared theory of how it works. The job of this skill is to make that context an engineered artifact, not a vibe.
 
 ## When this skill runs, you (Claude) should
 
@@ -26,10 +26,10 @@ These eight files are the shared vocabulary every command uses. Read them once a
 - `foundation/contextops-lifecycle.md` — Build, Distribute, Maintain, Update, Measure. The DevOps-style discipline that keeps context from rotting.
 - `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, the Context Rot taxonomy (Poisoning / Distraction / Confusion / Clash), and the four repayment practices.
 - `foundation/anti-patterns.md` — The twelve things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure, rules that should be hooks, trusting untrusted content in agent context.
-- `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, one-canonical-file architecture (AGENTS.md alone by default, `docs/agents/` neutral overflow, and the named reasons to add a second file), three-tier boundaries, HTML preservation tags.
+- `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, one-canonical-file architecture (AGENTS.md alone by default, `docs/agents/` neutral overflow), three-tier boundaries, `preserve:start` / `preserve:end` markers.
 - `foundation/harness-reference.md` — Which harnesses read `AGENTS.md`, and the short list of cases where a harness needs a file of its own. Carries a `Last verified` date; re-verify before each release.
 - `foundation/runtime-controls.md` — Hooks as the enforcement layer, subagents as the context-isolation layer, when a skill beats an MCP server, permissions as a context concern, and evals as the only honest conformity check. Carries a `Last verified` date.
-- `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
+- `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop enforced in the server (MCP has no `requiresConfirmation` field; the four tool annotations are hints, not controls), centralized auditing. Carries a `Last verified` date.
 
 ## Reference (load on demand, not at session start)
 
@@ -45,6 +45,9 @@ in context for the rest of the session.
   frontmatter, permission and sandbox fields, `claude plugin validate` and
   `claude plugin eval`. Load it in `verify` and `audit`, before emitting
   anything into `.claude/settings.json`.
+- `reference/mcp-detail.md` — Host config paths, the four tool annotations and
+  their defaults, the tier layout, the keys every host ignores, and the newer
+  protocol features. Load it in `mcp`, before emitting a configuration.
 
 ## The ten commands
 
@@ -61,7 +64,7 @@ Each command lives in `commands/<name>.md`. Open the file when invoked; do not t
 | `mcp` | Design an MCP server configuration with least-privilege and HITL boundaries | Connecting an agent to a real system (DB, deploy, API) |
 | `verify` | Bake test / lint / typecheck commands into context so the agent self-corrects | Every repo, every time. The single highest leverage move. |
 | `onboard` | Produce a task-specific orientation brief for a fresh agent or engineer | Starting a new session, handing off work, compacting a noisy session |
-| `apply` | Apply a remediation plan produced by `audit --html` | Right after an interactive audit, to enact the chosen fixes |
+| `apply` | Apply a remediation plan produced by `audit`'s HTML report | Right after an interactive audit, to enact the chosen fixes |
 
 If the user just says `groundwork` with no command, list the ten options and ask which one they want, or what they are trying to accomplish if they cannot name it.
 
