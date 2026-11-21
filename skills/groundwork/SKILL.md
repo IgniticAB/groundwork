@@ -2,7 +2,7 @@
 name: groundwork
 metadata:
   version: "1.1.0"
-description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Also trigger when the user wants to brief or orient a fresh agent or teammate on a task ("onboard", "handoff", "what context does this task need"), or to apply a remediation plan produced by an earlier audit ("apply the fixes", "/gw apply"). Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
+description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user wants to turn a rule the agent keeps ignoring into something enforced — hooks, permissions, subagents for context isolation, or evals that prove the context changes behaviour. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Also trigger when the user wants to brief or orient a fresh agent or teammate on a task ("onboard", "handoff", "what context does this task need"), or to apply a remediation plan produced by an earlier audit ("apply the fixes", "/gw apply"). Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
 ---
 
 # Groundwork
@@ -20,14 +20,15 @@ The premise: in 2026, the bottleneck on AI-assisted engineering is no longer mod
 
 ## Foundation (read these first)
 
-These seven files are the shared vocabulary every command uses. Read them once at the start of the session; commands assume you know them.
+These eight files are the shared vocabulary every command uses. Read them once at the start of the session; commands assume you know them.
 
 - `foundation/five-layer-stack.md` — System, Project, Codebase, Session, Tooling. What goes in each layer and why mixing them causes drift.
 - `foundation/contextops-lifecycle.md` — Build, Distribute, Maintain, Update, Measure. The DevOps-style discipline that keeps context from rotting.
 - `foundation/cognitive-debt.md` — What cognitive debt is, how AI accelerates it, the Context Rot taxonomy (Poisoning / Distraction / Confusion / Clash), and the four repayment practices.
-- `foundation/anti-patterns.md` — The things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure.
+- `foundation/anti-patterns.md` — The twelve things never to do. Monolithic prompt bloat, vague principles (with the anchored-vs-vague comparison table), placeholder comments, implicit assumptions, tool over-exposure, rules that should be hooks, trusting untrusted content in agent context.
 - `foundation/good-practices.md` — Negative space, defensive commits, interface-first, verification-driven logic, plan mode, one-canonical-file architecture (AGENTS.md alone by default, `docs/agents/` neutral overflow, and the named reasons to add a second file), three-tier boundaries, HTML preservation tags.
 - `foundation/harness-reference.md` — Which harnesses read `AGENTS.md`, and the short list of cases where a harness needs a file of its own. Carries a `Last verified` date; re-verify before each release.
+- `foundation/runtime-controls.md` — Hooks as the enforcement layer, subagents as the context-isolation layer, when a skill beats an MCP server, permissions as a context concern, and evals as the only honest conformity check. Carries a `Last verified` date.
 - `foundation/mcp-principles.md` — Least-privilege binding, human-in-the-loop, centralized auditing. The non-negotiables for any MCP server you design.
 
 ## Reference (load on demand, not at session start)
@@ -40,6 +41,10 @@ in context for the rest of the session.
   schemas, skill-portability limits, plugins and marketplaces, validation
   commands. Load it in `init`, `document`, `scope` and `verify`, once you know
   which harnesses you are emitting for.
+- `reference/runtime-detail.md` — Hook events and exit-code semantics, subagent
+  frontmatter, permission and sandbox fields, `claude plugin validate` and
+  `claude plugin eval`. Load it in `verify` and `audit`, before emitting
+  anything into `.claude/settings.json`.
 
 ## The ten commands
 

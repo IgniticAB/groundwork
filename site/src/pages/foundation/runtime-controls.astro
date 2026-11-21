@@ -1,0 +1,138 @@
+---
+import Doc from '../../layouts/Doc.astro';
+import FoundationPager from '../../components/FoundationPager.astro';
+import { url } from '../../lib/url';
+
+const title = 'Runtime controls';
+const description =
+  'Context files tell the agent what to do. The runtime decides what it can do. Hooks, subagents, permissions, and the evals that prove any of it worked.';
+---
+
+<Doc title={title} description={description} section="foundation">
+  <p class="doc-lede">
+    Everything in the other foundation pages is prose the model may or may not
+    follow. Everything here is machinery that holds whether it follows or not.
+  </p>
+
+  <p>
+    <strong>Last verified: 2026-11-21</strong> against Claude Code's own docs.
+    This layer is Claude Code-specific today — other harnesses are adding their
+    own equivalents. The principles transfer; the file paths do not.
+  </p>
+
+  <h2>The dividing line</h2>
+  <blockquote>Deterministic scaffolding, probabilistic intelligence.</blockquote>
+  <p>
+    A rule the agent must follow <em>every</em> time is not a rule, it is a
+    check. Prose asks; a hook enforces. The test to apply to any line in
+    <code>AGENTS.md</code>:
+  </p>
+  <table>
+    <thead><tr><th>If the line…</th><th>It belongs in</th></tr></thead>
+    <tbody>
+      <tr><td>Describes a judgement call ("prefer composition over inheritance")</td><td><code>AGENTS.md</code>. Only a reader can apply it.</td></tr>
+      <tr><td>Names a command that must run after a class of edits</td><td>A hook. <code>PostToolUse</code> on the edit tools.</td></tr>
+      <tr><td>Forbids touching a path</td><td>A <code>deny</code> permission rule, not a Never bullet alone.</td></tr>
+      <tr><td>Must hold before the agent says it is done</td><td>A <code>Stop</code> hook that runs the verification.</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Writing a rule in prose is not free: it spends attention on every turn, and
+    it still fails silently. If the thing can be checked by a script, check it.
+  </p>
+
+  <h2>1. Hooks are the enforcement layer</h2>
+  <p>
+    Shell commands Claude Code runs at fixed points in its own loop, under a
+    <code>hooks</code> key in <code>.claude/settings.json</code> — committed and
+    reviewed like any other project config. There is no
+    <code>.claude/hooks.json</code>.
+  </p>
+  <p>
+    The points worth knowing: <code>PreToolUse</code> (before a tool runs, can
+    block), <code>PostToolUse</code> (after — cannot block, the tool already
+    ran), <code>UserPromptSubmit</code>, <code>Stop</code> (before the agent
+    finishes its turn) and <code>SessionStart</code>. The full list is longer
+    and still growing.
+  </p>
+  <p>
+    The mechanism is exit codes. <strong>Exit 2 is the blocking signal</strong>:
+    on <code>PreToolUse</code> it denies the call and the hook's <em>stderr</em>
+    becomes the reason the agent sees — so write that stderr as a sentence
+    addressed to the model. Exit 1 is a non-blocking error and the action
+    proceeds, so a policy hook that exits 1 enforces nothing.
+  </p>
+  <p>The highest-leverage two:</p>
+  <ul>
+    <li><strong><code>Stop</code> running the full verification.</strong> The agent cannot declare done on a red build.</li>
+    <li><strong><code>PostToolUse</code> running the formatter or linter on edited files.</strong> Removes an entire category of prose rule from <code>AGENTS.md</code>.</li>
+  </ul>
+  <p>
+    Git pre-commit hooks still matter — they catch what the human does too — but
+    they fire long after the agent has moved on. Agent-runtime hooks fire while
+    the agent can still act on them.
+  </p>
+
+  <h2>2. Subagents are the context-isolation layer</h2>
+  <p>
+    A subagent (<code>.claude/agents/&lt;name&gt;.md</code>) starts in a
+    <strong>fresh context window</strong>. It does not see the parent
+    conversation or the files the parent read, and only its final message comes
+    back — every intermediate tool call stays inside it.
+  </p>
+  <p>
+    That makes it the answer to Context Distraction: read-heavy work — searching
+    a large codebase, reviewing a diff, scanning logs — returns a conclusion
+    instead of fifty file excerpts. The cost is real: the subagent knows only
+    what its prompt says, so a vague delegation gets a confident wrong answer
+    back. Brief it like a new colleague.
+  </p>
+  <p>
+    Subagents are also where tool restriction becomes cheap: a reviewing
+    subagent with no edit tools cannot edit, whatever it concludes.
+  </p>
+
+  <h2>3. Skills, MCP and hooks answer different questions</h2>
+  <table>
+    <thead><tr><th>Missing</th><th>Use</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Know-how — a procedure, checklist or convention</td><td>A <strong>skill</strong></td><td>It is instructions. Loads on relevance; costs a description line until used.</td></tr>
+      <tr><td>Access to a system outside the terminal</td><td><strong>MCP</strong>, or that system's CLI if it has one</td><td>It is a connection. See <a href={url('foundation/mcp-principles/')}>MCP principles</a>.</td></tr>
+      <tr><td>A guarantee that something happens every time</td><td>A <strong>hook</strong></td><td>Neither of the above decides; both leave it to the model.</td></tr>
+    </tbody>
+  </table>
+  <p>
+    If a system already has a CLI, prefer the CLI. An MCP server adds tool names
+    to every session's context; a CLI the agent already knows how to run adds
+    nothing.
+  </p>
+
+  <h2>4. Permissions are a context concern, not only a security one</h2>
+  <p>
+    <code>permissions</code> in <code>.claude/settings.json</code> takes
+    <code>allow</code>, <code>ask</code> and <code>deny</code> lists.
+    <code>deny</code> is consulted before anything else. <code>ask</code> forces
+    a confirmation even in a permission mode that would otherwise approve
+    silently — the right shape for the "Ask first" tier in
+    <code>AGENTS.md</code>'s Boundaries.
+  </p>
+  <p>
+    The limit worth stating out loud: <strong>Bash rules match the command text
+    as the agent writes it.</strong> <code>Bash(curl *)</code> does not catch
+    <code>sh -c 'curl …'</code>. For anything that genuinely must not happen,
+    the OS-level sandbox is the enforcement and the permission rule is the hint.
+  </p>
+  <p>A Boundaries → Never bullet with no matching <code>deny</code> rule is a wish. Write both.</p>
+
+  <h2>5. Evals are how you find out whether any of it worked</h2>
+  <ul>
+    <li><strong><code>claude plugin validate</code></strong> — static. Manifests, skills, agents and commands checked for syntax and schema errors. Free, fast, belongs in CI.</li>
+    <li><strong><code>claude plugin eval</code></strong> — behavioural. Test cases, each a realistic prompt plus graders, scored. Crucially it also runs each case <em>without</em> the context, so a case that scores the same either way tells you the context did nothing. Real model calls, so it costs money; <code>--threshold</code> makes it a CI gate.</li>
+  </ul>
+  <p>
+    That baseline comparison is the honest version of "is our context working?".
+    Everything else is a guess about a file nobody re-read.
+  </p>
+
+  <FoundationPager slug="runtime-controls" />
+</Doc>

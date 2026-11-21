@@ -28,12 +28,17 @@ export const foundation: FoundationMeta[] = [
   {
     slug: 'anti-patterns',
     title: 'Anti-patterns',
-    oneLiner: 'Ten things that look like good context engineering and are not. Reject every one of them, including in your own output.',
+    oneLiner: 'Twelve things that look like good context engineering and are not. Reject every one of them, including in your own output.',
   },
   {
     slug: 'mcp-principles',
     title: 'MCP principles',
     oneLiner: 'Least-privilege binding, human-in-the-loop, centralised auditing. The non-negotiables when the agent reaches a real system.',
+  },
+  {
+    slug: 'runtime-controls',
+    title: 'Runtime controls',
+    oneLiner: 'Context files tell the agent what to do. The runtime decides what it can do. Hooks, subagents, permissions, and the evals that prove any of it worked.',
   },
   {
     slug: 'harness-reference',

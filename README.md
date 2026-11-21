@@ -131,7 +131,11 @@ groundwork/
         anti-patterns.md
         good-practices.md
         harness-reference.md
+        runtime-controls.md
         mcp-principles.md
+      reference/                         loaded on demand, not at session start
+        harness-detail.md
+        runtime-detail.md
       commands/                          one file per command
         init.md
         audit.md
@@ -179,7 +183,7 @@ groundwork/
 This skill follows five rules in its own design, the same rules it teaches.
 
 1. **One skill, N commands.** Modeled on impeccable.style. A single entry in the skill menu; commands are discovered by typing the skill name.
-2. **Foundation files load on every invocation.** `foundation/` is read once at session start. Commands assume it is in context.
+2. **Foundation files load on every invocation; `reference/` does not.** `foundation/` is read once at session start and commands assume it is in context. `reference/` holds the per-harness and per-runtime detail that only some commands need, and is loaded at the point of use — the same progressive disclosure the skill tells other repos to practise.
 3. **Templates over generation.** Files the commands emit are templates with substitutions, not regenerated from scratch each time. Templates are reviewable.
 4. **Layer discipline.** Every file lives in the layer where it belongs (System, Project, Codebase, Session, Tooling).
 5. **No placeholders in emitted output.** Either the file has real content or it does not exist.

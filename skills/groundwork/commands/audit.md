@@ -90,9 +90,18 @@ For each of the five layers:
   - **Entry-point budget.** SKILL.md under 200 lines (same hard ceiling as `oversized-claude-md`). Above that, the entry point is bloated; detail should live in sub-files referenced from it.
   - **Internal-link resolution.** Every relative-path link in SKILL.md resolves to a real file in the skill directory.
   - **Path-target match.** The skill is installed under a harness path the repo targets, not a stray one.
+  - **Frontmatter portability.** Only `name`, `description`, `license`, `compatibility`, `metadata` and `allowed-tools` are portable across hosts. Any Claude-Code-only field (`argument-hint`, `context`, `model`, `effort`, `paths`, …) is a hard error on claude.ai and the Skills API, so a skill carrying one works locally and fails the moment anyone else loads it. P1. See `reference/harness-detail.md`.
+
+  **Runtime controls.** Context files are only half the Project layer; the other half is what the runtime enforces regardless of what the files say. Check for, and read:
+  - `.claude/settings.json` — a `hooks` key, and a `permissions` block. A repo whose `AGENTS.md` Boundaries → Never list has no matching `deny` rule has written a wish, not a boundary. A repo whose Verification section is not backed by a `Stop` hook is relying on the agent to remember.
+  - `.claude/agents/*.md` — subagents. Note whether read-heavy work (search, review) is delegated, and whether any subagent has edit tools it does not need.
+  - `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` — if the repo ships context to other people, these are its distribution format.
+  - `evals/` — an eval suite is the only evidence in the repo that anyone has checked whether the context changes behaviour. Its absence is normal; its presence is a strong Project signal.
+
+  These are Claude Code-specific. Do not mark a repo down for their absence if `AGENTS.md` names only Cursor and Codex — note instead that the enforcement layer is unavailable there, and that prose is carrying the whole load. See `foundation/runtime-controls.md`.
 - **Codebase.** Is there a top-level README that orients an agent? A `docs/architecture.md`? An ADR directory? A glossary? File maps? Are the conventions in the Project layer actually followed in the code?
 - **Session.** Not applicable to a static audit (Session is transient). Note this and move on.
-- **Tooling.** MCP server configuration? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context?
+- **Tooling.** MCP server configuration (`.mcp.json`, `.cursor/mcp.json`, `.vscode/mcp.json`)? A `mcp-policy.md`? Are credentials scoped? Is there a pre-commit hook for context — and, separately, an agent-runtime hook? The two fire at different times and the repo needs both for different reasons (`foundation/runtime-controls.md`).
 
 ### Step 2. Score each layer
 
@@ -111,14 +120,47 @@ Overall maturity: weighted average, with Project weighted 2x and the others 1x. 
 
 ### Step 3. Run the conformity check
 
-If you can:
+Every score above this point is a judgement about files. This step is the only
+one that asks whether the context changes what the agent does. Take the best
+option the repo supports, in this order.
 
-1. Pick a small, low-risk task that the agent could plausibly handle (e.g. "add a new utility function with tests"), or use an existing TODO if present.
+**a. Static validation — always, if the repo ships skills, agents or a plugin.**
+
+```bash
+claude plugin validate <path> --strict
+```
+
+Checks a plugin manifest, a marketplace manifest, or the skills / agents /
+commands in a directory for syntax and schema errors. Free, fast, no model
+calls. A repo that fails this is shipping context that will not load for anyone.
+
+**b. Behavioural evaluation — if an `evals/` suite exists, or the user wants one.**
+
+```bash
+claude plugin eval
+```
+
+Each case is a realistic prompt plus graders, and each case is **also run
+without the plugin**. That baseline is the whole value: a case scoring the same
+with and without the context proves the context did nothing. Report the
+with/without delta, not the absolute score.
+
+Two things to say before running it. It makes real model calls billed to the
+user's account, so ask first. And it requires Claude Code v2.1.269 or later.
+
+If no suite exists, do not build one inside an audit. Record it as a
+recommendation — `claude plugin eval init` scaffolds one — and move on.
+
+**c. Manual fallback — if neither applies.**
+
+1. Pick a small, low-risk task the agent could plausibly handle (e.g. "add a new utility function with tests"), or use an existing TODO if present.
 2. Have the agent attempt it in a scratch branch / worktree.
 3. Run the project's verification commands on the result.
 4. Record whether it passed without modification.
 
-If you cannot run this (no scratch environment, no obvious task, the user said skip it), say so explicitly in the report. Do not fabricate a result.
+This is one data point, not a measurement. Label it as such in the report.
+
+If you can run none of the three (no scratch environment, no obvious task, the user said skip it), say so explicitly. Do not fabricate a result, and do not let a conformity score stand in the report with nothing behind it.
 
 ### Step 4. ADR-coverage scan
 

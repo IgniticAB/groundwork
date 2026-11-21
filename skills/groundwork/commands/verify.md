@@ -13,7 +13,8 @@ This command makes verification first-class. After running it, every context fil
 
 - Updates to `AGENTS.md` to include or refresh the "Verification" section. This is the canonical file; in most repos it is the only one that needs editing.
 - Updates to any per-harness file the repo actually carries (`CLAUDE.md` as a full copy, `.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) so the fast verification command stays current. These are hand-maintained — no generator.
-- A pre-commit hook script at `.context/hooks/check-context.sh` (if not already present). The hook catches package-manager drift against `AGENTS.md`, missing ADRs on multi-file commits, and ADRs with no Status.
+- Agent-runtime hooks in `.claude/settings.json` (Claude Code repos, offered not assumed) so the verification runs before the agent can declare a task done, rather than only being described in prose.
+- A git pre-commit hook script at `.context/hooks/check-context.sh` (if not already present). The hook catches package-manager drift against `AGENTS.md`, missing ADRs on multi-file commits, and ADRs with no Status.
 - A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected.
 - The `groundwork` detector wired in: as a pre-commit step and as a CI job.
 - A short test of each verification command (and the detector) to confirm they work.
@@ -101,6 +102,32 @@ pointer files do not list the full verification — they point at `AGENTS.md` fo
 that. If a pointer file exists for a harness that now reads `AGENTS.md`
 natively, say so once: deleting it is less work than keeping it current.
 
+### Step 4b. Promote the rules that must hold every time
+
+Before wiring hooks, read the Verification section you just wrote and ask of
+each command: *must this run every time, or is it a judgement call?* The ones
+that must run every time do not belong only in prose — prose asks, and the
+asking competes for attention with everything else in the file
+(`foundation/anti-patterns.md` #11).
+
+If the repo targets Claude Code, offer two agent-runtime hooks in
+`.claude/settings.json`. Do not write them without asking: they change what the
+agent is allowed to do, and that is the user's call.
+
+- **`Stop` → the full verification.** The agent cannot declare a task done on a red build.
+- **`PostToolUse` matching the edit tools → the formatter or fast linter.** Removes a whole class of prose rule from `AGENTS.md`.
+
+Both go under a `hooks` key in `.claude/settings.json`. **There is no
+`.claude/hooks.json`.** The exit code is the mechanism: exit 2 blocks and the
+hook's stderr is the message the agent reads, so write that stderr as a sentence
+addressed to the agent. Exit 1 is a non-blocking error and enforces nothing —
+getting this backwards is the most common way a hook silently does nothing.
+Shapes and event names: `reference/runtime-detail.md`.
+
+If the repo does not target Claude Code, say so plainly: the enforcement layer
+is not available there, the git pre-commit hook in Step 6 is the nearest
+equivalent, and it fires after the agent has already finished.
+
 ### Step 5. Wire in the detector
 
 The `groundwork` CLI is a deterministic detector that complements the verification commands. It catches stale CLAUDE.md, MCP credential leaks, missing verification sections, secrets, and more. Wire it in two places:
@@ -112,6 +139,11 @@ The `groundwork` CLI is a deterministic detector that complements the verificati
 Run `npx @ignitic/groundwork detect .` once now to confirm it runs and to show the user the baseline findings. If there are P0 findings, surface them; let the user decide whether to fix-then-wire-in or wire-in-with-known-issues.
 
 ### Step 6. Local drift hook
+
+This is a **git** pre-commit hook, and it is a different thing from the
+agent-runtime hooks in Step 4b. It fires when a human commits, long after the
+agent has moved on; the runtime hooks fire while the agent can still act on
+them. A repo wants both, for different failures.
 
 The repo-specific drift hook catches three classes of cross-file invariants that the detector does not check by itself: package-manager drift between `package.json` and `AGENTS.md`, multi-file commits shipping without an ADR, and staged ADRs that forgot to declare a Status. The basic shape:
 
