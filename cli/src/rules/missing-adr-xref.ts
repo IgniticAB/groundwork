@@ -1,5 +1,10 @@
-// Detects when AGENTS.md or CLAUDE.md mentions a decision but does not link an ADR.
-// Heuristic: phrases like "we chose", "we use X (not Y)", "decided to" should be cross-linked to docs/decisions/.
+// Detects when AGENTS.md or CLAUDE.md states a decision but does not link an ADR.
+// Heuristic: phrases like "we chose", "we use X (not Y)", "decided to" should be
+// cross-linked to docs/decisions/.
+//
+// A line that points *at* the decision log is not a decision missing its link —
+// it is the link. Both the window check and the per-line check below allow a
+// bare `docs/decisions/` reference, not just a numbered ADR.
 import type { Rule, Finding } from '../types.js';
 
 const DECISION_PHRASES = [
@@ -8,6 +13,13 @@ const DECISION_PHRASES = [
   /\brejected\b/i,
   /\bnon-?obvious\b/i,
 ];
+
+/**
+ * A satisfied cross-link: a numbered ADR, or a pointer to the decision log
+ * itself. The second form matters because a "See also" line naming
+ * `docs/decisions/` is doing exactly the job this rule asks for.
+ */
+const CROSS_LINK = /ADR-?\d{4}|docs\/decisions\b/i;
 
 export const missingAdrXref: Rule = {
   id: 'missing-adr-xref',
@@ -27,7 +39,7 @@ export const missingAdrXref: Rule = {
         if (DECISION_PHRASES.some((re) => re.test(line))) {
           // Check the surrounding 3 lines for an ADR reference.
           const window = lines.slice(Math.max(0, i - 2), Math.min(lines.length, i + 3)).join('\n');
-          if (!/ADR-?\d{4}|docs\/decisions\/\d{4}/i.test(window)) {
+          if (!CROSS_LINK.test(window)) {
             findings.push({
               ruleId: 'missing-adr-xref',
               severity: 'P2',

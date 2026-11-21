@@ -4,7 +4,24 @@
 
 A skill (and 10 commands) for setting up and maintaining state of the art context engineering on a project or repo.
 
-Built from the practices in *The 2026 Context Engineering Blueprint*, structured after the model in [impeccable.style](https://impeccable.style): one umbrella skill, with shared foundation files that always load, plus focused commands for the highest-leverage moves.
+Structured after the model in [impeccable.style](https://impeccable.style): one
+umbrella skill, with shared foundation files that always load, focused commands
+for the highest-leverage moves, and reference files that load only when a
+command needs them.
+
+**This repo is the output of its own `init`.** Its agent context is an
+[`AGENTS.md`](AGENTS.md) and nothing else, because that is what the skill now
+tells you to write. Its decisions are in [`docs/decisions/`](docs/decisions/),
+including the one that retired the architecture it used to recommend. What it
+rejected is in [`negative-space.md`](docs/decisions/negative-space.md). The
+verification in `AGENTS.md` is enforced by a `Stop` hook in
+[`.claude/settings.json`](.claude/settings.json), so an agent working here
+cannot declare a task done on a red build. `npm run detect` runs this repo
+through its own detector and must stay clean — a tool that cannot pass its own
+checks is not evidence of anything.
+
+Last reviewed against vendor documentation: **2026-11-21**. The foundation
+files that make factual claims carry their own `Last verified` dates.
 
 ## What it does
 
@@ -33,6 +50,12 @@ One agent skill with 10 commands. Works in [50+ AI coding harnesses](https://git
 
 ```bash
 npx skills add IgniticAB/groundwork
+```
+
+Or, in Claude Code, install it as a plugin:
+
+```bash
+/plugin install groundwork --marketplace IgniticAB/groundwork
 ```
 
 The installer auto-detects your harness and places files in the right location (`.claude/skills/groundwork/`, `.cursor/skills/groundwork/`, `.agents/skills/groundwork/`, etc.).
@@ -70,7 +93,7 @@ For CI and pre-commit anti-pattern scans outside the skill:
 npm i -g @ignitic/groundwork
 ```
 
-Then run `groundwork detect` to scan a project, or `npx @ignitic/groundwork detect` without installing. Eighteen deterministic rules, no LLM required, JSON output for build gates.
+Then run `groundwork detect` to scan a project, or `npx @ignitic/groundwork detect` without installing. Twenty deterministic rules, no LLM required, JSON output for build gates.
 
 The skill is for authoring context. The CLI is for guarding it. They complement each other.
 
@@ -191,10 +214,15 @@ This skill follows five rules in its own design, the same rules it teaches.
 
 ## Source material
 
-Two source documents back this skill. Both live in this repo:
+Two essays from May 2026 that the foundation was derived from, kept in
+`docs/source/` for provenance rather than as guidance:
 
 - `AI-First R&D Context Engineering 101.md`. The architectural view: five-layer stack, cognitive debt, ContextOps lifecycle, MCP principles.
-- `AI Agent Context Engineering Best Practices.md`. The operational view: rule composition, split-file architecture, tool-specific patterns (Cursor trigger budgets, Windsurf memories, Copilot agent profiles), Context Rot taxonomy, three-tier boundaries.
+- `AI Agent Context Engineering Best Practices.md`. The operational view: rule composition, file architecture, per-tool patterns, Context Rot taxonomy, three-tier boundaries.
+
+Read `skills/groundwork/foundation/` instead. Several specifics in the essays
+were checked against vendor documentation in November 2026 and did not survive;
+`docs/source/README.md` lists which and says why they are left uncorrected.
 
 The site at `/blueprint` synthesizes both into a single navigable summary.
 

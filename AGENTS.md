@@ -8,9 +8,10 @@
 
 Groundwork is an agent skill that sets up and maintains context engineering in
 other people's repos, plus a deterministic detector CLI that guards what the
-skill authors. Three deliverables: `skills/groundwork/` (the skill, installed
-via `npx skills add`), `cli/` (published as `@ignitic/groundwork`), and `site/`
-(Astro docs, deployed to GitHub Pages).
+skill authors. Three deliverables: `skills/groundwork/` (the skill), `cli/`
+(published as `@ignitic/groundwork`), `site/` (Astro docs on GitHub Pages).
+
+The repo is its own worked example, and that is load-bearing.
 
 ## Stack
 
@@ -33,7 +34,7 @@ npm test
 npm run detect
 ```
 
-`npm run detect` runs this repo through its own detector. It must stay clean:
+`npm run detect` runs this repo through its own detector and must stay clean:
 a tool that cannot pass its own checks is not evidence of anything.
 
 ## Non-negotiables
@@ -42,8 +43,14 @@ a tool that cannot pass its own checks is not evidence of anything.
 - Use npm. Do not introduce another package manager.
 - Never commit `node_modules/` or `dist/`. Both were committed once and it took
   540 tracked files to undo.
-- Every count stated in prose (commands, rules) must match what is on disk.
-  README, SKILL.md, `slash-commands/gw.md` and the site all state them.
+- Every count stated in prose must match disk. Currently ten commands, twenty
+  rules, stated in README, SKILL.md, `slash-commands/gw.md` and the site.
+- Never state a vendor's limit, field name or behaviour without checking that
+  vendor's own docs. Six invented "facts" shipped for six months because nobody
+  did. Files making such claims carry a `Last verified` date; move it when you
+  re-check.
+- `foundation/` loads every invocation, `reference/` only on demand. New detail
+  goes in `reference/` unless every command needs it.
 
 ## Style
 
@@ -74,6 +81,7 @@ One case that fires, one that must not. `cli/src/test/`.
 
 **Ask first**
 - Changes touching more than 3 files, the rule registry, or any published interface.
+- Bumping `cli/package.json` version, or publishing to npm.
 - Adding a detector rule, or changing an existing rule's severity.
 - Anything that changes what `init` emits into a user's repo.
 
@@ -83,5 +91,8 @@ One case that fires, one that must not. `cli/src/test/`.
 
 ## See also
 
-- `docs/decisions/` — ADRs; the *why* behind the architecture
+- `docs/decisions/` — ADRs; the *why* behind the architecture, and `negative-space.md` for what was rejected
 - `skills/groundwork/foundation/` — the principles the commands rely on
+- `skills/groundwork/reference/` — per-harness, per-runtime and per-MCP detail, loaded on demand
+- `docs/source/` — the May 2026 essays this was derived from; provenance, not guidance
+- `CHANGELOG.md` — what changed and why

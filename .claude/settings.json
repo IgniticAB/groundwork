@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && npm run typecheck >/dev/null 2>&1 || { echo 'typecheck failed. Run: npm run typecheck — fix the errors before finishing.' >&2; exit 2; }"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node cli/bin/groundwork.mjs detect . --fail-on P0 >/dev/null 2>&1 || { echo 'The detector reports a P0 on this repo. Run: npm run detect — a tool that cannot pass its own checks is not evidence of anything.' >&2; exit 2; }"
+          }
+        ]
+      }
+    ]
+  }
+}

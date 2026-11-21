@@ -1,0 +1,19 @@
+{
+  "name": "groundwork",
+  "description": "Set up and maintain context engineering in a repo: one canonical AGENTS.md, scoped rules, ADRs, verification loops, MCP boundaries, and a deterministic detector that guards what was authored.",
+  "version": "0.3.0",
+  "author": {
+    "name": "Magnus Nord",
+    "url": "https://github.com/IgniticAB"
+  },
+  "homepage": "https://igniticab.github.io/groundwork/",
+  "repository": "https://github.com/IgniticAB/groundwork",
+  "license": "MIT",
+  "keywords": [
+    "context-engineering",
+    "agents-md",
+    "adr",
+    "mcp",
+    "linter"
+  ]
+}

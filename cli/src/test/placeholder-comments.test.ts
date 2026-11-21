@@ -1,3 +1,4 @@
+// ce-ignore-file: these fixtures contain the patterns the rule detects.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { placeholderComments } from '../rules/placeholder-comments.js';

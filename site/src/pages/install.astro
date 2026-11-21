@@ -28,6 +28,13 @@ const description =
 
     <p>Open the agent, type <code>groundwork</code>, and the menu appears.</p>
 
+    <h3>Or, in Claude Code, install it as a plugin</h3>
+    <pre><code>/plugin install groundwork --marketplace IgniticAB/groundwork</code></pre>
+    <p>
+      Same skill, distributed through Claude Code's own plugin system. Either
+      path works; the plugin is the one that keeps itself updated.
+    </p>
+
     <h3>Target a specific harness</h3>
     <pre><code>npx skills add IgniticAB/groundwork -a claude-code
 npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
@@ -50,9 +57,9 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
 
     <h2>3. Add the CLI for CI (optional)</h2>
     <p>
-      The skill authors context. The CLI guards it. Twelve deterministic
-      rules, no LLM, JSON output. Wire it into CI and pre-commit so context
-      drift never ships.
+      The skill authors context. The CLI guards it. Twenty deterministic
+      rules, no LLM, no network, no key — so it runs in a pre-commit hook and
+      in CI with a stable exit code. Wire it in and context drift never ships.
     </p>
     <pre><code>npx @ignitic/groundwork detect --fail-on P0</code></pre>
     <p>

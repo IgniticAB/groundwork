@@ -1,0 +1,18 @@
+{
+  "name": "groundwork",
+  "owner": {
+    "name": "Ignitic AB",
+    "url": "https://github.com/IgniticAB"
+  },
+  "metadata": {
+    "description": "Context engineering for repos that AI agents work in.",
+    "version": "0.3.0"
+  },
+  "plugins": [
+    {
+      "name": "groundwork",
+      "source": "./",
+      "description": "The groundwork skill: ten commands for setting up and maintaining a repo's agent context, plus the foundation it reasons from."
+    }
+  ]
+}
