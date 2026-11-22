@@ -63,6 +63,17 @@ Or, in Claude Code, install it as a plugin:
 
 The installer auto-detects your harness and places files in the right location (`.claude/skills/groundwork/`, `.cursor/skills/groundwork/`, `.agents/skills/groundwork/`, etc.).
 
+It also writes a `skills-lock.json` at your repo root, with two-space indentation
+that it rewrites on every `skills update`. If your formatter covers JSON and
+disagrees — a Prettier config with `useTabs: true`, say — your format check will
+fail on a generated file. Add it to the ignore list next to your package
+lockfile:
+
+```
+# .prettierignore
+skills-lock.json
+```
+
 Target specific harnesses with `-a`:
 
 ```bash

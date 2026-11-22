@@ -42,6 +42,17 @@ npx skills add IgniticAB/groundwork -a cursor -a codex</code></pre>
     <h3>Install globally</h3>
     <pre><code>npx skills add IgniticAB/groundwork -g</code></pre>
 
+  <h2>If your format check fails right after installing</h2>
+  <p>
+    The installer writes a <code>skills-lock.json</code> at your repo root with
+    two-space indentation, and rewrites it on every <code>skills update</code>.
+    A formatter that covers JSON with different settings — Prettier with
+    <code>useTabs: true</code>, for instance — will fail on it. Treat it like
+    any other generated lockfile and add it to the ignore list:
+  </p>
+  <pre><code># .prettierignore
+skills-lock.json</code></pre>
+
     <h2>2. Use it</h2>
     <p>Three ways to invoke a command:</p>
     <ul>
