@@ -23,7 +23,7 @@ their own stages, for the reason `init` gives. `npm run detect` runs this repo
 through its own detector and must stay clean — a tool that cannot pass its own
 checks is not evidence of anything.
 
-Last reviewed against vendor documentation: **2026-11-21**. The foundation
+Last reviewed against vendor documentation: **2026-11-22**. The foundation
 files that make factual claims carry their own `Last verified` dates.
 
 ## What it does
