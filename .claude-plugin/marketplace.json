@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Context engineering for repos that AI agents work in.",
-    "version": "0.3.1"
+    "version": "0.3.2"
   },
   "plugins": [
     {

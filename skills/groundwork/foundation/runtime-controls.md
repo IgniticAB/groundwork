@@ -4,12 +4,16 @@ Context files tell the agent what to do. The runtime decides what it *can* do.
 Everything in the other foundation files is prose the model may or may not
 follow; everything here is machinery that holds whether it follows or not.
 
-**Last verified: 2026-11-21** against Claude Code's own docs. Exact event names,
-frontmatter fields and flags live in `reference/runtime-detail.md` — load that
-when you are about to emit a file, not before. Re-verify both before a release.
+**Last verified: 2026-11-22.** Exact event names, paths, frontmatter fields and
+flags live in `reference/runtime-detail.md` — load that when you are about to
+emit a file, not before. Re-verify both before a release.
 
-This layer is Claude Code-specific today. Other harnesses are adding their own
-equivalents; the principles transfer, the file paths do not.
+Hooks are not Claude Code-only. Claude Code, Cursor and Codex each read a
+committed, per-project hooks file, and in all three a hook can deny a tool call.
+Never tell a Cursor or Codex repo that it has no enforcement layer. The paths,
+event names and deny mechanisms differ in every case, so read the reference
+before emitting one. Subagents, permissions and evals as described below *are*
+Claude Code-specific.
 
 ## The dividing line
 
@@ -30,9 +34,11 @@ still fails silently. If the thing can be checked by a script, check it.
 
 ## 1. Hooks are the enforcement layer
 
-Hooks are shell commands Claude Code runs at fixed points in its own loop. They
-go under a `hooks` key in `.claude/settings.json` — committed, reviewed,
-versioned like any other project config.
+Hooks are shell commands the harness runs at fixed points in its own loop, from
+a file committed, reviewed and versioned like any other project config: a
+`hooks` key in `.claude/settings.json` (Claude Code), `.cursor/hooks.json`
+(Cursor), `.codex/hooks.json` (Codex). The rest of this section describes Claude
+Code; `reference/runtime-detail.md` has the other two.
 
 The points worth knowing: `PreToolUse` (before a tool runs, can block),
 `PostToolUse` (after, cannot block — the tool already ran), `UserPromptSubmit`
@@ -45,6 +51,9 @@ The mechanism is exit codes, not prose. **Exit 2 is the blocking signal**: on
 agent sees — so the stderr line is a message to the model, and should read like
 one. Exit 1 is a non-blocking error; the action proceeds. A hook that means to
 enforce a policy and exits 1 enforces nothing.
+
+Exit 2 is the block in Cursor and Codex too. It is the one thing that ports
+between them — assume nothing else does.
 
 The highest-leverage two:
 

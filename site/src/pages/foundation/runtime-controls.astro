@@ -15,9 +15,11 @@ const description =
   </p>
 
   <p>
-    <strong>Last verified: 2026-11-21</strong> against Claude Code's own docs.
-    This layer is Claude Code-specific today — other harnesses are adding their
-    own equivalents. The principles transfer; the file paths do not.
+    <strong>Last verified: 2026-11-22.</strong> Hooks are not Claude Code-only:
+    Claude Code, Cursor and Codex each read a committed, per-project hooks file,
+    and in all three a hook can deny a tool call. The paths, event names and
+    deny mechanisms differ in every case. Subagents, permissions and evals as
+    described below <em>are</em> Claude Code-specific.
   </p>
 
   <h2>The dividing line</h2>
@@ -43,10 +45,12 @@ const description =
 
   <h2>1. Hooks are the enforcement layer</h2>
   <p>
-    Shell commands Claude Code runs at fixed points in its own loop, under a
-    <code>hooks</code> key in <code>.claude/settings.json</code> — committed and
-    reviewed like any other project config. There is no
-    <code>.claude/hooks.json</code>.
+    Shell commands the harness runs at fixed points in its own loop, from a file
+    committed and reviewed like any other project config: a <code>hooks</code>
+    key in <code>.claude/settings.json</code> (Claude Code),
+    <code>.cursor/hooks.json</code> (Cursor), <code>.codex/hooks.json</code>
+    (Codex). There is no <code>.claude/hooks.json</code>. The rest of this
+    section describes Claude Code.
   </p>
   <p>
     The points worth knowing: <code>PreToolUse</code> (before a tool runs, can
@@ -60,7 +64,8 @@ const description =
     on <code>PreToolUse</code> it denies the call and the hook's <em>stderr</em>
     becomes the reason the agent sees — so write that stderr as a sentence
     addressed to the model. Exit 1 is a non-blocking error and the action
-    proceeds, so a policy hook that exits 1 enforces nothing.
+    proceeds, so a policy hook that exits 1 enforces nothing. Exit 2 is the block
+    in Cursor and Codex too — it is the one thing that ports between them.
   </p>
   <p>The highest-leverage two:</p>
   <ul>

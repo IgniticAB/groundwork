@@ -1,15 +1,18 @@
 # Runtime Detail (load on demand)
 
-Paths, field names, flags and exit-code semantics for Claude Code's runtime
-layer. `foundation/runtime-controls.md` carries the principles and the decision;
-this file carries the things you must get exactly right to emit a working file.
+Paths, field names, flags and exit-code semantics for the runtime layer.
+`foundation/runtime-controls.md` carries the principles and the decision; this
+file carries the things you must get exactly right to emit a working file.
 
-**Last verified: 2026-11-21** against code.claude.com/docs. Where the docs do
+**Last verified: 2026-11-21** against code.claude.com/docs for the Claude Code
+sections; **2026-11-22** against cursor.com/docs/hooks and
+learn.chatgpt.com/docs/hooks for "Hooks in Cursor and Codex". Where the docs do
 not state something, this file says so rather than inventing it.
 
-All of it is Claude Code-specific. No other harness in
-`foundation/harness-reference.md` reads `.claude/settings.json` or
-`.claude/agents/`.
+Everything here is Claude Code-specific **except** the "Hooks in Cursor and
+Codex" section. No other harness reads `.claude/settings.json` or
+`.claude/agents/` — but Cursor and Codex have their own committed hook files,
+and a repo targeting them is not without an enforcement layer.
 
 ## Hooks
 
@@ -61,6 +64,42 @@ object instead. Exit 2 also wins over a JSON `permissionDecision` of `allow`.
 
 Because stderr is what the model reads, write it as a sentence addressed to the
 agent: `"typecheck failed; fix the errors before finishing"`, not a stack trace.
+
+## Hooks in Cursor and Codex
+
+Both ship a committed, per-project hooks file that can deny a tool call. A repo
+that targets either is not limited to prose plus git hooks, and an audit must
+not say it is.
+
+| | Claude Code | Cursor | Codex |
+| --- | --- | --- | --- |
+| Project file | `hooks` key in `.claude/settings.json` | `.cursor/hooks.json` | `.codex/hooks.json` |
+| Personal file | `~/.claude/settings.json` | `~/.cursor/hooks.json` | `$CODEX_HOME/hooks.json` (default `~/.codex/`) |
+| Pre-tool event | `PreToolUse` | `preToolUse`, plus `beforeShellExecution` / `beforeMCPExecution` / `beforeReadFile` | `PreToolUse`, plus `PermissionRequest` |
+| Deny via JSON | `permissionDecision: "deny"` | `permission: "deny"` | `permissionDecision: "deny"` (older form: `decision: "block"`) |
+| Deny via exit code | 2, reason on stderr | 2 | 2, reason on stderr |
+
+Exit 2 blocks in all three. That is the one thing that ports; nothing else does.
+
+Per-harness notes that change what you emit:
+
+- **Cursor.** Project hooks are version-controlled and apply in any trusted
+  workspace — the docs say so explicitly, so a committed `.cursor/hooks.json`
+  reaches the whole team. Event names are camelCase (`preToolUse`, not
+  `PreToolUse`) and there are 21 of them, including shell- and MCP-specific
+  `before*` events that have no Claude Code equivalent. Hooks **fail open** by
+  default: a crashing hook lets the action through unless that script sets
+  `failClosed: true`. Resolution order is Enterprise → Team → Project → User.
+- **Codex.** Project hooks load **only from trusted project layers**, so a
+  committed `.codex/hooks.json` does nothing until the user trusts it via
+  `/hooks` in the CLI — tell them that, or the file looks broken. Hooks are on
+  by default (`[features] hooks = false` in `config.toml` disables them; the
+  `codex_hooks` key is a deprecated alias). Codex's own docs call tool hooks
+  "a useful guardrail, not a complete enforcement boundary"; quote that rather
+  than overselling them.
+
+Neither vendor marks hooks beta or experimental, and neither states a minimum
+version. Do not claim one.
 
 ## Subagents
 

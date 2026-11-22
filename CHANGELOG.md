@@ -3,6 +3,39 @@
 Notable changes to the Groundwork skill and the `@ignitic/groundwork` detector.
 Dates are the date the work landed on `main`.
 
+## 0.3.2 — 2026-11-22
+
+Plugin `0.3.2`, skill `v1.1.2`. Detector unchanged, still `0.3.0` on npm.
+
+One invented limit, found by an outside reviewer reading the skill against the
+vendors' own docs. Groundwork told Cursor and Codex repos they had no
+enforcement layer. Both have had one all along.
+
+### Fixed
+
+- **`audit` claimed agent-runtime hooks were unavailable outside Claude Code.**
+  They are not. Cursor reads a committed `.cursor/hooks.json` ("checked into
+  version control with your project", 21 events, deny via `permission: "deny"`
+  or exit 2); Codex reads `.codex/hooks.json` in trusted project layers (deny
+  via `permissionDecision: "deny"` or exit 2). Exit 2 blocks in all three
+  harnesses. A Cursor or Codex repo with no hooks file now scores the same gap
+  as a Claude Code repo with no hooks, instead of being told the layer does not
+  exist for it. `commands/audit.md`, `foundation/runtime-controls.md`,
+  `reference/runtime-detail.md` and the matching site page.
+
+### Added
+
+- **`reference/runtime-detail.md` gains "Hooks in Cursor and Codex"** — a
+  per-harness table of project path, personal path, pre-tool event, JSON deny
+  field and exit-code deny, plus the two traps: Cursor hooks fail *open* unless
+  the script sets `failClosed: true`, and a committed `.codex/hooks.json` does
+  nothing until the user trusts it with `/hooks`. Verified 2026-11-22 against
+  cursor.com/docs/hooks and learn.chatgpt.com/docs/hooks.
+
+This is the failure mode `AGENTS.md` names first: a vendor's behaviour stated
+without reading that vendor's docs. The direction was new — previous instances
+invented capabilities, this one invented a limit — but the cause was the same.
+
 ## 0.3.1 — 2026-11-22
 
 Plugin `0.3.1`, skill `v1.1.1`. The detector is untouched and stays on npm at
