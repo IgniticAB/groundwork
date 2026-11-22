@@ -127,7 +127,8 @@ Emit:
       Copilot and Windsurf all read it, so that is the whole of it)
   - docs/decisions/README.md
   - docs/decisions/negative-space.md
-  - .context/hooks/check-context.sh (ADR coverage + pkg-manager drift)
+  - .context/hooks/check-context.sh      (pre-commit: pkg-manager drift, ADR status)
+  - .context/hooks/check-commit-msg.sh   (commit-msg: ADR coverage)
 
 No first ADR: Q8 was skipped, and `init` never invents one.
 
@@ -187,6 +188,7 @@ groundwork/
         mcp-config.template.json
         mcp-policy.template.md
         hook.sh.template
+        commit-msg-hook.sh.template
         husky-pre-commit.template
         context-check.yml.template
         audit-report.html.template        interactive HTML audit report
@@ -230,7 +232,7 @@ The site at `/blueprint` synthesizes both into a single navigable summary.
 
 ## Status and scope
 
-Skill v1.1. Ten commands. Detector CLI (`@ignitic/groundwork`) with twenty rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
+Skill v1.1.1. Ten commands. Detector CLI (`@ignitic/groundwork`) with twenty rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
 
 If you want to extend it: add a new command file in `skills/groundwork/commands/` and a row in the table in `skills/groundwork/SKILL.md`. Add new detector rules in `cli/src/rules/` and register them in `cli/src/rules/index.ts`. Commands are independent; rules are independent; they share the foundation files but do not depend on each other.
 

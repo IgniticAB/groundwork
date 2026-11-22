@@ -50,7 +50,7 @@ const description =
   <ul>
     <li><code>AGENTS.md</code>: canonical, hand-edited, under ~80 lines. Every harness <code>init</code> targets reads it, so by default this is the only context file emitted.</li>
     <li><code>docs/decisions/</code>: README and a negative-space stub. A first ADR is opt-in (the eighth question); skip it and write one later with <code>adr</code>.</li>
-    <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook.</li>
+    <li><code>.context/hooks/check-context.sh</code>: slim pre-commit hook, plus <code>.context/hooks/check-commit-msg.sh</code> at commit-msg for ADR coverage.</li>
   </ul>
 
   <h2>How it works</h2>

@@ -13,7 +13,9 @@ Depending on the harnesses the user targets, some subset of:
 
 - `AGENTS.md` — the canonical, hand-edited source of agent rules. Self-sufficient; aim under ~80 lines. **This is the default output and in most repos it is the only context file emitted**: Claude Code, Cursor, Codex, Copilot and Windsurf all read it.
 - `docs/decisions/` directory with a README and the negative-space starter. A first ADR is **not** auto-created; the user can opt in at the question step or write one later with `groundwork adr`.
-- `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR coverage + ADR status + package-manager drift).
+- `.context/hooks/check-context.sh` — a slim pre-commit hook (ADR status + package-manager drift), and
+  `.context/hooks/check-commit-msg.sh` — a commit-msg hook (ADR coverage on multi-file commits). Two files because
+  the second needs the commit message, which git has not written when pre-commit runs.
 - `.claude/rules/README.md` — **only** when the user opts in to Claude Code's auto-loading layer (off by default).
 
 Harness-specific files are emitted **only** when Q5 names a reason for one — a pointer file nothing reads is maintenance for nothing:
@@ -51,6 +53,7 @@ no harness ever reads, which looks like the agent ignoring the rules.
 - `docs/agents/` directory
 - `docs/decisions/` directory
 - `.context/hooks/check-context.sh`
+- `.context/hooks/check-commit-msg.sh`
 
 Glob for all of the above. **Run this check before any other detection.** If any match, stop and ask the user explicitly:
 
@@ -241,19 +244,28 @@ If Q8 was skipped, do not create any ADR file. The user can write their first on
 
 Subsequent ADRs use `templates/adr.template.md` and are authored via the `adr` command.
 
-### Step 7. Set up the pre-commit hook
+### Step 7. Set up the git hooks
 
-Create `.context/hooks/check-context.sh` from `templates/hook.sh.template`. Make it executable. The hook does three things: warn on `package.json#packageManager` drift vs `AGENTS.md`, require an ADR (or a reference to one) on multi-file commits, and require a valid Status on staged ADRs. It does **not** enforce parity between any context files.
+Create two scripts and make both executable:
 
-Wire it up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If a runner is present, add the hook entry directly and tell the user it is wired in.
+- `.context/hooks/check-context.sh` from `templates/hook.sh.template` — runs at **pre-commit**. Warns on `package.json#packageManager` drift vs `AGENTS.md`, and requires a valid Status on staged ADRs.
+- `.context/hooks/check-commit-msg.sh` from `templates/commit-msg-hook.sh.template` — runs at **commit-msg**. Requires a multi-file commit to add an ADR, reference one, or say `no-adr-needed`.
 
-If none is present, leave the hook script in place and report to the user, using this exact framing:
+The split is not cosmetic. git does not write the commit message until after
+pre-commit has run, so a message check placed in pre-commit reads the *previous*
+commit's message: it blocks commits that reference an ADR and waves through ones
+that do not. Never merge these two scripts into one pre-commit hook. Neither
+enforces parity between context files.
 
-> No hook runner detected (`husky`, `pre-commit`, `lefthook`). The hook script is in place at `.context/hooks/check-context.sh` but is not wired into anything yet. To wire it up, run one of:
+Wire them up only if the repo already uses `husky`, `pre-commit`, or `lefthook` — detect this. If a runner is present, add both entries directly, each at its own stage, and tell the user they are wired in.
+
+If none is present, leave both scripts in place and report to the user, using this exact framing:
+
+> No hook runner detected (`husky`, `pre-commit`, `lefthook`). Both hook scripts are in place under `.context/hooks/` but are not wired into anything yet. To wire them up, run one of:
 >
-> - **Node repo, macOS/Linux:** `npx husky init && echo 'sh .context/hooks/check-context.sh' >> .husky/pre-commit`
-> - **Node repo, Windows PowerShell:** `npx husky init; Add-Content .husky/pre-commit 'sh .context/hooks/check-context.sh'`
-> - **Python repo:** `pip install pre-commit && pre-commit install` (then add the hook entry to `.pre-commit-config.yaml`)
+> - **Node repo, macOS/Linux:** `npx husky init && echo 'sh .context/hooks/check-context.sh' >> .husky/pre-commit && echo 'sh .context/hooks/check-commit-msg.sh "$1"' > .husky/commit-msg`
+> - **Node repo, Windows PowerShell:** `npx husky init; Add-Content .husky/pre-commit 'sh .context/hooks/check-context.sh'; Set-Content .husky/commit-msg 'sh .context/hooks/check-commit-msg.sh "$1"'`
+> - **Python repo:** `pip install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg` (then add both hook entries to `.pre-commit-config.yaml`, the second with `stages: [commit-msg]`)
 
 Pick the closest match to the user's repo. Do not silently add a new tool to the repo. Suggest, do not install. The platform only changes the install-command syntax; the decision (suggest vs install) depends on whether a hook runner was already present, not on the operating system.
 

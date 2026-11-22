@@ -3,6 +3,47 @@
 Notable changes to the Groundwork skill and the `@ignitic/groundwork` detector.
 Dates are the date the work landed on `main`.
 
+## 0.3.1 — 2026-11-22
+
+Plugin `0.3.1`, skill `v1.1.1`. The detector is untouched and stays on npm at
+`0.3.0`: nothing in `cli/` changed, and the fixes below ship in templates the
+npm package does not carry.
+
+Two bugs in templates `init` writes into other people's repos. Both were gates
+that reported success while letting the thing they guard through, which is
+worse than having no gate: the repo was green and the guard was off.
+
+### Fixed
+
+- **The generated CI workflow could pass on a P0.** `context-check.yml.template`
+  pipes the detector through `tee` and set no `shell:`. GitHub's default Linux
+  shell is `bash -e {0}`, with no `pipefail`, so the pipeline reported `tee`'s
+  status — and `tee` always succeeds. The detector exited 1, the step exited 0,
+  the check went green. Now sets `shell: bash` explicitly, which carries
+  `-eo pipefail`. Groundwork's own CI invokes the detector directly, with no
+  pipe, so no run of it ever exercised this.
+- **The ADR hook blocked the commits it documents and passed the ones it
+  guards against.** `hook.sh.template` ran as `pre-commit` and read the commit
+  message from `.git/COMMIT_EDITMSG` — a file git does not write until after
+  pre-commit has run. It was judging the *previous* commit's message. A commit
+  saying `see ADR-0001` was rejected; so was the documented `no-adr-needed`
+  opt-out; and a six-file commit with no ADR at all was accepted whenever the
+  previous commit happened to carry the marker.
+
+  The message-dependent check moved to a new `commit-msg-hook.sh.template`,
+  installed as a `commit-msg` hook, where git passes the message path as `$1`.
+  The file-only checks stay in `pre-commit`. The new script refuses to run when
+  it receives no message file, so wiring it to the wrong stage fails loudly
+  rather than silently judging the wrong text.
+
+### Changed
+
+- The CI template pins `@ignitic/groundwork@0.3` instead of `@latest`. A CI gate
+  that floats to the newest published version can turn a green build red without
+  anyone touching the repo.
+- `init` and `verify` now emit and register two hook scripts rather than one,
+  each at its own stage, and say why the split is not optional.
+
 ## 0.3.0 — 2026-11-21
 
 A correctness release. The repo had been untouched since May, and six months is

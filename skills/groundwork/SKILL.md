@@ -1,7 +1,7 @@
 ---
 name: groundwork
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
 description: Set up and maintain state of the art context engineering for a new or existing project. Use this skill whenever the user wants to bootstrap a repo for AI-first development, write or improve a CLAUDE.md / AGENTS.md / .cursor/rules/ file, audit a project's "AI readiness", plan a non-trivial change before coding, author an ADR, scope rules to specific file patterns, design an MCP server with least-privilege access, or bake verification loops (tests, linters) into the AI's context. Also trigger when the user wants to turn a rule the agent keeps ignoring into something enforced — hooks, permissions, subagents for context isolation, or evals that prove the context changes behaviour. Also trigger when the user says "context engineering", "ContextOps", "AI-first repo", "cognitive debt", "plan mode", "negative space", or asks how to make a codebase work well with Claude Code, Cursor, Codex, or Copilot. Also trigger when the user wants to brief or orient a fresh agent or teammate on a task ("onboard", "handoff", "what context does this task need"), or to apply a remediation plan produced by an earlier audit ("apply the fixes", "/gw apply"). Prefer this skill over ad-hoc prompting whenever the artifact being produced is something an AI agent will read on future runs.
 ---
 

@@ -14,8 +14,8 @@ This command makes verification first-class. After running it, every context fil
 - Updates to `AGENTS.md` to include or refresh the "Verification" section. This is the canonical file; in most repos it is the only one that needs editing.
 - Updates to any per-harness file the repo actually carries (`CLAUDE.md` as a full copy, `.cursor/rules/main.mdc`, `.github/copilot-instructions.md`, `.windsurf/rules/main.md`) so the fast verification command stays current. These are hand-maintained — no generator.
 - Agent-runtime hooks in `.claude/settings.json` (Claude Code repos, offered not assumed) so the verification runs before the agent can declare a task done, rather than only being described in prose.
-- A git pre-commit hook script at `.context/hooks/check-context.sh` (if not already present). The hook catches package-manager drift against `AGENTS.md`, missing ADRs on multi-file commits, and ADRs with no Status.
-- A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected.
+- Two git hook scripts (if not already present): `.context/hooks/check-context.sh` for **pre-commit**, catching package-manager drift against `AGENTS.md` and ADRs with no Status; and `.context/hooks/check-commit-msg.sh` for **commit-msg**, catching multi-file commits that ship without an ADR.
+- A registration with the repo's hook runner (husky, pre-commit, lefthook), if one is detected — each script at its own stage.
 - The `groundwork` detector wired in: as a pre-commit step and as a CI job.
 - A short test of each verification command (and the detector) to confirm they work.
 
@@ -125,8 +125,8 @@ getting this backwards is the most common way a hook silently does nothing.
 Shapes and event names: `reference/runtime-detail.md`.
 
 If the repo does not target Claude Code, say so plainly: the enforcement layer
-is not available there, the git pre-commit hook in Step 6 is the nearest
-equivalent, and it fires after the agent has already finished.
+is not available there, the git hooks in Step 6 are the nearest equivalent, and
+they fire after the agent has already finished.
 
 ### Step 5. Wire in the detector
 
@@ -134,18 +134,35 @@ The `groundwork` CLI is a deterministic detector that complements the verificati
 
 **Pre-commit**: install via the hook runner (husky/pre-commit/lefthook) using `templates/husky-pre-commit.template` as the model. The hook calls `npx @ignitic/groundwork detect --fail-on P0`, so a bad commit fails fast.
 
-**CI**: copy `templates/context-check.yml.template` to `.github/workflows/context-check.yml` (if the repo uses GitHub Actions). Adjust `--fail-on P0` if the team wants to gate on P1 too.
+**CI**: copy `templates/context-check.yml.template` to `.github/workflows/context-check.yml` (if the repo uses GitHub Actions). Adjust `--fail-on P0` if the team wants to gate on P1 too. Keep the step's `shell: bash`: GitHub's default Linux shell has no `pipefail`, so a piped step reports the exit status of the last command and a failing detector would pass the check.
+
+If the repo runs GitHub Actions at all, suggest [actionlint](https://github.com/rhysd/actionlint) alongside this — a static checker for workflow files. Verified 2026-11-22 against its own README and `docs/checks.md`: it checks `${{ }}` expression syntax and types, validates `runs-on:` labels, and runs shellcheck over `run:` scripts when shellcheck is installed and the shell is `bash` or `sh`. It does **not** document a check for the masked-pipeline problem above, so it would not have caught it; do not claim otherwise to the user. Groundwork does not check workflows and should not start — this is the tool that does.
 
 Run `npx @ignitic/groundwork detect .` once now to confirm it runs and to show the user the baseline findings. If there are P0 findings, surface them; let the user decide whether to fix-then-wire-in or wire-in-with-known-issues.
 
-### Step 6. Local drift hook
+### Step 6. Local drift hooks
 
-This is a **git** pre-commit hook, and it is a different thing from the
-agent-runtime hooks in Step 4b. It fires when a human commits, long after the
-agent has moved on; the runtime hooks fire while the agent can still act on
-them. A repo wants both, for different failures.
+These are **git** hooks, a different thing from the agent-runtime hooks in
+Step 4b. They fire when a human commits, long after the agent has moved on; the
+runtime hooks fire while the agent can still act on them. A repo wants both, for
+different failures.
 
-The repo-specific drift hook catches three classes of cross-file invariants that the detector does not check by itself: package-manager drift between `package.json` and `AGENTS.md`, multi-file commits shipping without an ADR, and staged ADRs that forgot to declare a Status. The basic shape:
+They catch three classes of cross-file invariant the detector does not check by
+itself, and they split across two stages because one of the three needs the
+commit message:
+
+| Check | Stage | Script |
+| --- | --- | --- |
+| `package.json` packageManager vs `AGENTS.md` | pre-commit | `check-context.sh` |
+| Staged ADR with no Status | pre-commit | `check-context.sh` |
+| Multi-file commit with no ADR added or referenced | **commit-msg** | `check-commit-msg.sh` |
+
+git writes the commit message *after* pre-commit runs. A message check placed in
+pre-commit therefore reads the previous commit's message — it blocks commits that
+do reference an ADR, and passes ones that do not. Keep the third check in
+`commit-msg`, where git passes the message path as `$1`.
+
+The pre-commit shape:
 
 ```bash
 #!/usr/bin/env bash
@@ -163,20 +180,20 @@ if git diff --cached --name-only | grep -q "^package.json$"; then
   fi
 fi
 
-# ADR coverage and ADR-status checks live in templates/hook.sh.template — copy them in.
+# The ADR-status check lives in templates/hook.sh.template — copy it in.
 
 exit 0
 ```
 
-Use `templates/hook.sh.template` as the starter; tailor it to the user's stack. The template does not include any parity check between context files — `AGENTS.md` is the canonical source, so there is no other file to be in parity with.
+Use `templates/hook.sh.template` for the pre-commit script and `templates/commit-msg-hook.sh.template` for the commit-msg one; tailor both to the user's stack. The commit-msg template refuses to run when git passes it no message file, so wiring it into the wrong stage fails loudly instead of silently judging the wrong message. Neither template includes a parity check between context files — `AGENTS.md` is the canonical source, so there is no other file to be in parity with.
 
 ### Step 7. Register the hook
 
 Detect which hook runner is in use:
 
-- `.husky/` directory → husky. Add a `.husky/pre-commit` that calls our script.
-- `.pre-commit-config.yaml` → pre-commit. Add a local hook entry.
-- `lefthook.yml` → lefthook. Add an entry to `pre-commit:`.
+- `.husky/` directory → husky. Add a `.husky/pre-commit` calling `check-context.sh`, and a `.husky/commit-msg` calling `check-commit-msg.sh "$1"`.
+- `.pre-commit-config.yaml` → pre-commit. Add two local hook entries; the ADR-coverage one needs `stages: [commit-msg]`, and the runner needs `pre-commit install --hook-type commit-msg` to install that stage at all.
+- `lefthook.yml` → lefthook. Add an entry to `pre-commit:` and one to `commit-msg:`, passing `{1}` to the latter.
 - None → tell the user the one-line install for husky (most common for Node projects) or pre-commit (most common for Python).
 
 Do not install a new hook runner silently. Suggest, do not install. (Exception: if the user explicitly said "yes install whatever you need" earlier in this session.)

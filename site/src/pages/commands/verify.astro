@@ -16,6 +16,7 @@ const description =
   sourceFile="skills/groundwork/commands/verify.md"
   templateFiles={[
     'skills/groundwork/templates/hook.sh.template',
+    'skills/groundwork/templates/commit-msg-hook.sh.template',
     'skills/groundwork/templates/husky-pre-commit.template',
     'skills/groundwork/templates/context-check.yml.template',
   ]}
@@ -39,7 +40,7 @@ const description =
   <h2>What it produces</h2>
   <ul>
     <li>Verification section near the top of <code>AGENTS.md</code> (and two-file <code>CLAUDE.md</code>). Fast command in the per-harness pointer files.</li>
-    <li><code>.context/hooks/check-context.sh</code>: pre-commit hook for repo-specific drift.</li>
+    <li><code>.context/hooks/check-context.sh</code>: pre-commit hook for repo-specific drift, and <code>.context/hooks/check-commit-msg.sh</code>: commit-msg hook for ADR coverage. Two stages, because git writes the commit message only after pre-commit has run.</li>
     <li>Hook-runner registration (husky / pre-commit / lefthook) if one is detected. Suggested, not silently installed.</li>
     <li>The detector wired into pre-commit and CI (<code>.github/workflows/context-check.yml</code> if you use Actions).</li>
     <li>A test run of every verification command, so you know the baseline.</li>

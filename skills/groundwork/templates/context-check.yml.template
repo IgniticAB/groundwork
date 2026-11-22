@@ -28,7 +28,12 @@ jobs:
           node-version: 24
 
       - name: Run groundwork detect
-        run: npx --yes @ignitic/groundwork@latest detect . --fail-on P0 --json | tee findings.json
+        # `shell: bash` is load-bearing. GitHub's default Linux shell is
+        # `bash -e {0}`, which has no pipefail: the pipeline would report tee's
+        # exit status, tee always succeeds, and a P0 would pass the check.
+        # Naming bash explicitly gets `-eo pipefail`.
+        shell: bash
+        run: npx --yes @ignitic/groundwork@0.3 detect . --fail-on P0 --json | tee findings.json
 
       - name: Upload findings
         if: always()

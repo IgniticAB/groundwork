@@ -1,8 +1,15 @@
 #!/usr/bin/env sh
 # .husky/pre-commit
-# Runs the groundwork detector + the local context-check hook on every commit.
+# Runs the groundwork detector + the staged-file drift checks on every commit.
+#
+# The ADR-coverage check is NOT here: it needs the commit message, which does
+# not exist yet at pre-commit time. It goes in .husky/commit-msg instead:
+#
+#   #!/usr/bin/env sh
+#   # .husky/commit-msg
+#   [ -x .context/hooks/check-commit-msg.sh ] && .context/hooks/check-commit-msg.sh "$1"
 
-# Local drift checks (package.json vs AGENTS.md, ADR coverage, ADR status).
+# Local drift checks (package.json vs AGENTS.md, ADR status).
 if [ -x .context/hooks/check-context.sh ]; then
   .context/hooks/check-context.sh
 fi
