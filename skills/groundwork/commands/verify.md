@@ -194,7 +194,8 @@ Detect which hook runner is in use:
 - `.husky/` directory → husky. Add a `.husky/pre-commit` calling `check-context.sh`, and a `.husky/commit-msg` calling `check-commit-msg.sh "$1"`.
 - `.pre-commit-config.yaml` → pre-commit. Add two local hook entries; the ADR-coverage one needs `stages: [commit-msg]`, and the runner needs `pre-commit install --hook-type commit-msg` to install that stage at all.
 - `lefthook.yml` → lefthook. Add an entry to `pre-commit:` and one to `commit-msg:`, passing `{1}` to the latter.
-- None → tell the user the one-line install for husky (most common for Node projects) or pre-commit (most common for Python).
+- `.githooks/` plus `core.hooksPath` → plain git, no runner. Check that `git config core.hooksPath` actually points there: the directory is committed but the config is per-clone, so this is the one wiring that can look installed and do nothing.
+- None → tell the user the one-line install for husky (most common for Node projects) or pre-commit (most common for Python), or the dependency-free `.githooks/` + `core.hooksPath` route if they do not want another devDependency.
 
 Do not install a new hook runner silently. Suggest, do not install. (Exception: if the user explicitly said "yes install whatever you need" earlier in this session.)
 

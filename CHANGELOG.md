@@ -3,6 +3,35 @@
 Notable changes to the Groundwork skill and the `@ignitic/groundwork` detector.
 Dates are the date the work landed on `main`.
 
+## 0.3.3 — 2026-11-22
+
+Plugin `0.3.3`, skill `v1.1.3`. Detector unchanged, still `0.3.0` on npm.
+
+The repo now runs the git hooks it tells other people to write. It had the
+`Stop` hook in `.claude/settings.json` but neither git hook, so the README's
+"output of its own `init`" claim was two files short of true.
+
+### Added
+
+- **`.context/hooks/check-context.sh` and `.context/hooks/check-commit-msg.sh`**,
+  copied from the templates `init` emits, wired through committed
+  `.githooks/pre-commit` and `.githooks/commit-msg` with
+  `core.hooksPath`. Verified end to end: the commit-msg gate blocks a six-file
+  commit with no ADR, passes one that says `no-adr-needed`, passes one that
+  references `ADR-0003`, and the wrong-stage guard fails loudly when the script
+  is called without a message path.
+- **A fourth wire-up option in `init` step 7 and `verify` step 6:** committed
+  `.githooks/` plus `core.hooksPath`, for repos that do not want another
+  devDependency. All three existing options install a runner; this one installs
+  nothing. It carries its own trap, now stated in both commands — the directory
+  is committed but `core.hooksPath` is per-clone config, so the hooks are inert
+  until someone runs the command. This repo wires it into `prepare`, so
+  `npm install` does it.
+- `npm run hooks:install` at the repo root.
+
+Found by dogfooding: the option is in the skill because installing the hooks
+here showed the existing three were all the wrong shape for this repo.
+
 ## 0.3.2 — 2026-11-22
 
 Plugin `0.3.2`, skill `v1.1.2`. Detector unchanged, still `0.3.0` on npm.

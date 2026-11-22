@@ -266,6 +266,7 @@ If none is present, leave both scripts in place and report to the user, using th
 > - **Node repo, macOS/Linux:** `npx husky init && echo 'sh .context/hooks/check-context.sh' >> .husky/pre-commit && echo 'sh .context/hooks/check-commit-msg.sh "$1"' > .husky/commit-msg`
 > - **Node repo, Windows PowerShell:** `npx husky init; Add-Content .husky/pre-commit 'sh .context/hooks/check-context.sh'; Set-Content .husky/commit-msg 'sh .context/hooks/check-commit-msg.sh "$1"'`
 > - **Python repo:** `pip install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg` (then add both hook entries to `.pre-commit-config.yaml`, the second with `stages: [commit-msg]`)
+> - **No new dependency:** commit a `.githooks/pre-commit` and a `.githooks/commit-msg` that each call the matching script, then `git config core.hooksPath .githooks`. The hooks are version-controlled, but `core.hooksPath` is local config, so every clone runs the command once — wire it into a `prepare` script (`npm install` runs it) or say so in the README, or the hooks are committed and inert.
 
 Pick the closest match to the user's repo. Do not silently add a new tool to the repo. Suggest, do not install. The platform only changes the install-command syntax; the decision (suggest vs install) depends on whether a hook runner was already present, not on the operating system.
 

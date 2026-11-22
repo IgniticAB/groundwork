@@ -16,7 +16,10 @@ including the one that retired the architecture it used to recommend. What it
 rejected is in [`negative-space.md`](docs/decisions/negative-space.md). The
 verification in `AGENTS.md` is enforced by a `Stop` hook in
 [`.claude/settings.json`](.claude/settings.json), so an agent working here
-cannot declare a task done on a red build. `npm run detect` runs this repo
+cannot declare a task done on a red build. The two git hooks the skill tells you
+to write are in [`.context/hooks/`](.context/hooks/) and wired through
+[`.githooks/`](.githooks/) and `core.hooksPath` — pre-commit and commit-msg, at
+their own stages, for the reason `init` gives. `npm run detect` runs this repo
 through its own detector and must stay clean — a tool that cannot pass its own
 checks is not evidence of anything.
 
@@ -232,7 +235,7 @@ The site at `/blueprint` synthesizes both into a single navigable summary.
 
 ## Status and scope
 
-Skill v1.1.2. Ten commands. Detector CLI (`@ignitic/groundwork`) with twenty rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
+Skill v1.1.3. Ten commands. Detector CLI (`@ignitic/groundwork`) with twenty rules. Harness-agnostic output (Claude Code, Cursor, Codex, Copilot, and 50+ more via `npx skills`). Verification commands and detector are run for real, not declared.
 
 If you want to extend it: add a new command file in `skills/groundwork/commands/` and a row in the table in `skills/groundwork/SKILL.md`. Add new detector rules in `cli/src/rules/` and register them in `cli/src/rules/index.ts`. Commands are independent; rules are independent; they share the foundation files but do not depend on each other.
 

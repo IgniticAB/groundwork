@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit
+#
+# Committed, so everyone gets it. Active once `core.hooksPath` points here,
+# which `npm run hooks:install` (and `npm install` via `prepare`) does.
+#
+# Only file-decidable checks belong here. The ADR-coverage check needs the
+# commit message, which git has not written yet — it lives in commit-msg.
+
+set -e
+
+[ -x .context/hooks/check-context.sh ] && .context/hooks/check-context.sh
+
+# The repo's own detector, on the repo itself. A tool that cannot pass its own
+# checks is not evidence of anything.
+if [ -f cli/dist/index.js ]; then
+  node cli/bin/groundwork.mjs detect . --fail-on P0
+else
+  echo "pre-commit: cli/dist missing, skipping the detector. Run: npm run build" >&2
+fi

@@ -13,6 +13,8 @@
     "typecheck": "npm run typecheck --prefix cli",
     "test": "npm test --prefix cli",
     "detect": "npm run build --prefix cli && node cli/bin/groundwork.mjs detect .",
-    "install:all": "npm ci --prefix cli && npm ci --prefix site"
+    "install:all": "npm ci --prefix cli && npm ci --prefix site",
+    "hooks:install": "git config core.hooksPath .githooks",
+    "prepare": "git config core.hooksPath .githooks || true"
   }
 }

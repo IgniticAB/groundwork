@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# .githooks/commit-msg
+#
+# git passes the message path as $1. Only this stage receives it; the same
+# script in pre-commit would read the PREVIOUS commit's message.
+
+set -e
+
+[ -x .context/hooks/check-commit-msg.sh ] && .context/hooks/check-commit-msg.sh "$1"
